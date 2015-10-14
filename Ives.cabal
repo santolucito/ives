@@ -68,7 +68,8 @@ executable Ives
                        plugins >=1.5,
                        ghc-mod >=5.3,
                        QuickCheck >=2.8,
-                       random >=1.1
+                       random >=1.1,
+                       hinotify >=0.3
   
   -- Directories containing source files.
   -- hs-source-dirs:      
