@@ -77,3 +77,28 @@ executable Ives
   -- Base language which the package is written in.
   default-language:    Haskell2010
   
+executable Exampler
+  -- .hs or .lhs file containing the Main module.
+  main-is:             Ives/ExampleGen/Exampler.hs
+  
+  -- Other library packages from which modules are imported.
+  build-depends:       base >=4.6 && <5.0,
+                       hinotify >=0.3,
+                       process >=1.1,
+                       directory >=1.2,
+                       filepath >=1.3,
+                       temporary >=1.2
+  
+  -- Base language which the package is written in.
+  default-language:    Haskell2010
+
+Library
+  exposed-modules: Ives.ExampleGen.Gen
+
+  -- Other library packages from which modules are imported.
+  build-depends:   base >=4.6 && <5.0,
+                   QuickCheck >=2.8,
+                   random >=1.1
+
+  -- Base language which the package is written in.
+  default-language:    Haskell2010
