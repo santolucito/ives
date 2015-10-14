@@ -1,4 +1,4 @@
-> module Ives.ExampleGen.Gen (exGen, genExample, genExamples) where
+> module Ives.ExampleGen.Gen (exGen, genExamples) where
 
 > import Ives.Types
 > import Data.List
@@ -94,28 +94,23 @@ Keep evaluating the function one random argument at a time
 >        where
 >          argument a res = res{ arguments = show a : arguments res }
 
-Generate one example
+Generate examples
 
-> genExample :: (Exampleable a) => a -> IO ()
-> genExample = genExamples 1
-
-Generate multiple examples
-
-> genExamples :: (Exampleable a) => Int -> a -> IO ()
-> genExamples n a =
+> genExamples :: (Exampleable a) => a -> Int -> Int -> IO ()
+> genExamples a n size =
 >   do rnd <- newQCGen
->      examplesHelper (evaluate a) rnd n
+>      examplesHelper (evaluate a) rnd n size
 
 Actual generates the examples and prints them to standard out
 
-> examplesHelper :: Gen Example -> QCGen -> Int -> IO ()
-> examplesHelper _ _ 0 = return ()
-> examplesHelper gen rnd0 n =
+> examplesHelper :: Gen Example -> QCGen -> Int -> Int -> IO ()
+> examplesHelper _ _ 0 _ = return ()
+> examplesHelper gen rnd0 n size =
 >   do putStr $ unwords ["Arguments:", args, "Result:", res]
 >      putStr "\n"
->      examplesHelper gen rnd1 (n-1)
+>      examplesHelper gen rnd1 (n-1) size
 >        where
 >          (rnd1,rnd2) = split rnd0
->          example     = unGen gen rnd2 10
+>          example     = unGen gen rnd2 size
 >          args        = show $ arguments example
 >          Just res    = result example

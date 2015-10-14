@@ -39,12 +39,15 @@ createTemp path = do
   let func = dropWhile (\c -> c == '\65279') contents
   let funcName = takeWhile (\c -> c /= ' ') func
   (temp, handle) <- openTempFile dir fileName
-  hPutStrLn handle "import Ives.ExampleGen.Gen"
-  hPutStrLn handle ""
-  hPutStrLn handle "main :: IO ()"
-  hPutStrLn handle $ "main = do genExample " ++ funcName
-  hPutStrLn handle ""
-  hPutStrLn handle func
+  hPutStrLn handle   "import System.Environment"
+  hPutStrLn handle   "import Ives.ExampleGen.Gen"
+  hPutStrLn handle   ""
+  hPutStrLn handle   "main :: IO ()"
+  hPutStrLn handle   "main = do"
+  hPutStrLn handle   "  n:size:_ <- getArgs"
+  hPutStrLn handle $ "  genExamples " ++ funcName ++ " (read n) (read size)"
+  hPutStrLn handle   ""
+  hPutStrLn handle   func
   hClose handle
   return temp
   where
