@@ -1,10 +1,16 @@
-> module Ives.ExampleGen.Gen (genExample, genExamples) where
+> module Ives.ExampleGen.Gen (exGen, genExample, genExamples) where
 
 > import Ives.Types
 > import Data.List
 > import System.Random
 > import qualified Test.QuickCheck as QC
 > import Test.QuickCheck.Gen
+> import Test.QuickCheck.Random
+
+Placeholder
+
+> exGen :: ExGen
+> exGen = id
 
 Represents an example
 
@@ -97,12 +103,12 @@ Generate multiple examples
 
 > genExamples :: (Exampleable a) => Int -> a -> IO ()
 > genExamples n a =
->   do rnd <- newStdGen
+>   do rnd <- newQCGen
 >      examplesHelper (evaluate a) rnd n
 
 Actual generates the examples and prints them to standard out
 
-> examplesHelper :: Gen Example -> StdGen -> Int -> IO ()
+> examplesHelper :: Gen Example -> QCGen -> Int -> IO ()
 > examplesHelper _ _ 0 = return ()
 > examplesHelper gen rnd0 n =
 >   do putStr $ unwords ["Arguments:", args, "Result:", res]
