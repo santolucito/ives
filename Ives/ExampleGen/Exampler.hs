@@ -67,7 +67,7 @@ createTemp path = do
   hPutStrLn h   "main :: IO ()"
   hPutStrLn h   "main = do"
   hPutStrLn h   "  n:size:_ <- getArgs"
-  hPutStrLn h $ "  genExamples " ++ funcName ++ " (read n) (read size)"
+  hPutStrLn h $ "  genExamples " ++ funcName ++ " (read size) (read n)"
   hPutStrLn h   ""
   hPutStrLn h   func
   hClose h
