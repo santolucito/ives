@@ -1,4 +1,4 @@
-> module Ives.ExampleGen.Gen (exGen, genExamples, testExample) where
+> module Ives.ExampleGen.Gen (exGen, example) where
 
 > import Ives.Types
 > import Data.List
@@ -94,10 +94,18 @@ Keep evaluating the function one given argument at a time.
 >     where
 >       argument a res = res{ arguments = show a : arguments res }
 
-Test a given example (the second argument is a the list of arguments to the function).
+Run a given example (the second argument is a the list of arguments to the function).
 
-> testExample :: (Exampleable a) => a -> [String] -> IO ()
-> testExample a args = do
->   example <- examplify a Nothing (Just args)
+> runExample :: (Exampleable a) => a -> String -> IO ()
+> runExample a args = do
+>   example <- examplify a Nothing (Just $ words args)
 >   putStrLn $ unwords $ (arguments example) ++ [result example]
+
+> example :: (Exampleable a) => a -> [String] -> IO ()
+> example a (cmd:args) =
+>   case cmd of
+>     "run" -> runExample a example
+>       where example:_ = args
+>     "generate" -> genExamples a (read size) (read n)
+>       where size:n:_ = args
 
