@@ -1,6 +1,8 @@
 > import Data.List
 
 
+MUST BE ON GHC 7.8.*
+
 We want synthesis that learns from it's mistakes, works on the whole language, and makes idiomatic code.
 1) Learn from mistakes by synthesizing sub expressions as we go. Even if a particular branch doesn't succeed, we will have done useful work.
 2) Type directed synthesis based on implicit type-expansion of functions in standard library and imported libraries
