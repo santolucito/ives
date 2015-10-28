@@ -8,6 +8,8 @@
 > import Language.Haskell.Exts.Parser
 > import Language.Haskell.Exts
 
+> import Data.Either.Combinators
+
 NOTE: this needs to be run at the top cabal directory (when using ghci at least) or ghcmod will fail
 
 Given a module full of examples, "browse" to get all the types of examples
@@ -18,44 +20,58 @@ There is no way to go from the value level (the String of types) the the type le
 Agda would support this, and it would be nice to have because then I could do more integrated type manipulation.
 The approach here is just fine since we put everything into the haskell-src-exts language.
 
-> -- | takes a module name and gives back a function name that fits the examples
-> vroom :: String -> String
-> vroom = undefined
+ -- | takes a module name and gives back a function name that fits the examples
+ vroom :: String -> String
+ vroom f = getTypesFromFile
 
+> testFile f = do
+>   fc <- readFile f
+>   let x = processTys (T.pack fc)
+>   putStrLn $ either show show x
+>   
 > b = getTypesFromModule "base:Prelude"
 
-| this will grab all the defintions (fxns, types, etc) from Prelude and spit them back as a string. 
-| I just parse this String to build a grammar of types. 
-
+> -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
 > getTypesFromModule :: String -> IO ()
 > getTypesFromModule m = do
 >   r <- runGmOutT defaultOptions $ runGhcModT (defaultOptions {optDetailed = True}) $ browse m
->   let x = processTys  r
->   mapM_ print x 
+>   code <- either (handleMod) (return. T.pack) (fst r)
+>   let x = processTys $ cleanModule code
+>   putStrLn $ either show show x
 
-> processTys :: (Either GhcModError String, GhcModLog) -> [Decl]
-> processTys r =
->   let 
->     tys = dropTypeDefs $ T.lines $ handle r
->     parsedTys = map parseModule (map T.unpack tys)
+> handleMod :: GhcModError -> IO(T.Text)
+> handleMod x = do
+>   putStrLn $ "error"++show x
+>   return "ghcmod failed"
+
+> -- | modules have some odd stuff like type definitions and 
+> cleanModule :: T.Text -> T.Text
+> cleanModule c =
+>   let
+>     c' = dropWhile (C.isAsciiUpper. T.head) $ T.lines c
+>     c'' = T.unlines $ filter (T.isInfixOf "::") c'
 >   in
->     concatMap (f) parsedTys 
+>     c''
 
-> f :: ParseResult Module -> [Decl]
-> f m =
+> -- | take code and get Decl
+> processTys :: T.Text -> Either String [Decl]
+> processTys c =
+>   let 
+>     parsedC = handleParse $ parseModule $ T.unpack c
+>   in
+>     mapRight (filter isTypeSig) parsedC
+
+> handleParse :: ParseResult Module -> Either String [Decl]
+> handleParse m =
 >   case m of
->     ParseOk a -> getCode a
->     ParseFailed l e -> []
+>     ParseFailed l e -> Left $ "haskell-src failed" ++ (show e)
+>     ParseOk a -> Right $ getCode a
 
-> -- | TypeDefs start up Upper case, fxn types with lower
-> dropTypeDefs :: [T.Text] -> [T.Text]
-> dropTypeDefs = dropWhile (C.isAsciiUpper. T.head)
-
-> handle :: (Either GhcModError String, GhcModLog) -> T.Text
-> handle x =
->   case fst x of
->     Left e -> "error"
->     Right t -> T.pack t
+> isTypeSig :: Decl -> Bool
+> isTypeSig x =
+>   case x of
+>     TypeSig _ _ _-> True
+>     otherwise -> False
 
 from haskell-src-exts we have 
 data Module = Module

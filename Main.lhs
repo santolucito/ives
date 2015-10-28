@@ -7,4 +7,4 @@
 
  main = haskEditor exGen
 
-> main = undefined
+> main = testFile "test.hs"
