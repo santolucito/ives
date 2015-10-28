@@ -2,7 +2,7 @@
 > {-# LANGUAGE ExtendedDefaultRules #-}
 > {-# OPTIONS_GHC -fno-warn-type-defaults #-}
 
-> module RefinementTypeGen where
+> module Ives.SynthEngine.RefinementTypeGen where
 
 > import Prelude 
 > import qualified Shelly as S
@@ -14,12 +14,14 @@
 import ExampleGen
 
 
-run 'tester "testLiquid.hs" "examples.hs"' to see it in action!
+ main = tester "testLiquid.hs" "examples.hs"
 
 > tester f1 f2 = do
 >   hof <- rTypeAssign HigherOrderFxn f1
 >   ex  <- rTypeAssign Example f2
 >   let possible = intersect hof ex
+>   putStrLn "------------------------------"
+>   putStrLn "The rtypees that are common to the higher order fxn and the examples are..."
 >   putStrLn $ show possible 
 
 
