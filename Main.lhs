@@ -13,32 +13,32 @@
 > import qualified Data.Text as T
 > import Data.List
 
- main = haskEditor exGen
 
+> main :: IO()
 > main = do
->  testFile "tests/userApi.hs"
->  rTypeTester "tests/userApi.hs"
-
-   putStrLn "------------------------------"
-   putStrLn "------------------------------"
-   putStrLn "and the types of the fxns that we have 'in scope'"
-   testFile "tests/test.hs"
-
-> testFile f = do
->   fc <- readFile f
->   let x = processTys (T.pack fc)
->   case x of
+>   fc <- readFile "tests/userApi.hs"
+>   let ids = processTys (T.pack fc)
+>   case ids of
 >     Left e -> putStrLn $ show e
->     Right ds -> pl $ map getName ds
+>     Right ds -> rTypeTester "tests/userApi.hs" (map getName ds)
 
-> pl = mapM_ (putStrLn . show)
+> foo :: FilePath -> [Name] -> IO(Name, [(RType,RType)])
+> foo f i = do
+>   x <- rTypeAssign HigherOrderFxn f (toString $ head i)
+>   return (head i, x)
 
-> rTypeTester f = do
->   hof1 <- rTypeAssign HigherOrderFxn f "duplIf"
->   hof2 <- rTypeAssign HigherOrderFxn f "takeWhilePlus"
->   putStrLn "test"
+> poss ex hof = (length $ intersect ex (snd hof)) > 0
+
+> rTypeTester :: FilePath -> [[Name]] -> IO()
+> rTypeTester f ids = do
+>   hofxns <- mapM (foo f) ids
 >   ex  <- rTypeAssign Example f "exs"
->   let possible1 = (length $ intersect hof1 ex) > 0
->   let possible2 = (length $ intersect hof2 ex) > 0
->   putStrLn $ show possible1
->   putStrLn $ show possible2
+>   let possibleHofxns = filter (poss ex) hofxns 
+>   pl possibleHofxns
+> pl = mapM_ (putStrLn . show . fst)
+
+> toString :: Name -> String
+> toString = \case
+>   Ident s -> s
+>   Symbol s -> s 
+

@@ -9,4 +9,4 @@ to run Main.hs
 $ .cabal-sandbox/bin/Ives
 
 # problems
-liquid haskell doesn't support underscore pattern matcher selector
+we don't want to check the examples against all the possible refienemnt types, we need a way to prune those quickly (based on subtyping)
