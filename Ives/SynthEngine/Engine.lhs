@@ -1,83 +1,49 @@
-> {-# LANGUAGE OverloadedStrings #-}
 > {-# LANGUAGE LambdaCase #-}
 
 > module Ives.SynthEngine.Engine where
 
-> import Language.Haskell.GhcMod
-> import Language.Haskell.GhcMod.Monad
-> import qualified Data.Text as T
-> import qualified Data.Char as C
-> import Language.Haskell.Exts.Parser
+> import Ives.SynthEngine.RefinementTypeGen
+> import Ives.SynthEngine.TypeExtractor
+
 > import Language.Haskell.Exts
 
-> import Data.Either.Combinators
+> import qualified Data.Text as T
+> import Data.List
 
-NOTE: this needs to be run at the top cabal directory (when using ghci at least) or ghcmod will fail
+the actual synth engine - take a file and generate a program for that satifies exampes given in the "exs" variable
 
-Given a module full of examples, "browse" to get all the types of examples
-then "browse" the imports of that module, and base:Prelude
-then match up which example types fit which functions, and see if it works by running
+> vroom :: String -> IO()
+> vroom f = do
+>   fc <- readFile f
+>   let ids = getTypesFromCode fc
+>   case ids of
+>     Left e -> putStrLn $ show e
+>     Right ds -> rTypeTester f (map getName ds)
 
-There is no way to go from the value level (the String of types) the the type level (Type grammar I am generating)
-Agda would support this, and it would be nice to have because then I could do more integrated type manipulation.
-The approach here is just fine since we put everything into the haskell-src-exts language.
+1) try to assign *every* rtype to *every* identifier definied in the file
+2) try to assign *every* rtype to the examples
+3) see which identifiers have an rtype that cooresponds to on of the rtypes that the examples satisfy
+TODO this seriously needs optimization. 
+subtyping will let us prune which rtypes we have to try
+we also only need to run step 1 on the higher order fxn identifiers (which we can figure out from TypeExtractor.getTypesFromCode)
 
- -- | takes a module name and gives back a function name that fits the examples
- vroom :: String -> String
- vroom f = getTypesFromFile
+> rTypeTester :: FilePath -> [[Name]] -> IO()
+> rTypeTester f ids = do
+>   hofxns <- mapM (foo f) ids
+>   ex  <- rTypeAssign Example f "exs"
+>   let possibleHofxns = filter (poss ex) hofxns 
+>   pl possibleHofxns
+
+TODO: taking head here means we don't support multi-variable type signatures, whatever
+
+> foo :: FilePath -> [Name] -> IO(Name, [(RType,RType)])
+> foo f i = do
+>   x <- rTypeAssign HigherOrderFxn f (toString $ head i)
+>   return (head i, x)
+
+> -- | a hof only fits if one of the rtypes overlaps with the one of the examples rtypes
+> poss ex hof = (length $ intersect ex (snd hof)) > 0
+
+> pl = mapM_ (putStrLn . show . fst)
 
 
-   
-> b = getTypesFromModule "base:Prelude"
-
-> -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
-> getTypesFromModule :: String -> IO ()
-> getTypesFromModule m = do
->   r <- runGmOutT defaultOptions $ runGhcModT (defaultOptions {optDetailed = True}) $ browse m
->   code <- either (handleMod) (return. T.pack) (fst r)
->   let x = processTys $ cleanModule code
->   putStrLn $ either show show x
-
-> handleMod :: GhcModError -> IO(T.Text)
-> handleMod x = do
->   putStrLn $ "error"++show x
->   return "ghcmod failed"
-
-> -- | modules have some odd stuff like type definitions and 
-> cleanModule :: T.Text -> T.Text
-> cleanModule c =
->   let
->     c' = dropWhile (C.isAsciiUpper. T.head) $ T.lines c
->     c'' = T.unlines $ filter (T.isInfixOf "::") c'
->   in
->     c''
-
-> -- | take code and get Decl
-> processTys :: T.Text -> Either String [Decl]
-> processTys c =
->   let 
->     parsedC = handleParse $ parseModule $ T.unpack c
->   in
->     mapRight (filter isTypeSig) parsedC
-
-> handleParse :: ParseResult Module -> Either String [Decl]
-> handleParse = \case
->   ParseFailed l e -> Left $ "haskell-src failed" ++ (show e)
->   ParseOk a -> Right $ getCode a
-
-> isTypeSig :: Decl -> Bool
-> isTypeSig = \case
->     TypeSig _ _ _-> True
->     otherwise -> False
-
-> -- | get the ident from a typSig
-> getName :: Decl -> [Name]
-> getName = \case
->     TypeSig _ n _-> n
->     otherwise -> [Ident "Never do this"]
-
-from haskell-src-exts we have 
-data Module = Module
-  SrcLoc ModuleName [ModulePragma] (Maybe WarningText) (Maybe [ExportSpec]) [ImportDecl] [Decl]
-
-> getCode (Module s n p w e i d) = d
