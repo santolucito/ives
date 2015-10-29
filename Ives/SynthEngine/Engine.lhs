@@ -1,5 +1,6 @@
 > {-# LANGUAGE OverloadedStrings #-}
 > {-# LANGUAGE LambdaCase #-}
+
 > module Ives.SynthEngine.Engine where
 
 > import Language.Haskell.GhcMod
@@ -25,11 +26,8 @@ The approach here is just fine since we put everything into the haskell-src-exts
  vroom :: String -> String
  vroom f = getTypesFromFile
 
-> testFile f = do
->   fc <- readFile f
->   let x = processTys (T.pack fc)
->   putStrLn $ either show show x
->   
+
+   
 > b = getTypesFromModule "base:Prelude"
 
 > -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
@@ -63,15 +61,20 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >     mapRight (filter isTypeSig) parsedC
 
 > handleParse :: ParseResult Module -> Either String [Decl]
-> handleParse m =
->   case m of
->     ParseFailed l e -> Left $ "haskell-src failed" ++ (show e)
->     ParseOk a -> Right $ getCode a
+> handleParse = \case
+>   ParseFailed l e -> Left $ "haskell-src failed" ++ (show e)
+>   ParseOk a -> Right $ getCode a
 
 > isTypeSig :: Decl -> Bool
 > isTypeSig = \case
 >     TypeSig _ _ _-> True
 >     otherwise -> False
+
+> -- | get the ident from a typSig
+> getName :: Decl -> [Name]
+> getName = \case
+>     TypeSig _ n _-> n
+>     otherwise -> [Ident "Never do this"]
 
 from haskell-src-exts we have 
 data Module = Module

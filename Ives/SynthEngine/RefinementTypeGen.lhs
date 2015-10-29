@@ -10,20 +10,9 @@
 
 > import Control.Monad
 > import Data.List
+> import Data.String.Utils
 
 import ExampleGen
-
-
- main = tester "testLiquid.hs" "examples.hs"
-
-> tester f1 f2 = do
->   hof <- rTypeAssign HigherOrderFxn f1
->   ex  <- rTypeAssign Example f2
->   let possible = intersect hof ex
->   putStrLn "------------------------------"
->   putStrLn "The rtypees that are common to the higher order fxn and the examples are..."
->   putStrLn $ show possible 
-
 
 > type RType = String
 > data SynthSrc = HigherOrderFxn | Example
@@ -33,29 +22,33 @@ import ExampleGen
 >   map rTypeTemplate ["=","<=",">="]
 
 we are going to have some trouble with making this more polymorphohc for examples.
-the monomorphism restriction in haskell means we can't say (Int,Int) is an instance of (a,b) or even (a,a)
+we can't say (Int,Int) is an instance of (a,b) or even (a,a)
+the monomorphism restriction in haskell also means the user must provide a signature or we could get something odd
 can probably use some rewriting (grab haskell types and put them into rtypes before checking)
 Will also need to change '[a]' to 'Measure a =>' 
 
 > -- | (rtype for higherOrderFunction, rtype for list of examples)
 > rTypeTemplate op =
->   ("{-@ hofxn :: _ -> i:[a] -> {o:[b] | (len i) "++op ++" (len o)} @-}", "{-@ f :: [([Int],[Int])<{\\i o -> len i "++op++" len o}>] @-}")
+>   ("{-@ ? :: _ -> i:[a] -> {o:[a] | (len i) "++op ++" (len o)} @-}", "{-@ ? :: [([Int],[Int])<{\\i o -> len i "++op++" len o}>] @-}")
 
-> rTypeAssign :: SynthSrc -> FilePath -> IO([(RType,RType)])
-> rTypeAssign s exFile =
+
+> -- | which rtypes does some function in a file satify
+> rTypeAssign :: SynthSrc -> FilePath -> String -> IO([(RType,RType)])
+> rTypeAssign s file fxn =
 >   let
 >     f = case s of
 >           HigherOrderFxn -> fst
 >           Example -> snd
 >   in
->     filterM (test exFile . f) templates
+>     filterM (test file fxn . f) templates
 
 > -- | check if a file (with a single definition) matches the RType using liquidhaskell
-> test :: FilePath -> RType -> IO(Bool)
-> test f ty = do
+> test :: FilePath -> String -> RType -> IO(Bool)
+> test f fxnName ty = do
 >   fcontents <- readFile f
 >   let tmp = f++"tmp.hs"
->   writeFile tmp (ty++"\n")
+>   let namedTy = replace "?" fxnName ty
+>   writeFile tmp (namedTy ++"\n")
 >   appendFile tmp fcontents
 >   result <- S.shelly $ S.errExit False $ S.run "liquid" [T.pack tmp]
 >   return (isSafe result)
@@ -63,6 +56,4 @@ Will also need to change '[a]' to 'Measure a =>'
 > isSafe :: T.Text -> Bool
 > isSafe r = 
 >   T.isInfixOf "* SAFE *" r
-
-
 
