@@ -1,4 +1,5 @@
 > {-# LANGUAGE OverloadedStrings #-}
+> {-# LANGUAGE LambdaCase #-}
 > module Ives.SynthEngine.Engine where
 
 > import Language.Haskell.GhcMod
@@ -68,8 +69,7 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >     ParseOk a -> Right $ getCode a
 
 > isTypeSig :: Decl -> Bool
-> isTypeSig x =
->   case x of
+> isTypeSig = \case
 >     TypeSig _ _ _-> True
 >     otherwise -> False
 
