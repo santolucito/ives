@@ -12,10 +12,16 @@ foo = map (+1) [1..5]
 bar :: Int -> Bool
 bar = (>2)
 
---this should synthesize 'duplIf bar'
+fbar :: a -> Bool
+fbar x = True
+
+bfoo :: a -> Bool
+bfoo x = False
+
+--this should synthesize 'duplIf fbar'
 exs :: [([Int],[Int])]
 exs = 
-  [ ([1,2,3],[1,2,3,3])
-  , ([1,3,5],[1,3,3,5,5])
+  [ ([1,2,3],[1,1,2,2,3,3])
+  , ([1,3,5],[1,1,3,3,5,5])
   ]
 
