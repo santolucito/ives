@@ -7,18 +7,27 @@ import System.Directory
 import System.Environment
 import System.Process
 import System.Exit
+import System.Console.GetOpt
 import Control.Exception
-
 import System.INotify
+
+data Flag = Recycle deriving (Eq, Show)
+
+options :: [OptDescr Flag]
+options = [ Option ['r'] ["recycle"] (NoArg Recycle) "Recycles examples previously generated" ]
 
 main :: IO ()
 main = do
-  file:_ <- getArgs
+  cliArgs <- getArgs
+  (file, recycle) <- case getOpt RequireOrder options cliArgs of
+    (opts, file:_, []) -> return (file, elem Recycle opts)
+    (_, _, errs) -> ioError (userError (concat errs ++ usageInfo header options))
+      where header = "Usage: Exampler [OPTIONS] file"
   path <- canonicalizePath file
   inotify <- initINotify
-  wd <- addWatch inotify [Modify, MoveSelf, DeleteSelf] path (handler path)
+  wd <- addWatch inotify [Modify, MoveSelf, DeleteSelf] path (handler path recycle)
   putStrLn "Type \"bye\" to exit..."
-  exampler path
+  exampler path recycle
   waitForBye
 
 waitForBye :: IO ()
@@ -26,16 +35,14 @@ waitForBye = do
   input <- getLine
   if input == "bye" then return () else waitForBye
 
-handler :: FilePath -> Event -> IO ()
-handler path (Modified _ _) = do
+handler :: FilePath -> Bool -> Event -> IO ()
+handler path recycle (Modified _ _) = do
   putStrLn "*** FILE UPDATED ***"
-  exampler path
-handler _ (MovedSelf _)     = do
-  putStrLn "*** FILE MOVED ***"
-  exitFailure
-handler _ DeletedSelf       = do
-  putStrLn "*** FILE DELETED ***"
-  exitFailure
+  exampler path recycle
+handler _ _ (MovedSelf _)     = do
+  error "File deleted"
+handler _ _ DeletedSelf       = do
+  error "File moved"
 
 data Report = Report { coveredExpr :: Int
                      , totalExpr :: Int
@@ -43,61 +50,74 @@ data Report = Report { coveredExpr :: Int
                      , totalAlt :: Int
                      } deriving (Show)
 
-exampler :: FilePath -> IO ()
-exampler path = do
-  temp <- createTemp path
+exampler :: FilePath -> Bool -> IO ()
+exampler path recycle = do
+  temp <- createTemp path recycle
+  let original = takeBaseName path
+  let program = takeBaseName temp
+  let executable = joinPath [".", program]
+
   (e, out, err) <- readProcessWithExitCode "ghc" ["-fhpc", temp] ""
   case e of
     ExitSuccess -> return ()
     ExitFailure _ -> do
-      putStrLn err
-      exitFailure
+      error err
 
-  let original = takeBaseName path
-  let program = takeBaseName temp
-  let executable = joinPath [".", program]
   let examplesPath = addExtension original "examples"
   let oldExamplesPath = addExtension examplesPath "old"
   exists <- doesFileExist examplesPath
+
   -- move old examples so don't overwrite
-  if exists
+  if recycle && exists
     then do
     renameFile examplesPath oldExamplesPath
     else return ()
+
   h <- openFile examplesPath WriteMode
-  -- run old examples if there are any
-  report <- if exists
+
+  -- run old examples if there are any and recycled enabled
+  report <- if recycle && exists
               then do
               putStrLn "Running saved examples"
               examples <- readFile oldExamplesPath
               recycleExamples executable h defaultReport (lines examples)
               else return defaultReport
+                 
   if isCovered report
     then return ()
     else do
     putStrLn "Finding new examples"
-    findExamples executable h report
+    findExamples executable h report 1
   putStrLn "Coverage complete"
   hClose h
   cleanup original program
     where defaultReport = Report 0 1 0 1
 
-createTemp :: FilePath -> IO String
-createTemp path = do
+createTemp :: FilePath -> Bool -> IO String
+createTemp path recycle = do
   contents <- readFile path
   -- remove byte order mark
   let func = dropWhile (\c -> c == '\65279') contents
   let funcName = takeWhile (\c -> c /= ' ') func
   (temp, h) <- openTempFile dir fileName
-  hPutStrLn h   "import System.Environment"
-  hPutStrLn h   "import Ives.ExampleGen.Gen"
-  hPutStrLn h   ""
-  hPutStrLn h   "main :: IO ()"
-  hPutStrLn h   "main = do"
-  hPutStrLn h   "  args <- getArgs"
-  hPutStrLn h $ "  example " ++ funcName ++ " args"
-  hPutStrLn h   ""
-  hPutStrLn h   func
+  hPutStrLn h     "import System.Environment"
+  hPutStrLn h     "import Ives.ExampleGen.Gen"
+  hPutStrLn h     ""
+  hPutStrLn h     "main :: IO ()"
+  hPutStrLn h     "main = do"
+  if recycle
+    then do
+    hPutStrLn h   "  (cmd:args) <- getArgs"
+    hPutStrLn h   "  case cmd of"
+    hPutStrLn h $ "    \"run\" -> runExample " ++ funcName ++ " example"
+    hPutStrLn h   "      where example:_ = args"
+    hPutStrLn h $ "    \"generate\" -> genExamples " ++ funcName ++ " (read size) (read n)"
+    hPutStrLn h   "      where size:n:_ = args"
+    else do
+    hPutStrLn h   "  (_:size:n:_) <- getArgs"
+    hPutStrLn h $ "  genExamples " ++ funcName ++ " (read size) (read n)"
+  hPutStrLn h     ""
+  hPutStrLn h     func
   hClose h
   return temp
   where
@@ -142,13 +162,17 @@ recycleExamples executable h prevReport (example:examples)
         then return report
         else recycleExamples executable h report examples
 
-findExamples :: FilePath -> Handle -> Report -> IO ()
-findExamples executable h prevReport
-  | isCovered prevReport = return ()
+findExamples :: FilePath -> Handle -> Report -> Int -> IO ()
+findExamples executable h prevReport count
+  | isCovered prevReport = do
+      putStrLn $ "Tried " ++ show count ++ " examples total"
   | otherwise = do
       example <- readProcess executable ["generate", "10", "1"] ""
       report <- checkExample executable h prevReport example
-      findExamples executable h report
+      if count `mod` 1000 == 0
+        then putStrLn $ "Tried " ++ show count ++ " examples so far"
+        else return ()
+      findExamples executable h report (count + 1)
 
 cleanup :: FilePath -> FilePath -> IO ()
 cleanup original program = do
