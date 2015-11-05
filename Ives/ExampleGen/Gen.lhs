@@ -71,11 +71,11 @@ The type also needs to be a member of the show typeclass.
 
 Instance for intermediate curried functions.
 
-> instance (Show a, Typeable a, Arbitrary a, Exampleable b) => Exampleable (a -> b) where
+> instance (Show a, Typeable a, Typeable b, Arbitrary a, Exampleable b) => Exampleable (a -> b) where
 >   examplify f rnd size = evaluateRandom f rnd size
 
-> instance Show (a -> b) where
->   show f = "fn"
+> instance (Typeable a, Typeable b) => Show (a -> b) where
+>   show f = show $ typeOf f
 
 Keep evaluating the function one random argument at a time.
 
