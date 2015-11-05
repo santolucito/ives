@@ -19,10 +19,16 @@ options = [ Option ['r'] ["recycle"] (NoArg Recycle) "Recycles examples previous
 main :: IO ()
 main = do
   cliArgs <- getArgs
-  (file, recycle) <- case getOpt RequireOrder options cliArgs of
-    (opts, file:_, []) -> return (file, elem Recycle opts)
-    (_, _, errs) -> ioError (userError (concat errs ++ usageInfo header options))
-      where header = "Usage: Exampler [OPTIONS] file"
+  let (opts, args, errs) = getOpt RequireOrder options cliArgs
+  let header = "Usage: Exampler [OPTIONS] file"
+  if null errs
+    then return ()
+    else ioError $ userError $ concat errs ++ usageInfo header options
+  if null args
+    then ioError $ userError $ usageInfo header options
+    else return ()
+  let recycle = elem Recycle opts
+  let file = head args
   path <- canonicalizePath file
   inotify <- initINotify
   wd <- addWatch inotify [Modify, MoveSelf, DeleteSelf] path (handler path recycle)
@@ -64,25 +70,9 @@ exampler path recycle = do
       error err
 
   let examplesPath = addExtension original "examples"
-  let oldExamplesPath = addExtension examplesPath "old"
-  exists <- doesFileExist examplesPath
-
-  -- move old examples so don't overwrite
-  if recycle && exists
-    then do
-    renameFile examplesPath oldExamplesPath
-    else return ()
-
   h <- openFile examplesPath WriteMode
+  let report = Report 0 1 0 1
 
-  -- run old examples if there are any and recycled enabled
-  report <- if recycle && exists
-              then do
-              putStrLn "Running saved examples"
-              examples <- readFile oldExamplesPath
-              recycleExamples executable h defaultReport (lines examples)
-              else return defaultReport
-                 
   if isCovered report
     then return ()
     else do
@@ -91,7 +81,6 @@ exampler path recycle = do
   putStrLn "Coverage complete"
   hClose h
   cleanup original program
-    where defaultReport = Report 0 1 0 1
 
 createTemp :: FilePath -> Bool -> IO String
 createTemp path recycle = do
@@ -100,24 +89,16 @@ createTemp path recycle = do
   let func = dropWhile (\c -> c == '\65279') contents
   let funcName = takeWhile (\c -> c /= ' ') func
   (temp, h) <- openTempFile dir fileName
-  hPutStrLn h     "import System.Environment"
-  hPutStrLn h     "import Ives.ExampleGen.Gen"
-  hPutStrLn h     ""
-  hPutStrLn h     "main :: IO ()"
-  hPutStrLn h     "main = do"
-  if recycle
-    then do
-    hPutStrLn h   "  (cmd:args) <- getArgs"
-    hPutStrLn h   "  case cmd of"
-    hPutStrLn h $ "    \"run\" -> runExample " ++ funcName ++ " example"
-    hPutStrLn h   "      where example:_ = args"
-    hPutStrLn h $ "    \"generate\" -> genExamples " ++ funcName ++ " (read size) (read n)"
-    hPutStrLn h   "      where size:n:_ = args"
-    else do
-    hPutStrLn h   "  (_:size:n:_) <- getArgs"
-    hPutStrLn h $ "  genExamples " ++ funcName ++ " (read size) (read n)"
-  hPutStrLn h     ""
-  hPutStrLn h     func
+  hPutStrLn h   "import System.Environment"
+  hPutStrLn h   "import Ives.ExampleGen.Gen"
+  hPutStrLn h   ""
+  hPutStrLn h   "main :: IO ()"
+  hPutStrLn h   "main = do"
+  hPutStrLn h   "  (_:size:_) <- getArgs"
+  hPutStrLn h $ "  example <- genExample " ++ funcName ++ " (read size)"
+  hPutStrLn h   "  putStrLn $ show example"
+  hPutStrLn h   ""
+  hPutStrLn h   func
   hClose h
   return temp
   where
@@ -152,22 +133,12 @@ checkExample executable h prevReport example = do
     else return ()
   return report
                                                             
-recycleExamples :: FilePath -> Handle -> Report -> [String] -> IO Report
-recycleExamples executable h prevReport (example:examples)
-  | isCovered prevReport = return prevReport
-  | otherwise = do
-      newExample <- readProcess executable ["run", example] ""
-      report <- checkExample executable h prevReport newExample
-      if null examples
-        then return report
-        else recycleExamples executable h report examples
-
 findExamples :: FilePath -> Handle -> Report -> Int -> IO ()
 findExamples executable h prevReport count
   | isCovered prevReport = do
       putStrLn $ "Tried " ++ show count ++ " examples total"
   | otherwise = do
-      example <- readProcess executable ["generate", "10", "1"] ""
+      example <- readProcess executable ["generate", "10"] ""
       report <- checkExample executable h prevReport example
       if count `mod` 1000 == 0
         then putStrLn $ "Tried " ++ show count ++ " examples so far"
