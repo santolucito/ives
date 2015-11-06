@@ -1,10 +1,8 @@
-> import Ives.SymbolicExecution.AST
+> import Ives.SymbolicExecution.FnEnv
 
 > main = do
->     f1 <- readFile "Sample1.hs"
->     let ast1 = getAST f1
->     putStrLn $ either show show ast1
->     putStrLn "*************"
->     f2 <- readFile "Sample2.hs"
->     let ast2 = getAST f2
->     putStrLn $ either show show ast2
+>     f1 <- readFile "Sample.hs"
+>     let env = fnEnv f1
+>     putStrLn $ show env
+>     putStrLn "**************"
+>     putStrLn $ show (lookup "fib" env)
