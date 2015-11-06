@@ -1,17 +1,19 @@
 > {-# LANGUAGE LambdaCase #-}
+> {-# LANGUAGE OverloadedStrings #-}
 
 > module Ives.SynthEngine.Engine where
 
 > import Language.Haskell.Exts
 > import qualified Data.Text as T
 > import Data.List
+> import Data.Char
 > import Data.Either.Combinators
 > import Control.Monad
+> import qualified Shelly as S
 
 > import Ives.SynthEngine.RefinementTypeGen
 > import Ives.SynthEngine.Extractor
 > import Ives.SynthEngine.Types
-
 
 the actual synth engine - take a file and generate a program that satifies examples given in the "exs" variable
 
@@ -24,10 +26,20 @@ the actual synth engine - take a file and generate a program that satifies examp
 
 > proceed exs fc ts = do
 >   hoFxns <- genHOFxns fc ts
->   let candidateFxns = map (\x -> (fst x,genComponentFxn fc x)) hoFxns --a list of compnent fxns for each hofxn
->   let validProgs = applyAll exs candidateFxns
->   putStrLn "the following programs satisfy the examples"
->   mapM_ putStrLn validProgs
+>   let candidateFxns = makeFxns fc hoFxns
+>   validProgs <- applyAll fc candidateFxns
+>   putStrLn "the following programs satisfy the examples: "
+>   mapM_ (putStrLn.("* "++)) validProgs
+
+> applyAll :: Code -> [String] -> IO [String]
+> applyAll fc fns =
+>   let prog fx = fc ++ "\n\nmain = print $ and $ map (\\(i, o) -> ((" ++ fx ++ ") i) == o) exs\n"
+>       run fx = do
+>           writeFile "tmp0000.hs" (prog fx)
+>           result <- S.shelly $ S.errExit False $ S.run "runhaskell" ["tmp0000.hs"]
+>           return ((T.filter isAlpha result) == "True")
+>   in filterM run fns
+>      
 
 once we know which hofxns we are interested in we need to generate the component function.
 this should be getting the typeSig of the higherorder functions too
@@ -38,21 +50,28 @@ what we CAN do it get all the functions in scope and see which ones will fit the
 each hofxn has a number of possible component fxns
 we need to compose these functions and run them on the examples until we find on that works.
 
-> -- | examples -> [hofxns,[componentFxns]] -> [validPrograms]
-> applyAll :: [[a]] -> [((Name,Type),[(Name,Type)])] -> [String]
-> applyAll exs cands =
+> -- | [hofxns,[componentFxns]] -> [Programs]
+> buildFxns :: [((Name,Type),[(Name,Type)])] -> [String]
+> buildFxns cands =
 >   let
 >     f = map (toString.fst) 
 >     (hs,cs) = unzip cands
 >     csNames = zip (f hs) (map f cs) :: [(String,[String])]
->     f' (h,c) = (map . (++)) h c
+>     f' (h,c) = map ((h ++ " ")++) c
 >     x = map f' csNames
 >   in
->     intercalate " " x
+>     concat x
 
      ["hofxns"]++map show hs ++ ["componentFxns"]++map show cs
 
+> makeFxns :: Code -> [((Name,Type), [(RType, RType)])] -> [String]
+> makeFxns c hoFxnSig = 
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
+>   let 
+>     codePieces = map (\x -> (fst x,genComponentFxn c x)) hoFxnSig --a list of compnent fxns for each hofxn
+>   in
+>     buildFxns codePieces
+
 > genComponentFxn :: Code -> ((Name,Type), [(RType, RType)]) -> [(Name,Type)]
 > genComponentFxn c hofxnSig = 
 >  let
@@ -60,6 +79,5 @@ we need to compose these functions and run them on the examples until we find on
 >    x = case componentSig of
 >        Left e -> Left e
 >        Right s -> mapRight (filter (\x -> s == snd x)) $ getTypesFromCode c :: Either String [(Name,Type)]
->    in 
->      fromRight' x
-
+>  in
+>    fromRight' x
