@@ -6,6 +6,7 @@
 > import qualified Data.Text as T
 > import Data.List
 > import Data.Either.Combinators
+> import Control.Monad
 
 > import Ives.SynthEngine.RefinementTypeGen
 > import Ives.SynthEngine.Extractor
@@ -23,8 +24,8 @@ the actual synth engine - take a file and generate a program that satifies examp
 
 > proceed exs fc ts = do
 >   hoFxns <- genHOFxns fc ts
->   let possibleCompFxns = map (genComponentFxn fc) hoFxns --a list of compnent fxns for each hofxn
->   let validProgs = applyAll exs (map fst hoFxns) possibleCompFxns
+>   let candidateFxns = map (\x -> (fst x,genComponentFxn fc x)) hoFxns --a list of compnent fxns for each hofxn
+>   let validProgs = applyAll exs candidateFxns
 >   putStrLn "the following programs satisfy the examples"
 >   mapM_ putStrLn validProgs
 
@@ -37,21 +38,28 @@ what we CAN do it get all the functions in scope and see which ones will fit the
 each hofxn has a number of possible component fxns
 we need to compose these functions and run them on the examples until we find on that works.
 
-> -- | examples -> [hofxns] -> [[componentFxns]] -> [validPrograms]
-> applyAll :: [[a]] -> [(Name,Type)] -> [Either String [(Name,Type)]] -> [String]
-> applyAll exs hs cs =
+> -- | examples -> [hofxns,[componentFxns]] -> [validPrograms]
+> applyAll :: [[a]] -> [((Name,Type),[(Name,Type)])] -> [String]
+> applyAll exs cands =
 >   let
->     --x = map map 
+>     f = map (toString.fst) 
+>     (hs,cs) = unzip cands
+>     csNames = zip (f hs) (map f cs) :: [(String,[String])]
+>     f' (h,c) = (map . (++)) h c
+>     x = map f' csNames
 >   in
->     ["hofxns"]++map show hs ++ ["componentFxns"]++map show cs
+>     intercalate " " x
+
+     ["hofxns"]++map show hs ++ ["componentFxns"]++map show cs
 
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
-> genComponentFxn :: Code -> ((Name,Type), [(RType, RType)]) -> Either String [(Name,Type)]
+> genComponentFxn :: Code -> ((Name,Type), [(RType, RType)]) -> [(Name,Type)]
 > genComponentFxn c hofxnSig = 
 >  let
->    compSig = getComp $ snd $ fst hofxnSig
->  in
->    case compSig of
->      Left e -> Left e
->      Right s -> mapRight (filter (\x -> s == snd x)) $ getTypesFromCode c
+>    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
+>    x = case componentSig of
+>        Left e -> Left e
+>        Right s -> mapRight (filter (\x -> s == snd x)) $ getTypesFromCode c :: Either String [(Name,Type)]
+>    in 
+>      fromRight' x
 
