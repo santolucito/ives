@@ -9,3 +9,5 @@ times a b = a * b
 fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib (n-2)
+
+lambdatest a b = (\x y -> x + y) a b

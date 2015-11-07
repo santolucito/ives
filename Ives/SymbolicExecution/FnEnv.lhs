@@ -1,42 +1,71 @@
-> module Ives.SymbolicExecution.FnEnv (fnEnv) where
+> module Ives.SymbolicExecution.FnEnv (BasicFn, fnEnv) where
 
-> import qualified Language.Haskell.Exts
-> import qualified Language.Haskell.Exts as Parser
-> import qualified Data.Map as Map
+> import qualified Language.Haskell.Exts as Exts
 
 
-The Decl list can be thought of as the AST. We need to convert this into a
-function lookup table for effective mock execution.
+The goal of this module is to create a lookup table that can return functions
+when given a function's string identifier as a search key.
 
-> getDecls :: String -> [Parser.Decl]
-> getDecls srcString =
->     let ast = Parser.parseModule srcString
+The BasicFn data structure represents the barebones of a function:
+- identifier
+- parameters
+- body
+
+> data BasicFn = BasicFn {
+>     ident   :: String,
+>     params  :: [Exts.Pat],
+>     body    :: Exts.Exp
+> } deriving (Show)
+
+
+Parse the various declarations in the file of our interest.
+
+> parseDecls :: String -> [Exts.Decl]
+> parseDecls srcString =
+>     let ast = Exts.parseModule srcString
 >     in case ast of
->           Parser.ParseFailed l e -> error $ "haskell-src failed:" ++ (show e)
->           Parser.ParseOk (Parser.Module _ _ _ _ _ _ d) -> d
+>           Exts.ParseFailed l e -> error $ "haskell-src failed:" ++ (show e)
+>           Exts.ParseOk (Exts.Module _ _ _ _ _ _ d) -> d
 
 
-We want to make a hashmap/table from the decl list to perform identifier lookup
-In particular we are interested in functions
+We want to check which of those declarations is a function binding, which we
+are most interested in because we need those to perform mock execution.
 
-> isFunBind :: Parser.Decl -> Bool
-> isFunBind (Parser.FunBind _) = True
+> isFunBind :: Exts.Decl -> Bool
+> isFunBind (Exts.FunBind _) = True
 > isFunBind _ = False
 
-> fmatchIdent :: Parser.Match -> String
-> fmatchIdent (Parser.Match _ (Parser.Ident name) _ _ _ _) = name
+
+We can extract the identifier of a function from the Exts.Match data structure.
+
+> fnIdent :: Exts.Match -> String
+> fnIdent (Exts.Match _ (Exts.Ident n) _ _ _ _) = n
 
 
-For now we do not parse guarded expressions because I decided so.
+A Exts.Match object is enough to allow us to construct a BasicFn.
 
-> fmatchRhs :: Parser.Match -> Parser.Exp
-> fmatchRhs (Parser.Match _ _ _ _ (Parser.UnGuardedRhs exp) _) = exp
+> fnMatch :: Exts.Match -> BasicFn
+> fnMatch (Exts.Match _ (Exts.Ident name) pat _ (Exts.UnGuardedRhs exp) _) =
+>     BasicFn name pat exp
 
-> envEntry :: Parser.Decl -> (String, [Parser.Exp])
-> envEntry (Parser.FunBind ms) = ((fmatchIdent $ head ms), map fmatchRhs ms)
 
-> parseFunBinds :: [Parser.Decl] -> [(String, [Parser.Exp])]
+Each entry in the environment is mapped to potentially multiple BasicFns
+because of the way Haskell does pattern matching.
+
+> envEntry :: Exts.Decl -> (String, [BasicFn])
+> envEntry (Exts.FunBind ms) =
+>     let fi = ((fnIdent $ head ms))
+>     in (fi, map fnMatch ms)
+
+
+Filter out only the function bindings and ignore everything else.
+
+> parseFunBinds :: [Exts.Decl] -> [(String, [BasicFn])]
 > parseFunBinds decls = map envEntry (filter isFunBind decls)
 
-> fnEnv :: String -> [(String, [Parser.Exp])]
-> fnEnv srcString = parseFunBinds $ getDecls srcString
+
+Makes an environment that maps function identifiers to list of BasicFns.
+
+> fnEnv :: String -> [(String, [BasicFn])]
+> fnEnv srcString = parseFunBinds $ parseDecls srcString
+
