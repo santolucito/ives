@@ -1,4 +1,4 @@
-> module Ives.SymbolicExecution.FnEnv (BasicFn, fnEnv) where
+> module Ives.SymbolicExecution.FnEnv (BasicFn(..), fnEnv) where
 
 > import qualified Language.Haskell.Exts as Exts
 
