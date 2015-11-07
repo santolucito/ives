@@ -13,7 +13,7 @@ The BasicFn data structure represents the barebones of a function:
 
 > data BasicFn = BasicFn {
 >     ident   :: String,
->     params  :: [Exts.Pat],
+>     params  :: [String],
 >     body    :: Exts.Exp
 > } deriving (Show)
 
@@ -42,11 +42,20 @@ We can extract the identifier of a function from the Exts.Match data structure.
 > fnIdent (Exts.Match _ (Exts.Ident n) _ _ _ _) = n
 
 
+Let's start with basics: assume all arguments are Exts.PVar.
+
+> fnParams :: [Exts.Pat] -> [String]
+> fnParams params =
+>     case params of
+>         (Exts.PVar (Exts.Ident n)):xs -> n:(fnParams xs)
+>         otherwise -> []
+
+
 A Exts.Match object is enough to allow us to construct a BasicFn.
 
 > fnMatch :: Exts.Match -> BasicFn
 > fnMatch (Exts.Match _ (Exts.Ident name) pat _ (Exts.UnGuardedRhs exp) _) =
->     BasicFn name pat exp
+>     BasicFn name (fnParams pat) exp
 
 
 Each entry in the environment is mapped to potentially multiple BasicFns
