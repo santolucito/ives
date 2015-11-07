@@ -11,3 +11,5 @@ fib 1 = 1
 fib n = fib (n-1) + fib (n-2)
 
 lambdatest a b = (\x y -> x + y) a b
+
+iftest x = if x < 10 then 7 else x + iftest $ x - 1
