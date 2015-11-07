@@ -28,7 +28,7 @@
 >   input <- topDown $ label "Input: " >>> textField NoWrap "1\n2" -< Nothing
 >   c <- arr (parse exGen) >>> unique -< (uitextToString code, uitextToString input)
 >   output <- uisfPipeE (mapM runCode) -< c
->   o <- (evMap $ arr collect )>>> hold ["none"] -< output
+>   o <- (evMap $ arr collect) >>> hold ["none"] -< output
 >   topDown $ label "Output: " >>> textField NoWrap "" -< Just $ concat $ intersperse "\n"  o
 >   returnA -< ()
 
