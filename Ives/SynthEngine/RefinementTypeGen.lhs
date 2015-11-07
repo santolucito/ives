@@ -9,6 +9,7 @@
 > import qualified Data.Text as T
 > import Control.Monad
 > import Data.List
+> import Data.Either.Combinators
 > import Data.String.Utils
 > import Language.Haskell.Exts
 
@@ -40,8 +41,8 @@ subtyping will let us prune which rtypes we have to try
 we also only need to run step 1 on the higher order fxn identifiers (which we can figure out from TypeExtractor.getTypesFromCode)
 
 > genHOFxns :: Code -> [(Name,Type)] -> IO [((Name,Type), [(RType, RType)])]
-> genHOFxns c ds = do
->   hofxns <- mapM (addRType c) ds
+> genHOFxns c sigs = do
+>   hofxns <- mapM (addRType c) sigs
 >   ex  <- rTypeAssign Example c "exs"
 >   return $ filter (poss ex) hofxns 
 
@@ -51,6 +52,11 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 >   x <- rTypeAssign HigherOrderFxn c n 
 >   return (t, x)
 
+
+> -- | if we are able to get a component fxn sig, it must be a higher order fxn
+> isHigherOrder :: (Name,Type) -> Bool
+> isHigherOrder = isRight. getComp. snd
+   
 > -- | a hof only fits if one of the rtypes overlaps with the one of the examples rtypes
 > poss ex hof = (length $ intersect ex (snd hof)) > 0
 

@@ -24,8 +24,9 @@ the actual synth engine - take a file and generate a program that satifies examp
 >   let exs = undefined --getExamples fc
 >   either putStrLn (proceed exs fc) typSigs
 
-> proceed exs fc ts = do
->   hoFxns <- genHOFxns fc ts
+> proceed exs fc typs = do
+>   let hoSigs = filter isHigherOrder typs
+>   hoFxns <- genHOFxns fc hoSigs
 >   let candidateFxns = makeFxns fc hoFxns
 >   validProgs <- applyAll fc candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
