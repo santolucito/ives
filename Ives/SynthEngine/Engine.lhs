@@ -21,8 +21,13 @@ the actual synth engine - take a file and generate a program that satifies examp
 > vroom f = do
 >   fc <- readFile f
 >   let typSigs = getTypesFromCode fc
+>   whenLeft typSigs putStrLn
+>
+>   preludeTypSigs <- getTypesFromModule "base:Prelude"
+>   whenLeft preludeTypSigs putStrLn
+>
 >   let exs = undefined --getExamples fc
->   either putStrLn (proceed exs fc) typSigs
+>   proceed exs fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
 
 > proceed exs fc typs = do
 >   let hoSigs = filter isHigherOrder typs

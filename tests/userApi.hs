@@ -1,3 +1,4 @@
+
 duplIf :: (a->Bool) -> [a] -> [a]
 duplIf _ []     = []
 duplIf f (x:xs) = if f x then x:x:(duplIf f xs) else x:(duplIf f xs)
