@@ -4,11 +4,14 @@
 > module Ives.SynthEngine.Engine where
 
 > import Language.Haskell.Exts
+> import Language.Haskell.Exts.Pretty
 > import qualified Data.Text as T
 > import Data.List
 > import Data.Char
+> import Data.Maybe
 > import Data.Either.Combinators
 > import Control.Monad
+> import Control.Arrow
 > import qualified Shelly as S
 
 > import Ives.SynthEngine.RefinementTypeGen
@@ -20,14 +23,26 @@ the actual synth engine - take a file and generate a program that satifies examp
 > vroom :: String -> IO()
 > vroom f = do
 >   fc <- readFile f
->   let typSigs = getTypesFromCode fc
->   whenLeft typSigs putStrLn
+>   let typSigs' = getTypesFromCode fc
+>   whenLeft typSigs' putStrLn
+>   let typSigs = fromRight [] typSigs'
 >
 >   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >   whenLeft preludeTypSigs putStrLn
 >
->   let exs = undefined --getExamples fc
->   proceed exs fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
+>   let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
+>   let p = filter isHigherOrder (fromRight [] preludeTypSigs)
+>   let p' = filter (\t -> isHigherOrder t && compareTypes (snd exsTyp) (snd t)) p
+>   (\(l,r) -> f' l >> f' r) exsTyp
+>   putStrLn "--------------"
+>   mapM_ (\(l,r) -> f' l >> f' r) p'
+>   putStrLn "--------------"
+>   mapM_ (\(l,r) -> f' l >> f' r) p
+> --  let exs = undefined --getExamples fc
+> --  proceed exs fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
+
+> f' :: Pretty a => a -> IO()
+> f' = putStrLn . prettyPrint
 
 > proceed exs fc typs = do
 >   let hoSigs = filter isHigherOrder typs
@@ -46,6 +61,7 @@ the actual synth engine - take a file and generate a program that satifies examp
 >           return ((T.filter isAlpha result) == "True")
 >   in filterM run fns
 >      
+
 
 once we know which hofxns we are interested in we need to generate the component function.
 this should be getting the typeSig of the higherorder functions too

@@ -88,7 +88,6 @@ data Module = Module
 
 ================================
 
-
 > -- | assume that the component fxn signature will be a fxn typ surrounded by parens 
 > getComp :: Type -> Either String Type
 > getComp = \case
@@ -112,6 +111,22 @@ the type signature datas that are curretnly unsupported
    TyEquals t1 t1   -> u    -- ^ type equality predicate enabled by ConstraintKinds
    TySplice s       -> u   -- ^ template haskell splice type
    TyBang b t       -> u-- ^ Strict type marked with \"@!@\" or type marked with UNPACK pragma.
+
+
+> -- | look into all those other fields
+> compareTypes :: Type -> Type -> Bool
+> compareTypes (TyParen t1) (TyParen t2) = compareTypes t1 t2
+> compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = compareTypes t1 t2
+> compareTypes (TyList t1) (TyList t2) = compareTypes t1 t2
+> compareTypes (TyParArray t1) (TyParArray t2) = compareTypes t1 t2
+> compareTypes (TyTuple _ ts1) (TyTuple _ ts2) = and $ zipWith compareTypes ts1 ts2
+> compareTypes (TyApp t1 t1') (TyApp t2 t2') = compareTypes t1 t2 && compareTypes t1' t2'
+> compareTypes (TyKind t1 _) (TyKind t2 _) = compareTypes t1 t2
+> compareTypes (TyFun t1 t1') (TyFun t2 t2') = compareTypes t1 t2 && compareTypes t1' t2'
+> compareTypes (TyVar _) (TyVar _) = True
+> compareTypes (TyCon _) _ = True
+> compareTypes _ _ = False --inlucdes unsupported types
+
 
 > tryAll :: [Either String b] -> String -> Either String b
 > tryAll [] e = Left e
