@@ -18,13 +18,19 @@
 > import Ives.SynthEngine.Extractor
 > import Ives.SynthEngine.Types
 
+> import Data.Time.Clock.POSIX
+
 the actual synth engine - take a file and generate a program that satifies examples given in the "exs" variable
 
 > vroom :: String -> IO()
 > vroom f = do
+>   startT <- getPOSIXTime
 >   (fc,typs) <- buildTime f
-> --  synthTime fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
->   return ()
+>   buildT <- liftM2 (-) getPOSIXTime (return startT)
+>   -- synthTime fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
+>   synthT <- liftM2 (-) getPOSIXTime (return startT)
+>   putStrLn $ "built in "++(show buildT)
+>   putStrLn $ "synth in "++(show synthT)
 
 The build time stage only need to happen when the user library is updated.
 This builds all the information we need to do pbe based on user defined fxns and imports (e.g. Prelude)
@@ -32,6 +38,7 @@ We can be fairly forgiving with runtime here since wouldn't really be a frequent
 With this in mind the "exs" variable shouldn't be used anywhere here, this means
   the weighting function doesn't belong here (since we need rtypes for everything anyway)
   and should be moved to synthTime
+NB: a fair amount of time will be added for getting files from disk
 
 > buildTime :: String -> IO(Code,[(Name,Type)])
 > buildTime f = do
