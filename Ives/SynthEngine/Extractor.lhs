@@ -7,6 +7,7 @@
 > import qualified Data.Char as C
 > import Data.Either.Combinators
 > import Data.Maybe
+> import Control.Applicative
 
 > import Language.Haskell.GhcMod
 > import Language.Haskell.GhcMod.Monad
@@ -113,20 +114,48 @@ the type signature datas that are curretnly unsupported
    TyBang b t       -> u-- ^ Strict type marked with \"@!@\" or type marked with UNPACK pragma.
 
 
-> -- | look into all those other fields
-> compareTypes :: Type -> Type -> Bool
-> compareTypes (TyParen t1) (TyParen t2) = compareTypes t1 t2
-> compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = compareTypes t1 t2
-> compareTypes (TyList t1) (TyList t2) = compareTypes t1 t2
-> compareTypes (TyParArray t1) (TyParArray t2) = compareTypes t1 t2
-> compareTypes (TyTuple _ ts1) (TyTuple _ ts2) = and $ zipWith compareTypes ts1 ts2
-> compareTypes (TyApp t1 t1') (TyApp t2 t2') = compareTypes t1 t2 && compareTypes t1' t2'
-> compareTypes (TyKind t1 _) (TyKind t2 _) = compareTypes t1 t2
-> compareTypes (TyFun t1 t1') (TyFun t2 t2') = compareTypes t1 t2 && compareTypes t1' t2'
-> compareTypes (TyVar _) (TyVar _) = True
-> compareTypes (TyCon _) _ = True
-> compareTypes _ _ = False --inlucdes unsupported types
+ order matters here! this needs formlization, draw a graph
+   will return ranking, on how close the match is for weighting
+   would be better to have somekind of haskell poset library
+   higher match is better
+   would be nice to use https://hackage.haskell.org/package/hoogle-4.2.42/src/src/Hoogle/Score/Type.hs
+   instead of this crappy implementation
 
+> compareExTypeToHOType = compareTypes
+> compareTypes :: Type -> Type -> Maybe Int
+> compareTypes (TyParen t1) (TyParen t2) = 
+>   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = 
+>   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyList t1) (TyList t2) = 
+>   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyParArray t1) (TyParArray t2) =
+>   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyKind t1 _) (TyKind t2 _) =
+>   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyTuple _ ts1) (TyTuple _ ts2) = 
+>   foldl (liftA2 (+)) (Just 1) (zipWith compareTypes ts1 ts2)
+> compareTypes (TyApp t1 t1') (TyApp t2 t2') =
+>   fmap (1+) (liftA2 (+) (compareTypes t1 t2) (compareTypes t1' t2'))
+> compareTypes (TyFun t1 t1') (TyFun t2 t2') = 
+>   fmap (1+) (liftA2 (+) (compareTypes t1 t2) (compareTypes t1' t2'))
+> compareTypes (TyVar _) (TyVar _) = Just 10 
+> compareTypes (TyCon _) (TyCon _) = Just 10
+> compareTypes (TyCon _) (TyVar _) = Just 10
+> compareTypes _ (TyVar _) = Just 1
+> compareTypes _ _ = Nothing --inlucdes unsupported types
+
+> -- | the out type of the examples is whatever is last type in the tuples
+> --   the examples will be wrapped in a a list tho
+> sndTyp :: Type -> Type
+> sndTyp (TyList t) = case t of
+>                         TyTuple _ ts -> last ts
+>                         otherwise -> t --should be error
+> sndTyp x = x --this should be an error
+
+> lastTyp :: Type -> Type
+> lastTyp (TyFun t1 t2) = lastTyp t2
+> lastTyp t = t
 
 > tryAll :: [Either String b] -> String -> Either String b
 > tryAll [] e = Left e

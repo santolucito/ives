@@ -26,23 +26,28 @@ the actual synth engine - take a file and generate a program that satifies examp
 >   let typSigs' = getTypesFromCode fc
 >   whenLeft typSigs' putStrLn
 >   let typSigs = fromRight [] typSigs'
->
+
 >   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >   whenLeft preludeTypSigs putStrLn
->
+
 >   let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
 >   let p = filter isHigherOrder (fromRight [] preludeTypSigs)
->   let p' = filter (\t -> isHigherOrder t && compareTypes (snd exsTyp) (snd t)) p
->   (\(l,r) -> f' l >> f' r) exsTyp
->   putStrLn "--------------"
->   mapM_ (\(l,r) -> f' l >> f' r) p'
->   putStrLn "--------------"
->   mapM_ (\(l,r) -> f' l >> f' r) p
+>   let p'' = filter (\t -> isHigherOrder t) p
+>   let weightedTyps = map (\t -> compareExTypeToHOType (sndTyp $ snd exsTyp) (lastTyp $ snd t)) p''
+>   let p' = reverse $ sortWith snd $ zip p'' $ filter isJust weightedTyps 
+>   putStrLn "-------EXAMPLE OUT TYPE-------"
+>   (\(l,r) -> f' l >> f' (sndTyp r)) exsTyp
+>   putStrLn "-------CANDIDATE FXNS-------"
+>   mapM_ (\(l,r) -> f' l >> f' (lastTyp r)) p
+>   putStrLn "-------MATCHED FXNS-------"
+>   mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
 > --  let exs = undefined --getExamples fc
 > --  proceed exs fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
 
-> f' :: Pretty a => a -> IO()
-> f' = putStrLn . prettyPrint
+> --f' :: Pretty a => a -> IO()
+> -- f' = putStrLn . prettyPrint
+> f' :: Show a => a -> IO()
+> f' = putStrLn . show
 
 > proceed exs fc typs = do
 >   let hoSigs = filter isHigherOrder typs
@@ -103,3 +108,6 @@ we need to compose these functions and run them on the examples until we find on
 >        Right s -> mapRight (filter (\x -> s == snd x)) $ getTypesFromCode c :: Either String [(Name,Type)]
 >  in
 >    fromRight' x
+
+> sortWith f = sortBy (\x y -> compare (f x) (f y))
+
