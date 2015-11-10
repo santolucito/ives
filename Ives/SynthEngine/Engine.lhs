@@ -22,40 +22,65 @@ the actual synth engine - take a file and generate a program that satifies examp
 
 > vroom :: String -> IO()
 > vroom f = do
+>   (fc,typs) <- buildTime f
+> --  synthTime fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
+>   return ()
+
+> buildTime :: String -> IO(Code,[(Name,Type)])
+> buildTime f = do
 >   fc <- readFile f
 >   let typSigs' = getTypesFromCode fc
 >   whenLeft typSigs' putStrLn
 >   let typSigs = fromRight [] typSigs'
-
+>
 >   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >   whenLeft preludeTypSigs putStrLn
-
+>
 >   let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
->   let p = filter isHigherOrder (fromRight [] preludeTypSigs)
->   let p'' = filter (\t -> isHigherOrder t) p
->   let weightedTyps = map (\t -> compareExTypeToHOType (sndTyp $ snd exsTyp) (lastTyp $ snd t)) p''
->   let p' = reverse $ sortWith snd $ zip p'' $ filter isJust weightedTyps 
+>
+>   let uHOTyps = filter isHigherOrder typSigs
+>   let pHOTyps = filter isHigherOrder (fromRight [] preludeTypSigs)
+>   let weightedU = scoreTyps exsTyp uHOTyps
+>   let weightedP = scoreTyps exsTyp pHOTyps
+>   let sortWeightedTyps = reverse. sortWith snd. filter (isJust.snd)
+>   let p' = (sortWeightedTyps weightedU ++ sortWeightedTyps weightedP)
 >   putStrLn "-------EXAMPLE OUT TYPE-------"
 >   (\(l,r) -> f' l >> f' (sndTyp r)) exsTyp
 >   putStrLn "-------CANDIDATE FXNS-------"
->   mapM_ (\(l,r) -> f' l >> f' (lastTyp r)) p
+>   mapM_ (\(l,r) -> f' l >> f' (lastTyp r)) (uHOTyps ++ pHOTyps)
 >   putStrLn "-------MATCHED FXNS-------"
 >   mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
 > --  let exs = undefined --getExamples fc
-> --  proceed exs fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
+>   return (fc,(map fst p'))
 
-> --f' :: Pretty a => a -> IO()
-> -- f' = putStrLn . prettyPrint
-> f' :: Show a => a -> IO()
-> f' = putStrLn . show
-
-> proceed exs fc typs = do
+> synthTime fc typs = do
 >   let hoSigs = filter isHigherOrder typs
 >   hoFxns <- genHOFxns fc hoSigs
 >   let candidateFxns = makeFxns fc hoFxns
 >   validProgs <- applyAll fc candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
 >   mapM_ (putStrLn.("* "++)) validProgs
+
+
+==================== Move this stuff =================
+
+> scoreTyps :: (Name,Type) -> [(Name,Type)] -> [((Name,Type),Maybe Int)]
+> scoreTyps exsTyp tys =
+>   let
+>     f t = (t,compareExTypeToHOType (sndTyp $ snd exsTyp) (lastTyp $ snd t))
+>   in
+>     map f tys
+
+
+some nice printers
+
+> --f' :: Pretty a => a -> IO()
+> -- f' = putStrLn . prettyPrint
+> f' :: Show a => a -> IO()
+> f' = putStrLn . show
+
+
+when we finally have some functions and we want to check if the satisfy the examples
 
 > applyAll :: Code -> [String] -> IO [String]
 > applyAll fc fns =
@@ -66,7 +91,6 @@ the actual synth engine - take a file and generate a program that satifies examp
 >           return ((T.filter isAlpha result) == "True")
 >   in filterM run fns
 >      
-
 
 once we know which hofxns we are interested in we need to generate the component function.
 this should be getting the typeSig of the higherorder functions too

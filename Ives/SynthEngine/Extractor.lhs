@@ -89,6 +89,10 @@ data Module = Module
 
 ================================
 
+> -- | if we are able to get a component fxn sig, it must be a higher order fxn
+> isHigherOrder :: (Name,Type) -> Bool
+> isHigherOrder = isRight. getComp. snd
+
 > -- | assume that the component fxn signature will be a fxn typ surrounded by parens 
 > getComp :: Type -> Either String Type
 > getComp = \case
@@ -121,8 +125,8 @@ the type signature datas that are curretnly unsupported
    would be nice to use https://hackage.haskell.org/package/hoogle-4.2.42/src/src/Hoogle/Score/Type.hs
    instead of this crappy implementation
 
-> compareExTypeToHOType = compareTypes
 > compareTypes :: Type -> Type -> Maybe Int
+> compareExTypeToHOType = compareTypes
 > compareTypes (TyParen t1) (TyParen t2) = 
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = 

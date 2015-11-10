@@ -59,9 +59,6 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 >   return (t, x)
 
 
-> -- | if we are able to get a component fxn sig, it must be a higher order fxn
-> isHigherOrder :: (Name,Type) -> Bool
-> isHigherOrder = isRight. getComp. snd
    
 > -- | a hof only fits if one of the rtypes overlaps with the one of the examples rtypes
 > poss ex hof = (length $ intersect ex (snd hof)) > 0
