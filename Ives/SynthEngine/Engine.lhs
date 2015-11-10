@@ -26,6 +26,13 @@ the actual synth engine - take a file and generate a program that satifies examp
 > --  synthTime fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
 >   return ()
 
+The build time stage only need to happen when the user library is updated.
+This builds all the information we need to do pbe based on user defined fxns and imports (e.g. Prelude)
+We can be fairly forgiving with runtime here since wouldn't really be a frequent event in the avg use case
+With this in mind the "exs" variable shouldn't be used anywhere here, this means
+  the weighting function doesn't belong here (since we need rtypes for everything anyway)
+  and should be moved to synthTime
+
 > buildTime :: String -> IO(Code,[(Name,Type)])
 > buildTime f = do
 >   fc <- readFile f
@@ -52,6 +59,10 @@ the actual synth engine - take a file and generate a program that satifies examp
 >   mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
 > --  let exs = undefined --getExamples fc
 >   return (fc,(map fst p'))
+
+the Synth time stage happens when the user wants to actaully get a fxn from an example set
+this one need to run as quickly as possible
+the "exs" should only be read here
 
 > synthTime fc typs = do
 >   let hoSigs = filter isHigherOrder typs
