@@ -76,12 +76,13 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 > -- | check if a file (with a single definition) matches the RType using liquidhaskell
 > test :: Code -> String -> RType -> IO(Bool)
 > test fc fxnName ty = do
->   let tmp = "liquidTmp.hs"
+>   putStrLn $ "testing RType for: " ++ fxnName
+>   let tmp = "tmp/liquidTypeInjected.hs"
 >   let namedTy = replace "?" fxnName ty
 >   writeFile tmp (namedTy ++"\n")
 >   appendFile tmp fc
->   result <- S.shelly $ S.errExit False $ S.run "liquid" [T.pack tmp]
->   return (isSafe result)
+>   S.shelly $ S.errExit False $ S.bash_ "liquid" [T.pack tmp,">tmp/liquid.results 2>&1"]
+>   liftM isSafe (S.shelly $ S.readfile "tmp/liquid.results")
 
 > isSafe :: T.Text -> Bool
 > isSafe r = 

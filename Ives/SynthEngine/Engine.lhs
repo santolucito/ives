@@ -27,7 +27,7 @@ the actual synth engine - take a file and generate a program that satifies examp
 >   startT <- getPOSIXTime
 >   (fc,typs) <- buildTime f
 >   buildT <- liftM2 (-) getPOSIXTime (return startT)
->   -- synthTime fc (fromRight [] typSigs++fromRight [] preludeTypSigs)
+>   synthTime fc typs
 >   synthT <- liftM2 (-) getPOSIXTime (return startT)
 >   putStrLn $ "built in "++(show buildT)
 >   putStrLn $ "synth in "++(show synthT)
@@ -71,6 +71,7 @@ the Synth time stage happens when the user wants to actaully get a fxn from an e
 this one need to run as quickly as possible
 the "exs" should only be read here
 
+> synthTime :: Code -> [(Name,Type)] -> IO()
 > synthTime fc typs = do
 >   let hoSigs = filter isHigherOrder typs
 >   hoFxns <- genHOFxns fc hoSigs
