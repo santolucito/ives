@@ -76,6 +76,7 @@ the "exs" should only be read here
 >   let hoSigs = filter isHigherOrder typs
 >   hoFxns <- genHOFxns fc hoSigs
 >   let candidateFxns = makeFxns fc hoFxns
+>   putStrLn $ show candidateFxns
 >   validProgs <- applyAll fc candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
 >   mapM_ (putStrLn.("* "++)) validProgs
@@ -105,8 +106,9 @@ when we finally have some functions and we want to check if the satisfy the exam
 > applyAll fc fns =
 >   let prog fx = fc ++ "\n\nmain = print $ and $ map (\\(i, o) -> ((" ++ fx ++ ") i) == o) exs\n"
 >       run fx = do
->           writeFile "tmp0000.hs" (prog fx)
->           result <- S.shelly $ S.errExit False $ S.run "runhaskell" ["tmp0000.hs"]
+>           putStrLn $ "testing component: "++fx
+>           writeFile "tmp/testCmptFxn.hs" (prog fx)
+>           result <- S.shelly $ S.errExit False $ S.run "runhaskell" ["tmp/testCmptFxn.hs"]
 >           return ((T.filter isAlpha result) == "True")
 >   in filterM run fns
 >      
@@ -148,7 +150,7 @@ we need to compose these functions and run them on the examples until we find on
 >    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
 >    x = case componentSig of
 >        Left e -> Left e
->        Right s -> mapRight (filter (\x -> s == snd x)) $ getTypesFromCode c :: Either String [(Name,Type)]
+>        Right s -> mapRight (filter (\x -> isJust $ compareExTypeToHOType s (snd x))) $ getTypesFromCode c :: Either String [(Name,Type)]
 >  in
 >    fromRight' x
 

@@ -6,3 +6,5 @@
 > import Ives.SynthEngine.Engine
 
 > main = vroom "tests/userApi.hs"
+
+ main = vroom "tests/map1.hs"
