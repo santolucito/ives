@@ -18,6 +18,7 @@
 > import Ives.SynthEngine.Extractor
 > import Ives.SynthEngine.Types
 
+> import Debug.Trace
 > import Data.Time.Clock.POSIX
 
 the actual synth engine - take a file and generate a program that satifies examples given in the "exs" variable
@@ -148,6 +149,7 @@ we need to compose these functions and run them on the examples until we find on
 > genComponentFxn c hofxnSig = 
 >  let
 >    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
+>    p f i1 i2 = trace (show i1++" --- "++(show i2)++"\n\n") $ f i1 i2 --use to print what you are comparing
 >    x = case componentSig of
 >        Left e -> Left e
 >        Right s -> mapRight (filter (\x -> isJust $ compareExTypeToHOType s (snd x))) $ getTypesFromCode c :: Either String [(Name,Type)]

@@ -146,6 +146,7 @@ the type signature datas that are curretnly unsupported
 > compareTypes (TyVar _) (TyVar _) = Just 10 
 > compareTypes (TyCon _) (TyCon _) = Just 10
 > compareTypes (TyCon _) (TyVar _) = Just 10
+> compareTypes (TyVar _) (TyCon _) = Just 1
 > compareTypes _ (TyVar _) = Just 1
 > compareTypes _ _ = Nothing --inlucdes unsupported types
 
