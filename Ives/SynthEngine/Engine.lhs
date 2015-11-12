@@ -25,11 +25,16 @@ the actual synth engine - take a file and generate a program that satifies examp
 
 > vroom :: String -> IO()
 > vroom f = do
->   startT <- getPOSIXTime
->   (fc,typs) <- buildTime f
->   buildT <- liftM2 (-) getPOSIXTime (return startT)
+>   fc <- readFile f
+>
+>   startBuildT <- getPOSIXTime
+>   typs <- buildTime fc
+>   buildT <- liftM2 (-) getPOSIXTime (return startBuildT)
+>
+>   startSynthT <- getPOSIXTime
 >   synthTime fc typs
->   synthT <- liftM2 (-) getPOSIXTime (return startT)
+>   synthT <- liftM2 (-) getPOSIXTime (return startSynthT)
+>
 >   putStrLn $ "built in "++(show buildT)
 >   putStrLn $ "synth in "++(show synthT)
 
@@ -41,9 +46,8 @@ With this in mind the "exs" variable shouldn't be used anywhere here, this means
   and should be moved to synthTime
 NB: a fair amount of time will be added for getting files from disk
 
-> buildTime :: String -> IO(Code,[(Name,Type)])
-> buildTime f = do
->   fc <- readFile f
+> buildTime :: Code -> IO( [((Name,Type),[(RType,RType)])] )
+> buildTime fc = do
 >   let typSigs' = getTypesFromCode fc
 >   whenLeft typSigs' putStrLn
 >   let typSigs = fromRight [] typSigs'
@@ -65,20 +69,21 @@ NB: a fair amount of time will be added for getting files from disk
 >   mapM_ (\(l,r) -> f' l >> f' (lastTyp r)) (uHOTyps ++ pHOTyps)
 >   putStrLn "-------MATCHED FXNS-------"
 >   mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
-> --  let exs = undefined --getExamples fc
->   return (fc,(map fst p'))
+>   hoRTyps <- genHORTyps fc (map fst p')
+>   return hoRTyps
 
 the Synth time stage happens when the user wants to actaully get a fxn from an example set
 this one need to run as quickly as possible
 the "exs" should only be read here
+synth will need the code file with examples, and all the HOFxns with RTypes
 
-> synthTime :: Code -> [(Name,Type)] -> IO()
-> synthTime fc typs = do
->   let hoSigs = filter isHigherOrder typs
->   hoFxns <- genHOFxns fc hoSigs
->   let candidateFxns = makeFxns fc hoFxns
+> synthTime :: Code -> [((Name,Type),[(RType,RType)])] -> IO()
+> synthTime c hoTyps = do
+>   ex  <- rTypeAssign Example c "exs"
+>   let hoFxns = filter (poss ex) hoTyps
+>   let candidateFxns = makeFxns c hoFxns
 >   putStrLn $ show candidateFxns
->   validProgs <- applyAll fc candidateFxns
+>   validProgs <- applyAll c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
 >   mapM_ (putStrLn.("* "++)) validProgs
 

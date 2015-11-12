@@ -40,17 +40,10 @@ TODO this _seriously_ needs optimization.
 subtyping will let us prune which rtypes we have to try
 we also only need to run step 1 on the higher order fxn identifiers (which we can figure out from TypeExtractor.getTypesFromCode)
 
-> genHOFxns :: Code -> [(Name,Type)] -> IO [((Name,Type), [(RType, RType)])]
-> genHOFxns c sigs = do
->   hofxns <- mapM (addRType c) sigs
->   ex  <- rTypeAssign Example c "exs"
->   return $ filter (poss ex) hofxns 
+> genHORTyps :: Code -> [(Name,Type)] -> IO [((Name,Type), [(RType, RType)])]
+> genHORTyps c sigs = 
+>   mapM (addRType c) sigs
 
-> genHOFxns' :: Code -> [(Name,Type)] -> IO [((Name,Type), [(RType, RType)])]
-> genHOFxns' c sigs = do
->   hofxns <- mapM (addRType c) sigs
->   ex  <- rTypeAssign Example c "exs"
->   return $ filter (poss ex) hofxns 
 
 > addRType :: Code -> (Name,Type) -> IO((Name,Type), [(RType,RType)])
 > addRType c t = do
