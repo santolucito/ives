@@ -27,7 +27,7 @@ The approach here is just fine since we put everything into the haskell-src-exts
  b <- getTypesFromModule "base:Prelude"
 
 > -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
-> getTypesFromModule :: String -> IO(Either String [(Name,Type)])
+> getTypesFromModule :: String -> IO(Maybe [(Name,Type)])
 > getTypesFromModule m = do
 >   r <- runGmOutT defaultOptions $ runGhcModT (defaultOptions {optDetailed = True}) $ browse m
 >   code <- either (handleMod) (return) (fst r)
@@ -49,9 +49,10 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >     T.unpack $ (f2.f1) $ T.pack c
 
 > -- | take code and get Types
-> getTypesFromCode :: Code -> Either String [(Name,Type)]
-> getTypesFromCode =
->   mapRight (catMaybes.map isTypeSig) . getDeclsFromCode
+> getTypesFromCode :: Code -> Maybe [(Name,Type)]
+> getTypesFromCode c =
+>   let x = mapRight (catMaybes.map isTypeSig) $ getDeclsFromCode c
+>   in either (\x->Nothing) Just x
 
 > -- | take code and get every Decl, a complete abstract rep of the source
 > getDeclsFromCode :: Code -> Either String [Decl]

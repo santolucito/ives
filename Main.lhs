@@ -5,6 +5,8 @@
 > import Ives.ExampleGen.Gen
 > import Ives.SynthEngine.Engine
 
-> main = vroom "tests/userApi.hs"
+> main = do
+>   f <- getLine
+>   vroom f
 
  main = vroom "tests/map1.hs"

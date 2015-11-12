@@ -28,11 +28,11 @@ the actual synth engine - take a file and generate a program that satifies examp
 >   fc <- readFile f
 >
 >   startBuildT <- getPOSIXTime
->   typs <- buildTime fc
+>   (hoTyps, allTyps) <- buildTime fc
 >   buildT <- liftM2 (-) getPOSIXTime (return startBuildT)
 >
 >   startSynthT <- getPOSIXTime
->   synthTime fc typs
+>   synthTime fc hoTyps allTyps
 >   synthT <- liftM2 (-) getPOSIXTime (return startSynthT)
 >
 >   putStrLn $ "built in "++(show buildT)
@@ -46,19 +46,20 @@ With this in mind the "exs" variable shouldn't be used anywhere here, this means
   and should be moved to synthTime
 NB: a fair amount of time will be added for getting files from disk
 
-> buildTime :: Code -> IO( [((Name,Type),[(RType,RType)])] )
+> buildTime :: Code -> IO( ([((Name,Type),[(RType,RType)])], [(Name,Type)]) )
 > buildTime fc = do
 >   let typSigs' = getTypesFromCode fc
->   whenLeft typSigs' putStrLn
->   let typSigs = fromRight [] typSigs'
+>   --whenLeft typSigs' putStrLn
+>   let typSigs = fromJust typSigs'
 >
->   preludeTypSigs <- getTypesFromModule "base:Prelude"
->   whenLeft preludeTypSigs putStrLn
+>   preludeTypSigs' <- getTypesFromModule "base:Prelude"
+>   --whenLeft preludeTypSigs putStrLn
+>   let preludeTypSigs = fromJust preludeTypSigs'
 >
 >   let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
 >
 >   let uHOTyps = filter isHigherOrder typSigs
->   let pHOTyps = filter isHigherOrder (fromRight [] preludeTypSigs)
+>   let pHOTyps = filter isHigherOrder preludeTypSigs
 >   let weightedU = scoreTyps exsTyp uHOTyps
 >   let weightedP = scoreTyps exsTyp pHOTyps
 >   let sortWeightedTyps = reverse. sortWith snd. filter (isJust.snd)
@@ -70,18 +71,19 @@ NB: a fair amount of time will be added for getting files from disk
 >   putStrLn "-------MATCHED FXNS-------"
 >   mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
 >   hoRTyps <- genHORTyps fc (map fst p')
->   return hoRTyps
+>   return (hoRTyps,typSigs++preludeTypSigs)
 
 the Synth time stage happens when the user wants to actaully get a fxn from an example set
 this one need to run as quickly as possible
 the "exs" should only be read here
 synth will need the code file with examples, and all the HOFxns with RTypes
 
-> synthTime :: Code -> [((Name,Type),[(RType,RType)])] -> IO()
-> synthTime c hoTyps = do
+> synthTime :: Code -> [((Name,Type),[(RType,RType)])] -> [(Name,Type)] -> IO()
+> synthTime c hoTyps allTyps = do
 >   ex  <- rTypeAssign Example c "exs"
 >   let hoFxns = filter (poss ex) hoTyps
->   let candidateFxns = makeFxns c hoFxns
+>   let candidateFxns = makeFxns hoFxns allTyps
+>   putStrLn $ show ex
 >   putStrLn $ show candidateFxns
 >   validProgs <- applyAll c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
@@ -142,24 +144,24 @@ we need to compose these functions and run them on the examples until we find on
 
      ["hofxns"]++map show hs ++ ["componentFxns"]++map show cs
 
-> makeFxns :: Code -> [((Name,Type), [(RType, RType)])] -> [String]
-> makeFxns c hoFxnSig = 
+> makeFxns :: [((Name,Type), [(RType, RType)])] -> [(Name,Type)] -> [String]
+> makeFxns hoFxnSig allTyps = 
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
 >   let 
->     codePieces = map (\x -> (fst x,genComponentFxn c x)) hoFxnSig --a list of compnent fxns for each hofxn
+>     codePieces = map (\x -> (fst x,genComponentFxn x allTyps)) hoFxnSig --a list of compnent fxns for each hofxn
 >   in
 >     buildFxns codePieces
 
-> genComponentFxn :: Code -> ((Name,Type), [(RType, RType)]) -> [(Name,Type)]
-> genComponentFxn c hofxnSig = 
+> genComponentFxn :: ((Name,Type), [(RType, RType)]) -> [(Name,Type)] -> [(Name,Type)]
+> genComponentFxn hofxnSig allTyps = 
 >  let
 >    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
 >    p f i1 i2 = trace (show i1++" --- "++(show i2)++"\n\n") $ f i1 i2 --use to print what you are comparing
 >    x = case componentSig of
->        Left e -> Left e
->        Right s -> mapRight (filter (\x -> isJust $ compareExTypeToHOType s (snd x))) $ getTypesFromCode c :: Either String [(Name,Type)]
+>        Left e -> []
+>        Right s -> filter (\x -> isJust $ p compareExTypeToHOType s (snd x)) allTyps
 >  in
->    fromRight' x
+>    x
 
 > sortWith f = sortBy (\x y -> compare (f x) (f y))
 
