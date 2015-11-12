@@ -80,7 +80,7 @@ synth will need the code file with examples, and all the HOFxns with RTypes
 
 > synthTime :: Code -> [((Name,Type),[(RType,RType)])] -> [(Name,Type)] -> IO()
 > synthTime c hoTyps allTyps = do
->   ex  <- rTypeAssign Example c "exs"
+>   ex  <- rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
 >   let hoFxns = filter (poss ex) hoTyps
 >   let candidateFxns = makeFxns hoFxns allTyps
 >   putStrLn $ show ex

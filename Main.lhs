@@ -6,6 +6,7 @@
 > import Ives.SynthEngine.Engine
 
 > main = do
+>   putStrLn "give me a file"
 >   f <- getLine
 >   vroom f
 

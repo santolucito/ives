@@ -16,6 +16,8 @@
 
 > import Ives.SynthEngine.Types
 
+> import Debug.Trace
+
 Given a module full of examples, "browse" to get all the types of examples
 then "browse" the imports of that module, and base:Prelude
 then match up which example types fit which functions, and see if it works by running
@@ -118,6 +120,13 @@ the type signature datas that are curretnly unsupported
    TySplice s       -> u   -- ^ template haskell splice type
    TyBang b t       -> u-- ^ Strict type marked with \"@!@\" or type marked with UNPACK pragma.
 
+
+> getOutExType :: Type -> Type
+> getOutExType = \case
+>   TyList t -> case t of 
+>                 TyTuple b ts -> trace (show $ last ts) $ last ts
+>                 --otherwise -> fucked up
+>  -- otherwise -> fucked up
 
  order matters here! this needs formlization, draw a graph
    will return ranking, on how close the match is for weighting
