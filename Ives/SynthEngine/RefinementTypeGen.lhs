@@ -33,6 +33,13 @@ Will also need to change '[a]' to 'Measure a =>'
 
 we assume ?type? is already wrapped in a list
 
+would like to use a nicer example notation,but liquid haskell doesnt support language exts
+could write a small function to rewrite :-> as a tuple, but that requires a bit of effort
+{-# LANGUAGE TypeOperators #-}
+data a :-> b =  a :-> b
+fst :: (a :-> b) -> a
+fst (a :-> b) = a
+
 > -- | (rtype for higherOrderFunction, rtype for list of examples)
 > rTypeTemplate op =
 >   ("{-@ ?f? :: _ -> i:[a] -> {o:[a] | (len i) "++op ++" (len o)} @-}", "{-@ ?f? :: [(?type?,?type?)<{\\i o -> len i "++op++" len o}>] @-}")

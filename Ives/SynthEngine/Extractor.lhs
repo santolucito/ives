@@ -18,6 +18,7 @@
 
 > import Debug.Trace
 
+
 Given a module full of examples, "browse" to get all the types of examples
 then "browse" the imports of that module, and base:Prelude
 then match up which example types fit which functions, and see if it works by running
@@ -26,10 +27,8 @@ There is no way to go from the value level (the String of types) the the type le
 Agda would support this, and it would be nice to have because then I could do more integrated type manipulation.
 The approach here is just fine since we put everything into the haskell-src-exts language.
 
- b <- getTypesFromModule "base:Prelude"
-
 > -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
-> getTypesFromModule :: String -> IO(Maybe [(Name,Type)])
+> getTypesFromModule :: String -> IO([(Name,Type)])
 > getTypesFromModule m = do
 >   r <- runGmOutT defaultOptions $ runGhcModT (defaultOptions {optDetailed = True}) $ browse m
 >   code <- either (handleMod) (return) (fst r)
@@ -51,26 +50,29 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >     T.unpack $ (f2.f1) $ T.pack c
 
 > -- | take code and get Types
-> getTypesFromCode :: Code -> Maybe [(Name,Type)]
+> getTypesFromCode :: Code -> [(Name,Type)]
 > getTypesFromCode c =
->   let x = mapRight (catMaybes.map isTypeSig) $ getDeclsFromCode c
->   in either (\x->Nothing) Just x
+>   let x = map isTypeSig $ fromJust $ fromCode c getCode
+>   in catMaybes x
+
 
 > -- | take code and get every Decl, a complete abstract rep of the source
-> getDeclsFromCode :: Code -> Either String [Decl]
-> getDeclsFromCode =
->   handleParse . parseModule 
+> fromCode :: Code -> (Module -> a) -> Maybe a
+> fromCode c getterFun = 
+>   case parseModuleWithMode (defaultParseMode {extensions=knownExtensionsE}) c of
+>     ParseOk a -> Just $ getterFun a
+>     ParseFailed l e -> error ("Parsing failed due to: "++e)
+
+> -- | List of all known extensions, all enabled.
+> knownExtensionsE :: [Extension]
+> knownExtensionsE =
+>   concat [ [EnableExtension x] | x <- [minBound..maxBound] ]
 
 > -- | TODO: taking head means we dont support multiple variable type sigs
 > isTypeSig :: Decl -> Maybe (Name,Type)
 > isTypeSig = \case
 >     TypeSig _ ns t -> Just ((head ns),t)
 >     otherwise -> Nothing
-
-> handleParse :: ParseResult Module -> Either String [Decl]
-> handleParse = \case
->   ParseFailed l e -> Left $ "haskell-src failed" ++ (show e)
->   ParseOk a -> Right $ getCode a
 
 > -- | get the ident from a typSig
 > getName :: Decl -> [Name]
@@ -83,11 +85,18 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >   Ident s -> s
 >   Symbol s -> s 
 
+> showImport :: ImportDecl -> String
+> showImport (ImportDecl _ mn _ _ _ _ _ _) = 
+>   let getModuleName (ModuleName n) = n
+>   in getModuleName mn
+
 from haskell-src-exts we have 
 data Module = Module
   SrcLoc ModuleName [ModulePragma] (Maybe WarningText) (Maybe [ExportSpec]) [ImportDecl] [Decl]
 
+> getCode :: Module -> [Decl]
 > getCode (Module s n p w e i d) = d
+> getImports (Module s n p w e i d) = i
 
 
 ================================

@@ -32,7 +32,7 @@ the actual synth engine - take a file and generate a program that satifies examp
 >   buildT <- liftM2 (-) getPOSIXTime (return startBuildT)
 >
 >   startSynthT <- getPOSIXTime
->   synthTime fc hoTyps allTyps
+> --  synthTime fc hoTyps allTyps
 >   synthT <- liftM2 (-) getPOSIXTime (return startSynthT)
 >
 >   putStrLn $ "built in "++(show buildT)
@@ -48,13 +48,12 @@ NB: a fair amount of time will be added for getting files from disk
 
 > buildTime :: Code -> IO( ([((Name,Type),[(RType,RType)])], [(Name,Type)]) )
 > buildTime fc = do
->   let typSigs' = getTypesFromCode fc
->   --whenLeft typSigs' putStrLn
->   let typSigs = fromJust typSigs'
+>   let typSigs = getTypesFromCode fc
 >
->   preludeTypSigs' <- getTypesFromModule "base:Prelude"
->   --whenLeft preludeTypSigs putStrLn
->   let preludeTypSigs = fromJust preludeTypSigs'
+>   let importSrcs = map showImport $ fromJust $ fromCode fc getImports
+>   importSigs <- mapM getTypesFromModule importSrcs
+> 
+>   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >
 >   let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
 >
