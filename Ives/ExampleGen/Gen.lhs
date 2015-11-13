@@ -1,6 +1,6 @@
 > {-# LANGUAGE ExistentialQuantification #-}
 
-> module Ives.ExampleGen.Gen (exGen, genExample, evalExample, arguments, result) where
+> module Ives.ExampleGen.Gen (exGen, genExample, evalExample, arguments, result, AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
 
 > import Ives.Types
 > import Data.List
