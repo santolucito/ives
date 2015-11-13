@@ -85,7 +85,7 @@ executable Ives
   
 executable Exampler
   -- .hs or .lhs file containing the Main module.
-  main-is:             Ives/ExampleGen/Exampler.hs
+  main-is:             Ives/ExampleGen/Exampler.lhs
   
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.6 && <5.0,
