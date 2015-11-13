@@ -27,7 +27,7 @@ Arguments need to be an instance of the Arbitrary typeclass so they can be gener
 Wrapper class for any result value.
 Results need to be an instance of the Exampleable typeclass so they can be generated during example generation.
 
-> data AnyExampleable = forall a. Exampleable a => MkAE a
+> data AnyExampleable = forall a. (Exampleable a, Typeable a) => MkAE a
 > instance Show AnyExampleable where
 >   show (MkAE a) = show a
 
@@ -90,7 +90,7 @@ Non-function types just return a new example with their value as the result. The
 >   genEx a _ _ = Example (MkAE a) []
 >   evalEx a _ = Just $ Example (MkAE a) []
 
-> instance Show a => Exampleable [a] where
+> instance (Show a, Typeable a) => Exampleable [a] where
 >   genEx l _ _ = Example (MkAE l) []
 >   evalEx l _ = Just $ Example (MkAE l) []
 
@@ -98,15 +98,15 @@ Non-function types just return a new example with their value as the result. The
 >   genEx a _ _ = Example (MkAE a) []
 >   evalEx a _ = Just $ Example (MkAE a) []
 
-> instance (Show a, Show b) => Exampleable (a, b) where
+> instance (Show a, Show b, Typeable a, Typeable b) => Exampleable (a, b) where
 >   genEx t _ _ = Example (MkAE t) []
 >   evalEx t _ = Just $ Example (MkAE t) []
 
-> instance (Show a, Show b, Show c) => Exampleable (a, b, c) where
+> instance (Show a, Show b, Show c, Typeable a, Typeable b, Typeable c) => Exampleable (a, b, c) where
 >   genEx t _ _ = Example (MkAE t) []
 >   evalEx t _ = Just $ Example (MkAE t) []
 
-> instance (Show a, Show b, Show c, Show d) => Exampleable (a, b, c, d) where
+> instance (Show a, Show b, Show c, Show d, Typeable a, Typeable b, Typeable c, Typeable d) => Exampleable (a, b, c, d) where
 >   genEx t _ _ = Example (MkAE t) []
 >   evalEx t _ = Just $ Example (MkAE t) []
 
