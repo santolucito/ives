@@ -44,7 +44,8 @@ fst (a :-> b) = a
 
 > -- | (rtype for higherOrderFunction, rtype for list of examples)
 > rTypeTemplate op =
->   ("{-@ ?f? :: _ -> i:a -> {o:a | (size i) "++op ++" (size o)} @-}", "{-@ ?f? :: [(?type?,?type?)<{\\i o -> len i "++op++" len o}>] @-}")
+>   ( "{-@ ?f? :: _ -> i:?intype? -> {o:?outtype? | (len i) "++op ++" (len o)} @-}"  --for higher order fxns
+>   , "{-@ ?f? :: [(?intype?,?outtype?)<{\\i o -> (len i) "++op++" (len o)}>] @-}" ) --for examples
 
 
 ------ Algorithm ----------
@@ -72,8 +73,8 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 > rTypeAssign s c fxn =
 >   let
 >     f = case s of
->           HigherOrderFxn -> fst
->           Example -> snd
+>           HigherOrderFxn -> (injectRFxnType fxn .fst)
+>           Example -> (injectRExType fxn . snd)
 >   in
 >     filterM (test c fxn . f) templates
 
@@ -81,15 +82,27 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 > test :: Code -> Sig -> RType -> IO(Bool)
 > test fc fxn ty = do
 >   let fxnName = toString $ fst fxn
->   putStrLn $ "testing RType for: " ++ fxnName
+>   let namedTy = replace "?f?" fxnName ty
+>
 >   let tmp = "tmp/liquidTypeInjected.hs"
->   let ty' = replace "?f?" fxnName ty
->   let namedTy = replace "?type?" (prettyPrint $ getOutExType $ snd fxn) ty' --need some way to write down a type (haskell-src pretty printer?)
 >   writeFile tmp (namedTy ++"\n")
 >   appendFile tmp fc
 >   S.shelly $ S.errExit False $ S.bash_ "liquid" [T.pack tmp,">tmp/liquid.results 2>&1"]
->   liftM isSafe (S.shelly $ S.readfile "tmp/liquid.results")
+>   result <- liftM isSafe (S.shelly $ S.readfile "tmp/liquid.results")
+>   putStrLn $ namedTy ++" ||> "++(show result)
+>   return result
 
+> injectRExType :: Sig -> RType -> RType
+> injectRExType fxn baseRTy =
+>   let f i s r = replace s (prettyPrint $ getExType i $ snd fxn) r
+>   in f 1 "?outtype?" $ f 0 "?intype?" baseRTy
+     
+> injectRFxnType :: Sig -> RType -> RType
+> injectRFxnType fxn baseRTy =
+>   let f sel s r = replace s (sel $ getFxnType $ snd fxn) r
+>   in f snd "?outtype?" $ f fst "?intype?" baseRTy
+
+     
 > isSafe :: T.Text -> Bool
 > isSafe r = 
 >   T.isInfixOf "* SAFE *" r

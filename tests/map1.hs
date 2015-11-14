@@ -1,3 +1,4 @@
+--need prelude
 f :: Int -> Int
 f = (+1)
 

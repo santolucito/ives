@@ -12,6 +12,7 @@
 > import Data.Maybe
 > import Data.Either.Combinators
 > import Control.Monad
+> import Control.Applicative
 > import Control.Arrow
 > import qualified Shelly as S
 
@@ -108,7 +109,7 @@ First we want to rank our higher order functions
 then with the ranks, begin searching for a program
 
 >   let hoFxns = filter (matchRType exsRTyp) (map fstsnd hoTyps')
->   let candidateFxns = makeFxns hoFxns allTyps
+>   let candidateFxns = makeFxns (snd exsTyp) hoFxns allTyps
 >   mapM print hoTyps
 >   mapM print (map fstsnd hoTyps')
 >--   putStrLn $ show allTyps
@@ -123,7 +124,7 @@ then with the ranks, begin searching for a program
 > scoreTyps :: Sig -> [Sig] -> [(Sig,Maybe Int)]
 > scoreTyps exsTyp tys =
 >   let
->     f t = (t,compareExTypeToHOType (sndTyp $ snd exsTyp) (lastTyp $ snd t))
+>     f t = (t,isConcreteTypeOf (sndTyp $ snd exsTyp) (lastTyp $ snd t))
 >   in
 >     map f tys
 
@@ -172,24 +173,34 @@ we need to compose these functions and run them on the examples until we find on
 
      ["hofxns"]++map show hs ++ ["componentFxns"]++map show cs
 
-> makeFxns :: [(Sig, [(RType, RType)])] -> [Sig] -> [String]
-> makeFxns hoFxnSig allTyps = 
+> makeFxns :: Type -> [(Sig, [(RType, RType)])] -> [Sig] -> [String]
+> makeFxns exTy hoFxnSig allTyps = 
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
 >   let 
->     codePieces = map (\x -> (fst x,genComponentFxn x allTyps)) hoFxnSig --a list of compnent fxns for each hofxn
+>     codePieces = map (\x -> (fst x,genComponentFxn exTy x allTyps)) hoFxnSig --a list of compnent fxns for each hofxn
 >   in
 >     buildFxns codePieces
 
-> genComponentFxn :: (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
-> genComponentFxn hofxnSig allTyps = 
+Given a higher order function, we want all compenent functions that fit that type sig
+The HO typ sig can generalize the example type, but so must the component sig 
+we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]->[Bool]
+
+> genComponentFxn :: Type -> (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
+> genComponentFxn exTy hofxnSig allTyps = 
 >  let
 >    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
->    p f i1 i2 = trace (show i1++" --- "++(show i2)++"\n\n") $ f i1 i2 --use to print what you are comparing
->    x = case componentSig of
->        Left e -> []
->        Right s -> filter (\x -> isJust $ p compareExTypeToHOType s (snd x)) allTyps
+>    p s f i1 i2 = trace (s++"\n"++show i1++" --- "++(show i2)++"\n||>"++(show $ f i1 i2)++"\n\n") $ f i1 i2 --use to print what you are comparing
+>    f cs = filter (\thisCs -> 
+>                     isJust (liftA2 (+) 
+>                     (p "CS" isConcreteTypeOf (snd thisCs) cs) --this is short-circuting! (just by luck, im not that smart)
+>                     (Just 0)
+>                     --(p "EX" isConcreteTypeOf (exAsFunType exTy) (snd thisCs))
+>                     )) 
+>           allTyps
 >  in
->    x
+>    case componentSig of
+>      Left e -> []
+>      Right cs -> f cs
 
 > sortWith f = sortBy (\x y -> compare (f x) (f y))
 

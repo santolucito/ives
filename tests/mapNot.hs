@@ -1,3 +1,4 @@
+--needs prelude
 
 exs :: [([Bool], [Bool])]
 exs = 

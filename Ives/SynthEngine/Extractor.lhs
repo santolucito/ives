@@ -129,13 +129,27 @@ the type signature datas that are curretnly unsupported
    TySplice s       -> u   -- ^ template haskell splice type
    TyBang b t       -> u-- ^ Strict type marked with \"@!@\" or type marked with UNPACK pragma.
 
+> exAsFunType :: Type -> Type
+> exAsFunType eTy =
+>   let
+>     inTy  = getExType 0 eTy
+>     outTy = getExType 1 eTy
+>   in
+>     TyFun inTy outTy
 
-> getOutExType :: Type -> Type
-> getOutExType = \case
+> getExType :: Int -> Type -> Type
+> getExType n = \case
 >   TyList t -> case t of 
->                 TyTuple b ts -> trace (show $ last ts) $ last ts
->                 --otherwise -> fucked up
->  -- otherwise -> fucked up
+>                 TyTuple b ts -> ts !! n
+>                 otherwise -> error "examples are fucked"
+>   otherwise -> error "examples are fucked"
+
+> getFxnType :: Type -> (String,String)
+> getFxnType s =
+>   let 
+>     tf = map T.strip $ T.splitOn "->" $ T.pack $ prettyPrint s
+>   in 
+>     (T.unpack . last $ init tf ,T.unpack $last tf)
 
  order matters here! this needs formlization, draw a graph
    will return ranking, on how close the match is for weighting
@@ -145,7 +159,7 @@ the type signature datas that are curretnly unsupported
    instead of this crappy implementation
 
 > compareTypes :: Type -> Type -> Maybe Int
-> compareExTypeToHOType = compareTypes
+> isConcreteTypeOf = compareTypes
 > compareTypes (TyParen t1) (TyParen t2) = 
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = 
@@ -163,10 +177,10 @@ the type signature datas that are curretnly unsupported
 > compareTypes (TyFun t1 t1') (TyFun t2 t2') = 
 >   fmap (1+) (liftA2 (+) (compareTypes t1 t2) (compareTypes t1' t2'))
 > compareTypes (TyVar _) (TyVar _) = Just 10 
-> compareTypes (TyCon _) (TyCon _) = Just 10
+> compareTypes (TyCon q1) (TyCon q2) = if (q1==q2) then Just 20 else Nothing
 > compareTypes (TyCon _) (TyVar _) = Just 10
-> compareTypes (TyVar _) (TyCon _) = Just 1
-> compareTypes _ (TyVar _) = Just 1
+> compareTypes (TyVar _) (TyCon _) = Nothing
+> compareTypes _ (TyVar _) = Nothing
 > compareTypes _ _ = Nothing --inlucdes unsupported types
 
 > -- | the out type of the examples is whatever is last type in the tuples

@@ -1,7 +1,6 @@
 {-@ LIQUID "--no-termination" @-}
 import Euterpea
 
-{-@ exs :: [(Music Pitch,Music Pitch)<{\i o -> (size i) = (size o)}>] @-}
 
 {-@ class measure size :: forall a. a -> Int @-}
 
@@ -32,7 +31,10 @@ countNodes m =
 third :: Pitch -> Pitch
 third=trans 3
 
-exs :: [(Music Pitch,Music Pitch)]
+{-@ exs :: [(Music Int,Music Int)<{\i o -> (size i) = (size o)}>] @-}
+
+n = Prim (Note 1 (1::Int))
+exs :: [(Music Int,Music Int)]
 exs = [
-        ((c 4 qn :+: d 4 qn), (ef 4 qn :+: f 4 qn))
+        (n, n)
       ]
