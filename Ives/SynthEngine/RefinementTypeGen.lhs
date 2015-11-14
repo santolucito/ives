@@ -17,6 +17,8 @@
 > import Ives.SynthEngine.Extractor
 
 
+If you statisfy >=, I dont car if you satisfy =
+
 > templates :: [(RType,RType)]
 > templates = 
 >   map rTypeTemplate ["=","<=",">="]
@@ -42,7 +44,7 @@ fst (a :-> b) = a
 
 > -- | (rtype for higherOrderFunction, rtype for list of examples)
 > rTypeTemplate op =
->   ("{-@ ?f? :: _ -> i:[a] -> {o:[a] | (len i) "++op ++" (len o)} @-}", "{-@ ?f? :: [(?type?,?type?)<{\\i o -> len i "++op++" len o}>] @-}")
+>   ("{-@ ?f? :: _ -> i:a -> {o:a | (size i) "++op ++" (size o)} @-}", "{-@ ?f? :: [(?type?,?type?)<{\\i o -> len i "++op++" len o}>] @-}")
 
 
 ------ Algorithm ----------
@@ -53,23 +55,20 @@ TODO this _seriously_ needs optimization.
 subtyping will let us prune which rtypes we have to try
 we also only need to run step 1 on the higher order fxn identifiers (which we can figure out from TypeExtractor.getTypesFromCode)
 
-> genHORTyps :: Code -> [(Name,Type)] -> IO [((Name,Type), [(RType, RType)])]
+> genHORTyps :: Code -> [Sig] -> IO [(Sig, [(RType, RType)])]
 > genHORTyps c sigs = 
 >   mapM (addRType c) sigs
 
-
-> addRType :: Code -> (Name,Type) -> IO((Name,Type), [(RType,RType)])
+> addRType :: Code -> Sig -> IO(Sig, [(RType,RType)])
 > addRType c t = do
 >   x <- rTypeAssign HigherOrderFxn c t 
 >   return (t, x)
-
-
    
 > -- | a hof only fits if one of the rtypes overlaps with the one of the examples rtypes
-> poss ex hof = (length $ intersect ex (snd hof)) > 0
+> matchRType ex hof = (length $ intersect ex (snd hof)) > 0
 
 > -- | which rtypes does some function in a file satify
-> rTypeAssign :: SynthSrc -> Code -> (Name,Type) -> IO([(RType,RType)])
+> rTypeAssign :: SynthSrc -> Code -> Sig -> IO([(RType,RType)])
 > rTypeAssign s c fxn =
 >   let
 >     f = case s of
@@ -79,7 +78,7 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 >     filterM (test c fxn . f) templates
 
 > -- | check if a file (with a single definition) matches the RType using liquidhaskell
-> test :: Code -> (Name,Type) -> RType -> IO(Bool)
+> test :: Code -> Sig -> RType -> IO(Bool)
 > test fc fxn ty = do
 >   let fxnName = toString $ fst fxn
 >   putStrLn $ "testing RType for: " ++ fxnName

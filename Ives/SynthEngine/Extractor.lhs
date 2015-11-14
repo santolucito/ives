@@ -28,7 +28,7 @@ Agda would support this, and it would be nice to have because then I could do mo
 The approach here is just fine since we put everything into the haskell-src-exts language.
 
 > -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
-> getTypesFromModule :: String -> IO([(Name,Type)])
+> getTypesFromModule :: String -> IO([Sig])
 > getTypesFromModule m = do
 >   r <- runGmOutT defaultOptions $ runGhcModT (defaultOptions {optDetailed = True}) $ browse m
 >   code <- either (handleMod) (return) (fst r)
@@ -50,7 +50,7 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >     T.unpack $ (f2.f1) $ T.pack c
 
 > -- | take code and get Types
-> getTypesFromCode :: Code -> [(Name,Type)]
+> getTypesFromCode :: Code -> [Sig]
 > getTypesFromCode c =
 >   let x = map isTypeSig $ fromJust $ fromCode c getCode
 >   in catMaybes x
@@ -69,7 +69,7 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >   concat [ [EnableExtension x] | x <- [minBound..maxBound] ]
 
 > -- | TODO: taking head means we dont support multiple variable type sigs
-> isTypeSig :: Decl -> Maybe (Name,Type)
+> isTypeSig :: Decl -> Maybe Sig
 > isTypeSig = \case
 >     TypeSig _ ns t -> Just ((head ns),t)
 >     otherwise -> Nothing
@@ -102,7 +102,7 @@ data Module = Module
 ================================
 
 > -- | if we are able to get a component fxn sig, it must be a higher order fxn
-> isHigherOrder :: (Name,Type) -> Bool
+> isHigherOrder :: Sig -> Bool
 > isHigherOrder = isRight. getComp. snd
 
 > -- | assume that the component fxn signature will be a fxn typ surrounded by parens 

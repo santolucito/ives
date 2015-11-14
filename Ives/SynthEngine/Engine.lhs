@@ -1,4 +1,5 @@
 > {-# LANGUAGE LambdaCase #-}
+> {-# LANGUAGE TupleSections #-}
 > {-# LANGUAGE OverloadedStrings #-}
 
 > module Ives.SynthEngine.Engine where
@@ -31,8 +32,9 @@ the actual synth engine - take a file and generate a program that satifies examp
 >   (hoTyps, allTyps) <- buildTime fc
 >   buildT <- liftM2 (-) getPOSIXTime (return startBuildT)
 >
+>   putStrLn "starting synth stage"
 >   startSynthT <- getPOSIXTime
-> --  synthTime fc hoTyps allTyps
+>   synthTime fc hoTyps allTyps
 >   synthT <- liftM2 (-) getPOSIXTime (return startSynthT)
 >
 >   putStrLn $ "built in "++(show buildT)
@@ -46,44 +48,71 @@ With this in mind the "exs" variable shouldn't be used anywhere here, this means
   and should be moved to synthTime
 NB: a fair amount of time will be added for getting files from disk
 
-> buildTime :: Code -> IO( ([((Name,Type),[(RType,RType)])], [(Name,Type)]) )
+> buildTime :: Code -> IO( ([(Sig,[(RType,RType)],Maybe Int)], [Sig]) )
 > buildTime fc = do
 >   let typSigs = getTypesFromCode fc
 >
 >   let importSrcs = map showImport $ fromJust $ fromCode fc getImports
->   importSigs <- mapM getTypesFromModule importSrcs
+>   importSigs <- liftM concat $ mapM getTypesFromModule importSrcs 
 > 
 >   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >
->   let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
+>   let f i tys = map (,Just i) $ filter isHigherOrder tys
 >
->   let uHOTyps = filter isHigherOrder typSigs
->   let pHOTyps = filter isHigherOrder preludeTypSigs
->   let weightedU = scoreTyps exsTyp uHOTyps
->   let weightedP = scoreTyps exsTyp pHOTyps
->   let sortWeightedTyps = reverse. sortWith snd. filter (isJust.snd)
->   let p' = (sortWeightedTyps weightedU ++ sortWeightedTyps weightedP)
->   putStrLn "-------EXAMPLE OUT TYPE-------"
->   (\(l,r) -> f' l >> f' (sndTyp r)) exsTyp
->   putStrLn "-------CANDIDATE FXNS-------"
->   mapM_ (\(l,r) -> f' l >> f' (lastTyp r)) (uHOTyps ++ pHOTyps)
->   putStrLn "-------MATCHED FXNS-------"
->   mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
->   hoRTyps <- genHORTyps fc (map fst p')
->   return (hoRTyps,typSigs++preludeTypSigs)
+>   let uHOTyps = f 3000 typSigs
+>   let iHOTyps = f 2000 importSigs
+>   let pHOTyps = f 1000 preludeTypSigs
+> --  let allHOTyps = uHOTyps ++ iHOTyps ++ pHOTyps :: [(Sig,Maybe Int)]
+>   let allHOTyps = uHOTyps ++ iHOTyps :: [(Sig,Maybe Int)]
+>
+> --  mapM print allHOTyps
+>   mapM print typSigs
+>   hoRTyps <- mapM (addRType fc) (map fst allHOTyps)
+>   let hoRTypsW = zipWith (\(t,r) w -> (t,r,w)) hoRTyps (map snd allHOTyps)
+> --  return (hoRTypsW, typSigs++importSigs++preludeTypSigs)
+>   return (hoRTypsW, typSigs++importSigs)
+
+
+   let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
+
+   let weightedU = scoreTyps exsTyp uHOTyps
+   let weightedP = scoreTyps exsTyp pHOTyps
+   let sortWeightedTyps = reverse. sortWith snd. filter (isJust.snd)
+   let p' = (sortWeightedTyps weightedU ++ sortWeightedTyps weightedP)
+   putStrLn "-------EXAMPLE OUT TYPE-------"
+   (\(l,r) -> f' l >> f' (sndTyp r)) exsTyp
+   putStrLn "-------CANDIDATE FXNS-------"
+   mapM_ (\(l,r) -> f' l >> f' (lastTyp r)) (uHOTyps ++ pHOTyps)
+   putStrLn "-------MATCHED FXNS-------"
+   mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
+
+> fst3 (x,_,_) = x
+> snd3 (_,x,_) = x
+> trd3 (_,_,x) = x
+> fstsnd (x,y,_) = (x,y)
 
 the Synth time stage happens when the user wants to actaully get a fxn from an example set
 this one need to run as quickly as possible
 the "exs" should only be read here
 synth will need the code file with examples, and all the HOFxns with RTypes
 
-> synthTime :: Code -> [((Name,Type),[(RType,RType)])] -> [(Name,Type)] -> IO()
+> synthTime :: Code -> [(Sig,[(RType,RType)],Maybe Int)] -> [Sig] -> IO()
 > synthTime c hoTyps allTyps = do
->   ex  <- rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
->   let hoFxns = filter (poss ex) hoTyps
+>   let exsTyp = fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps
+>   exsRTyp  <- rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
+
+First we want to rank our higher order functions
+
+>   let hoTyps' = zipWith (\(t,w) r -> (t,r,w)) (scoreTyps exsTyp (map fst3 hoTyps)) (map snd3 hoTyps)
+
+then with the ranks, begin searching for a program
+
+>   let hoFxns = filter (matchRType exsRTyp) (map fstsnd hoTyps')
 >   let candidateFxns = makeFxns hoFxns allTyps
->   putStrLn $ show ex
->   putStrLn $ show candidateFxns
+>   mapM print hoTyps
+>   mapM print (map fstsnd hoTyps')
+>--   putStrLn $ show allTyps
+>   print candidateFxns
 >   validProgs <- applyAll c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
 >   mapM_ (putStrLn.("* "++)) validProgs
@@ -91,7 +120,7 @@ synth will need the code file with examples, and all the HOFxns with RTypes
 
 ==================== Move this stuff =================
 
-> scoreTyps :: (Name,Type) -> [(Name,Type)] -> [((Name,Type),Maybe Int)]
+> scoreTyps :: Sig -> [Sig] -> [(Sig,Maybe Int)]
 > scoreTyps exsTyp tys =
 >   let
 >     f t = (t,compareExTypeToHOType (sndTyp $ snd exsTyp) (lastTyp $ snd t))
@@ -130,7 +159,7 @@ each hofxn has a number of possible component fxns
 we need to compose these functions and run them on the examples until we find on that works.
 
 > -- | [hofxns,[componentFxns]] -> [Programs]
-> buildFxns :: [((Name,Type),[(Name,Type)])] -> [String]
+> buildFxns :: [(Sig,[Sig])] -> [String]
 > buildFxns cands =
 >   let
 >     f = map (toString.fst) 
@@ -143,7 +172,7 @@ we need to compose these functions and run them on the examples until we find on
 
      ["hofxns"]++map show hs ++ ["componentFxns"]++map show cs
 
-> makeFxns :: [((Name,Type), [(RType, RType)])] -> [(Name,Type)] -> [String]
+> makeFxns :: [(Sig, [(RType, RType)])] -> [Sig] -> [String]
 > makeFxns hoFxnSig allTyps = 
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
 >   let 
@@ -151,7 +180,7 @@ we need to compose these functions and run them on the examples until we find on
 >   in
 >     buildFxns codePieces
 
-> genComponentFxn :: ((Name,Type), [(RType, RType)]) -> [(Name,Type)] -> [(Name,Type)]
+> genComponentFxn :: (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
 > genComponentFxn hofxnSig allTyps = 
 >  let
 >    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type

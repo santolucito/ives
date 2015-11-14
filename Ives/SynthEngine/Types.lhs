@@ -1,5 +1,7 @@
 > module Ives.SynthEngine.Types where
 
+> import Language.Haskell.Exts
+
 > data SynthSrc = HigherOrderFxn | Example
 > type Code = String -- maybe use Text?
 
@@ -8,3 +10,4 @@ http://hackage.haskell.org/package/haskell-src-exts-1.16.0.1/docs/Language-Haske
 
 > type RType = String
 
+> type Sig = (Name,Type)
