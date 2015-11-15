@@ -15,6 +15,9 @@ mapR :: (a->b)->[a]->[b]
 mapR f []=[]
 mapR f (x:xs)= mapR f xs ++ [f x]
 
+f :: a -> [a]
+f x = [x,x]
+
 --and wants to use it synthesize
 
 exs :: [([Int],[Int])]

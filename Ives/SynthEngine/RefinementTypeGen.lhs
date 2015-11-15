@@ -19,6 +19,9 @@
 
 If you statisfy >=, I dont car if you satisfy =
 
+TODO: if all three are false, that is actually interesting!
+if the example set does not satisfy any of these, we should apply all ho functions that do not satisfy any of these
+
 > templates :: [(RType,RType)]
 > templates = 
 >   map rTypeTemplate ["=","<=",">="]

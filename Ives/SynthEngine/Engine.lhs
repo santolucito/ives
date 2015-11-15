@@ -63,8 +63,9 @@ NB: a fair amount of time will be added for getting files from disk
 >   let uHOTyps = f 3000 typSigs
 >   let iHOTyps = f 2000 importSigs
 >   let pHOTyps = f 1000 preludeTypSigs
-> --  let allHOTyps = uHOTyps ++ iHOTyps ++ pHOTyps :: [(Sig,Maybe Int)]
->   let allHOTyps = uHOTyps ++ iHOTyps :: [(Sig,Maybe Int)]
+>   let allHOTyps = uHOTyps ++ iHOTyps ++ pHOTyps :: [(Sig,Maybe Int)]
+> --  let allHOTyps = uHOTyps ++ iHOTyps :: [(Sig,Maybe Int)]
+> --  let allHOTyps = pHOTyps :: [(Sig,Maybe Int)]
 >
 > --  mapM print allHOTyps
 >   mapM print typSigs
