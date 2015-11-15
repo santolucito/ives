@@ -1,11 +1,18 @@
-> {-# LANGUAGE ExistentialQuantification #-}
+> {-# LANGUAGE ExistentialQuantification, TemplateHaskell #-}
 
-> module Ives.ExampleGen.Gen (exGen, genExample, evalExample, arguments, result, AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
+> module Ives.ExampleGen.Gen (exGen, genExamplesStr, genExample, evalExample, arguments, result, AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
 
 > import Ives.Types
+> import Ives.ExampleGen.Conc
 > import Data.List
 > import Data.Typeable
+> import System.IO
 > import System.Random
+> import System.IO.Temp
+> import System.Process
+> import System.Exit
+> import System.FilePath
+> import System.Directory
 > import Test.QuickCheck
 > import Test.QuickCheck.Gen
 > import Test.QuickCheck.Random
@@ -128,4 +135,35 @@ Useful for recycling examples as a function changes.
 
 > evalExample :: (Exampleable a) => a -> [AnyArbitrary] -> Maybe Example
 > evalExample a args = evalEx a args
+
+> genExamplesStr :: String -> Int -> Int -> IO (String, [String])
+> genExamplesStr f n size = do
+>   temp <- createTemp f n size
+> 
+>   (e, out, err) <- readProcessWithExitCode "runhaskell" [temp] ""
+>   removeFile temp
+>   case e of
+>     ExitSuccess -> do
+>       let ty:examples = read out :: [String]
+>       return (ty, examples)
+>     ExitFailure _ -> error err
+
+> createTemp :: String -> Int -> Int -> IO String
+> createTemp f n size = do
+>   dir <- getCurrentDirectory
+>   (temp, h) <- openTempFile dir (addExtension f "hs")
+>   hPutStrLn h   "{-# LANGUAGE TemplateHaskell #-}"
+>   hPutStrLn h   "import Ives.ExampleGen.Gen"
+>   hPutStrLn h   "import Ives.ExampleGen.Conc"
+>   hPutStrLn h   "import Control.Monad"
+>   hPutStrLn h   "import Data.Typeable"
+>   hPutStrLn h   ""
+>   hPutStrLn h   "main :: IO ()"
+>   hPutStrLn h   "main = do"
+>   hPutStrLn h $ "  let f = $(send '" ++ f ++ ") :: $(concretify '" ++ f ++ ")"
+>   hPutStrLn h $ "  examples <- replicateM " ++ show n ++ " (genExample f " ++ show size ++ ")"
+>   hPutStrLn h $ "  print $ (show $ typeOf f) : (map show examples)"
+>   hPutStrLn h   ""
+>   hClose h
+>   return temp
 

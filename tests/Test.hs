@@ -1,14 +1,11 @@
-﻿{-# LANGUAGE TemplateHaskell #-}
-
-import Conc
-import Ives.ExampleGen.Gen
-import Control.Monad
-import Language.Haskell.TH
+﻿import Ives.ExampleGen.Gen
+import System.Environment
 
 main :: IO ()
 main = do
-  example <- genExample ($(send "filter") :: $(test "filter")) 10
-  print example
+  f:_ <- getArgs
+  examples <- genExamplesStr f 5 10
+  print examples
 
 --   example <- genExample (map :: (Int -> Int) -> [Int] -> [Int]) 10
 --   let (a0, a1, r) = extract (arguments example) (result example)
