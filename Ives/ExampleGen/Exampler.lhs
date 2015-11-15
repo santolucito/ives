@@ -104,7 +104,7 @@ Creates the executable that will generate examples for the function in the file 
 >   hPutStrLn h   "main = do"
 >   hPutStrLn h   "  (_:size:_) <- getArgs"
 >   hPutStrLn h $ "  example <- genExample " ++ funcName ++ " (read size)"
->   hPutStrLn h   "  putStrLn $ show example"
+>   hPutStrLn h   "  print example"
 >   hPutStrLn h   ""
 >   hPutStrLn h   func
 >   hClose h
