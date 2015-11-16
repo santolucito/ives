@@ -154,6 +154,14 @@ the type signature datas that are curretnly unsupported
 >     isHigherOrder ty && hasInit ty
 
 
+> getInitHOFxn :: Type -> Type
+> getInitHOFxn ty = 
+>   let 
+>     f t = drop 2 $ tail $ tyFunToList t
+>   in
+>     foldr1 TyFun $ tyFunToList ty
+
+
 > exAsFunType :: Type -> Type
 > exAsFunType eTy =
 >   let
