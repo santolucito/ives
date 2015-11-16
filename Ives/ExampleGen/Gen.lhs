@@ -16,6 +16,7 @@
 > import Test.QuickCheck
 > import Test.QuickCheck.Gen
 > import Test.QuickCheck.Random
+> import Language.Haskell.Exts
 
 Placeholder
 
@@ -136,34 +137,61 @@ Useful for recycling examples as a function changes.
 > evalExample :: (Exampleable a) => a -> [AnyArbitrary] -> Maybe Example
 > evalExample a args = evalEx a args
 
-> genExamplesStr :: String -> Int -> Int -> IO (String, [String])
-> genExamplesStr f n size = do
->   temp <- createTemp f n size
+Generates n examples of the provided size for the function name provided as a string. 
+
+> genExamplesStr :: String -> Maybe FilePath -> Int -> Int -> IO (String, [String])
+> genExamplesStr f file n size = do
+>   mod <- case file of
+>     Just path -> do
+>       mod <- createModule f path
+>       return $ Just mod
+>     Nothing -> return $ Nothing
+>   program <- createProgram f mod n size
 > 
->   (e, out, err) <- readProcessWithExitCode "runhaskell" [temp] ""
->   removeFile temp
+>   (e, out, err) <- readProcessWithExitCode "runhaskell" [program] ""
+>   
+>   removeFile program
+>   case mod of
+>     Just path -> removeFile path
+>     Nothing -> return ()
+>     
 >   case e of
 >     ExitSuccess -> do
 >       let ty:examples = read out :: [String]
 >       return (ty, examples)
 >     ExitFailure _ -> error err
 
-> createTemp :: String -> Int -> Int -> IO String
-> createTemp f n size = do
+> createModule :: String -> FilePath -> IO String
+> createModule f path = do
+>   res <- parseFile path
+>   let Module _ _ pragmas _ _ imports decls = fromParseResult res
+>   
+>   dir <- getCurrentDirectory
+>   (temp, h) <- openTempFile dir path
+>   mapM_ ((hPutStrLn h) . prettyPrint) pragmas
+>   hPutStrLn h $ "module " ++ takeBaseName temp ++ " (" ++ f ++ ") where"
+>   mapM_ ((hPutStrLn h) . prettyPrint) imports
+>   mapM_ ((hPutStrLn h) . prettyPrint) decls
+>   hClose h
+>   return temp
+
+> createProgram :: String -> Maybe FilePath -> Int -> Int -> IO String
+> createProgram f mod n size = do
 >   dir <- getCurrentDirectory
 >   (temp, h) <- openTempFile dir (addExtension f "hs")
->   hPutStrLn h   "{-# LANGUAGE TemplateHaskell #-}"
->   hPutStrLn h   "import Ives.ExampleGen.Gen"
->   hPutStrLn h   "import Ives.ExampleGen.Conc"
->   hPutStrLn h   "import Control.Monad"
->   hPutStrLn h   "import Data.Typeable"
->   hPutStrLn h   ""
->   hPutStrLn h   "main :: IO ()"
->   hPutStrLn h   "main = do"
->   hPutStrLn h $ "  let f = $(send '" ++ f ++ ") :: $(concretify '" ++ f ++ ")"
->   hPutStrLn h $ "  examples <- replicateM " ++ show n ++ " (genExample f " ++ show size ++ ")"
->   hPutStrLn h $ "  print $ (show $ typeOf f) : (map show examples)"
->   hPutStrLn h   ""
+>   hPutStrLn h "{-# LANGUAGE TemplateHaskell #-}\n\
+>               \import Ives.ExampleGen.Gen\n\
+>               \import Ives.ExampleGen.Conc\n\
+>               \import Control.Monad\n\
+>               \import Data.Typeable"
+>   case mod of
+>     Just path -> hPutStrLn h $ "import " ++ takeBaseName path
+>     Nothing -> return ()
+>   hPutStrLn h $ "main :: IO ()\n\
+>                 \main = do\n\
+>                 \  let f = $(send '" ++ f ++ ") :: $(concretify '" ++ f ++ ")\n\
+>                 \  examples <- replicateM " ++ show n ++ " (genExample f " ++ show size ++ ")\n\
+>                 \  print $ (show $ typeOf f) : (map show examples)"
 >   hClose h
 >   return temp
 
