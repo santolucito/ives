@@ -185,8 +185,8 @@ Given a higher order function, we want all compenent functions that fit that typ
 The HO typ sig can generalize the example type, but so must the component sig 
 we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]->[Bool]
 
-> exCurry :: Show a => Sig -> a -> Sig
-> exCurry (name, ty) x = (Ident newName, ty)
+> exCurry :: Show a => Sig -> Type -> a -> Sig
+> exCurry (name, _) ty x = (Ident newName, ty)
 >  where newName = (toString name) ++ " (" ++ (show x) ++ ")"
 
 > coerceSig :: Type -> Sig -> [Sig]
@@ -195,9 +195,8 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >   then [cur]
 >   else case snd cur of
 >          TyFun (TyCon (UnQual (Ident "Int"))) fn ->
->            let sub = coerceSig target (fst cur, fn)
->                co ex = map (exCurry ex) [-2, -1, 0, 1, 2]
->             in concatMap co sub
+>            let fxns = map (exCurry cur fn) [-2, -1, 0, 1, 2]
+>             in concatMap (coerceSig target) fxns
 >          otherwise -> []
 
 > genComponentFxn :: Type -> (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
