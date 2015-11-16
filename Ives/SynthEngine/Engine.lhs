@@ -88,11 +88,6 @@ NB: a fair amount of time will be added for getting files from disk
    putStrLn "-------MATCHED FXNS-------"
    mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
 
-> fst3 (x,_,_) = x
-> snd3 (_,x,_) = x
-> trd3 (_,_,x) = x
-> fstsnd (x,y,_) = (x,y)
-
 the Synth time stage happens when the user wants to actaully get a fxn from an example set
 this one need to run as quickly as possible
 the "exs" should only be read here
@@ -205,3 +200,7 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 
 > sortWith f = sortBy (\x y -> compare (f x) (f y))
 
+> fst3 (x,_,_) = x
+> snd3 (_,x,_) = x
+> trd3 (_,_,x) = x
+> fstsnd (x,y,_) = (x,y)

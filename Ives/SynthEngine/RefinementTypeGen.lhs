@@ -9,6 +9,7 @@
 > import qualified Data.Text as T
 > import Control.Monad
 > import Data.List
+> import Data.Maybe
 > import Data.Either.Combinators
 > import Data.String.Utils
 > import Language.Haskell.Exts
@@ -65,7 +66,10 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 
 > addRType :: Code -> Sig -> IO(Sig, [(RType,RType)])
 > addRType c t = do
->   x <- rTypeAssign HigherOrderFxn c t 
+>   print $ getFxnType $ snd t --only test fxn where types match	
+>   print t
+>   let testR = isJust $ uncurry compareTypes $ lastTyps $ snd t --only test fxn where types match	
+>   x <- if testR then rTypeAssign HigherOrderFxn c t else return []
 >   return (t, x)
    
 > -- | a hof only fits if one of the rtypes overlaps with the one of the examples rtypes

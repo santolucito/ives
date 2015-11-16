@@ -151,6 +151,18 @@ the type signature datas that are curretnly unsupported
 >   in 
 >     (T.unpack . last $ init tf ,T.unpack $last tf)
 
+>-- | get last two types
+> lastTyps :: Type -> (Type,Type)
+> lastTyps (TyFun t1 t2) = 
+>   case t2 of
+>     (TyFun t21 t22) -> lastTyps t2
+>     otherwise -> (t1,t2)
+> lastTyps t = (t,t)
+
+> lastTyp :: Type -> Type
+> lastTyp (TyFun t1 t2) = lastTyp t2
+> lastTyp t = t
+
  order matters here! this needs formlization, draw a graph
    will return ranking, on how close the match is for weighting
    would be better to have somekind of haskell poset library
@@ -190,10 +202,6 @@ the type signature datas that are curretnly unsupported
 >                         TyTuple _ ts -> last ts
 >                         otherwise -> t --should be error
 > sndTyp x = x --this should be an error
-
-> lastTyp :: Type -> Type
-> lastTyp (TyFun t1 t2) = lastTyp t2
-> lastTyp t = t
 
 > tryAll :: [Either String b] -> String -> Either String b
 > tryAll [] e = Left e
