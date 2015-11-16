@@ -1,5 +1,8 @@
-﻿import System.Environment
+﻿{-# LANGUAGE TemplateHaskell #-}
+
+import System.Environment
 import Ives.ExampleGen.Gen
+import Ty
 
 main :: IO ()
 main = do
