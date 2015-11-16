@@ -1,17 +1,15 @@
-﻿import Ives.ExampleGen.Gen
-import System.Environment
+﻿import System.Environment
+import Ives.ExampleGen.Gen
 
 main :: IO ()
 main = do
-  f:_ <- getArgs
-  examples <- genExamplesStr f 5 10
+  let n = 1
+  let size = 10
+  args <- getArgs
+  examples <- case length args of
+    1 -> genExamplesStr (args!!0) Nothing n size
+    2 -> genExamplesStr (args!!0) (Just $ args!!1) n size
   print examples
-
---   example <- genExample (map :: (Int -> Int) -> [Int] -> [Int]) 10
---   let (a0, a1, r) = extract (arguments example) (result example)
---   print (a0 1)
---   print a1
---   print r
 
 -- extract :: [AnyArbitrary] -> AnyExampleable -> ((Int -> Int), [Int], [Int])
 -- extract args res = (a0, a1, r)
