@@ -102,8 +102,8 @@ data Module = Module
 ================================
 
 > -- | if we are able to get a component fxn sig, it must be a higher order fxn
-> isHigherOrder :: Sig -> Bool
-> isHigherOrder = isRight. getComp. snd
+> isHigherOrder :: Type -> Bool
+> isHigherOrder = isRight. getComp
 
 > -- | assume that the component fxn signature will be a fxn typ surrounded by parens 
 > getComp :: Type -> Either String Type
@@ -129,6 +129,31 @@ the type signature datas that are curretnly unsupported
    TySplice s       -> u   -- ^ template haskell splice type
    TyBang b t       -> u-- ^ Strict type marked with \"@!@\" or type marked with UNPACK pragma.
 
+> tyFunToList :: Type -> [Type]
+> tyFunToList ty = case ty of 
+>   TyFun t1 t2      -> tyFunToList t1 ++ tyFunToList t2
+>   TyParen t1       -> tyFunToList t1
+>   TyForall m c t   -> tyFunToList t
+>   TyList  t        -> tyFunToList t
+>   TyParArray t     -> tyFunToList t
+>   TyApp   t1 t2    -> tyFunToList t2
+>   TyKind  t k      -> tyFunToList t  
+>   TyTuple b ts     -> [TyTuple b ts] 
+>   TyVar   n        -> [TyVar n]
+>   TyCon   qn       -> [TyCon qn]
+>   otherwise        -> [] --unsupported
+
+> -- |if we are working witha  HOFxn like fold
+> --  where we need an initial value to use it
+> isInitHOFxn :: Type -> Bool
+> isInitHOFxn ty = 
+>   let 
+>     f t = drop 2 $ tail $ tyFunToList t
+>     hasInit ty = not $ null $ tyFunToList ty
+>   in
+>     isHigherOrder ty && hasInit ty
+
+
 > exAsFunType :: Type -> Type
 > exAsFunType eTy =
 >   let
@@ -151,7 +176,7 @@ the type signature datas that are curretnly unsupported
 >   in 
 >     (T.unpack . last $ init tf ,T.unpack $last tf)
 
->-- | get last two types
+> -- | get last two types
 > lastTyps :: Type -> (Type,Type)
 > lastTyps (TyFun t1 t2) = 
 >   case t2 of

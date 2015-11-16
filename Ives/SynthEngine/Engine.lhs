@@ -58,7 +58,7 @@ NB: a fair amount of time will be added for getting files from disk
 > 
 >   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >
->   let f i tys = map (,Just i) $ filter isHigherOrder tys
+>   let f i tys = map (,Just i) $ filter (isHigherOrder.snd) tys
 >
 >   let uHOTyps = f 3000 typSigs
 >   let iHOTyps = f 2000 importSigs
