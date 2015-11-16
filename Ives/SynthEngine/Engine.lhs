@@ -108,7 +108,8 @@ First we want to rank our higher order functions
 
 then with the ranks, begin searching for a program
 
->   let hoFxns = filter (matchRType exsRTyp) (map fstsnd hoTyps')
+>   let hoFxns' = filter (matchRType exsRTyp) (map fstsnd hoTyps')
+>   let hoFxns  = if exsRTyp==[noRType] then genInitValues hoFxns' else hoFxns'
 >   let candidateFxns = makeFxns (snd exsTyp) hoFxns allTyps
 >   mapM print hoTyps
 >   mapM print (map fstsnd hoTyps')
@@ -180,6 +181,8 @@ we need to compose these functions and run them on the examples until we find on
 >     codePieces = map (\x -> (fst x,genComponentFxn exTy x allTyps)) hoFxnSig --a list of compnent fxns for each hofxn
 >   in
 >     buildFxns codePieces
+
+> genInitValues = id
 
 Given a higher order function, we want all compenent functions that fit that type sig
 The HO typ sig can generalize the example type, but so must the component sig 
