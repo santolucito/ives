@@ -99,7 +99,7 @@ executable Exampler
                        hinotify >=0.3,
                        process >=1.1,
                        directory >=1.2,
-                       filepath >=1.4,
+                       filepath >=1.2,
                        temporary >=1.2
   
   -- Base language which the package is written in.

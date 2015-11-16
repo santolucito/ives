@@ -71,8 +71,8 @@ NB: a fair amount of time will be added for getting files from disk
 >   mapM print typSigs
 >   hoRTyps <- mapM (addRType fc) (map fst allHOTyps)
 >   let hoRTypsW = zipWith (\(t,r) w -> (t,r,w)) hoRTyps (map snd allHOTyps)
-> --  return (hoRTypsW, typSigs++importSigs++preludeTypSigs)
->   return (hoRTypsW, typSigs++importSigs)
+>   return (hoRTypsW, typSigs++importSigs++preludeTypSigs)
+>  -- return (hoRTypsW, typSigs++importSigs)
 
 
    let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
@@ -88,11 +88,6 @@ NB: a fair amount of time will be added for getting files from disk
    putStrLn "-------MATCHED FXNS-------"
    mapM_ (\((l,r),w) -> f' l >> f' (lastTyp r)>> f' w) p'
 
-> fst3 (x,_,_) = x
-> snd3 (_,x,_) = x
-> trd3 (_,_,x) = x
-> fstsnd (x,y,_) = (x,y)
-
 the Synth time stage happens when the user wants to actaully get a fxn from an example set
 this one need to run as quickly as possible
 the "exs" should only be read here
@@ -101,7 +96,10 @@ synth will need the code file with examples, and all the HOFxns with RTypes
 > synthTime :: Code -> [(Sig,[(RType,RType)],Maybe Int)] -> [Sig] -> IO()
 > synthTime c hoTyps allTyps = do
 >   let exsTyp = fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps
->   exsRTyp  <- rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
+>   let exsTyMatch = isJust $ uncurry compareTypes $ getExType $ snd exsTyp
+>   exsRTyp  <- if exsTyMatch 
+>               then rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
+>               else return [noRType]
 
 First we want to rank our higher order functions
 
@@ -186,22 +184,25 @@ Given a higher order function, we want all compenent functions that fit that typ
 The HO typ sig can generalize the example type, but so must the component sig 
 we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]->[Bool]
 
+> coerceSig :: Type -> Sig -> [Sig]
+> coerceSig target cur =
+>   if (isJust (isConcreteTypeOf (snd cur) target))
+>   then [cur]
+>   else []
+
 > genComponentFxn :: Type -> (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
 > genComponentFxn exTy hofxnSig allTyps = 
 >  let
 >    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
->    p s f i1 i2 = trace (s++"\n"++show i1++" --- "++(show i2)++"\n||>"++(show $ f i1 i2)++"\n\n") $ f i1 i2 --use to print what you are comparing
->    f cs = filter (\thisCs -> 
->                     isJust (liftA2 (+) 
->                     (p "CS" isConcreteTypeOf (snd thisCs) cs) --this is short-circuting! (just by luck, im not that smart)
->                     (Just 0)
->                     --(p "EX" isConcreteTypeOf (exAsFunType exTy) (snd thisCs))
->                     )) 
->           allTyps
+>    f cs = concatMap (coerceSig cs) allTyps
 >  in
 >    case componentSig of
->      Left e -> []
+>      Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
 >      Right cs -> f cs
 
 > sortWith f = sortBy (\x y -> compare (f x) (f y))
 
+> fst3 (x,_,_) = x
+> snd3 (_,x,_) = x
+> trd3 (_,_,x) = x
+> fstsnd (x,y,_) = (x,y)

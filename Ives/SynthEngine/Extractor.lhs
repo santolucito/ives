@@ -132,15 +132,15 @@ the type signature datas that are curretnly unsupported
 > exAsFunType :: Type -> Type
 > exAsFunType eTy =
 >   let
->     inTy  = getExType 0 eTy
->     outTy = getExType 1 eTy
+>     inTy  = fst $ getExType eTy
+>     outTy = snd $ getExType eTy
 >   in
 >     TyFun inTy outTy
 
-> getExType :: Int -> Type -> Type
-> getExType n = \case
+> getExType :: Type -> (Type,Type)
+> getExType = \case
 >   TyList t -> case t of 
->                 TyTuple b ts -> ts !! n
+>                 TyTuple b ts -> (ts !! 0, ts !! 1)
 >                 otherwise -> error "examples are fucked"
 >   otherwise -> error "examples are fucked"
 
@@ -150,6 +150,18 @@ the type signature datas that are curretnly unsupported
 >     tf = map T.strip $ T.splitOn "->" $ T.pack $ prettyPrint s
 >   in 
 >     (T.unpack . last $ init tf ,T.unpack $last tf)
+
+>-- | get last two types
+> lastTyps :: Type -> (Type,Type)
+> lastTyps (TyFun t1 t2) = 
+>   case t2 of
+>     (TyFun t21 t22) -> lastTyps t2
+>     otherwise -> (t1,t2)
+> lastTyps t = (t,t)
+
+> lastTyp :: Type -> Type
+> lastTyp (TyFun t1 t2) = lastTyp t2
+> lastTyp t = t
 
  order matters here! this needs formlization, draw a graph
    will return ranking, on how close the match is for weighting
@@ -190,10 +202,6 @@ the type signature datas that are curretnly unsupported
 >                         TyTuple _ ts -> last ts
 >                         otherwise -> t --should be error
 > sndTyp x = x --this should be an error
-
-> lastTyp :: Type -> Type
-> lastTyp (TyFun t1 t2) = lastTyp t2
-> lastTyp t = t
 
 > tryAll :: [Either String b] -> String -> Either String b
 > tryAll [] e = Left e
