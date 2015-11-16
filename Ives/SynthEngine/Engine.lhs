@@ -96,7 +96,10 @@ synth will need the code file with examples, and all the HOFxns with RTypes
 > synthTime :: Code -> [(Sig,[(RType,RType)],Maybe Int)] -> [Sig] -> IO()
 > synthTime c hoTyps allTyps = do
 >   let exsTyp = fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps
->   exsRTyp  <- rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
+>   let exsTyMatch = isJust $ uncurry compareTypes $ getExType $ snd exsTyp
+>   exsRTyp  <- if exsTyMatch 
+>               then rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
+>               else return [noRType]
 
 First we want to rank our higher order functions
 
