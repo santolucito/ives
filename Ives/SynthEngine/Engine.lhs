@@ -112,7 +112,6 @@ then with the ranks, begin searching for a program
 >   let candidateFxns = makeFxns (snd exsTyp) hoFxns allTyps
 >   mapM print hoTyps
 >   mapM print (map fstsnd hoTyps')
->--   putStrLn $ show allTyps
 >   print candidateFxns
 >   validProgs <- applyAll c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
@@ -187,11 +186,11 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 
 > exCurry :: Show a => Sig -> Type -> a -> Sig
 > exCurry (name, _) ty x = (Ident newName, ty)
->  where newName = (toString name) ++ " (" ++ (show x) ++ ")"
+>   where newName = toString name ++ " (" ++ show x ++ ")"
 
 > coerceSig :: Type -> Sig -> [Sig]
 > coerceSig target cur =
->     if (isJust (isConcreteTypeOf (snd cur) target))
+>     if isJust (isConcreteTypeOf (snd cur) target)
 >     then [cur]
 >     else case snd cur of
 >            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn [-2, -1, 0, 1, 2]
@@ -199,7 +198,7 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >            TyFun (TyCon (UnQual (Ident "Double"))) fn -> dfl cur fn [0.0, 1.0]
 >            TyFun (TyList _) fn -> dfl cur fn ["[]"]
 >            otherwise -> []
->   where dfl cur fn xs = concatMap (coerceSig target) $ map (exCurry cur fn) xs
+>   where dfl cur fn = concatMap (coerceSig target . exCurry cur fn)
 
 > genComponentFxn :: Type -> (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
 > genComponentFxn exTy hofxnSig allTyps = 
