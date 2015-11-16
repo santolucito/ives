@@ -10,6 +10,7 @@
 > import Data.List
 > import Data.Char
 > import Data.Maybe
+> import Data.Function
 > import Data.Either.Combinators
 > import Control.Monad
 > import Control.Applicative
@@ -165,7 +166,7 @@ we need to compose these functions and run them on the examples until we find on
 >     f = map (toString.fst) 
 >     (hs,cs) = unzip cands
 >     csNames = zip (f hs) (map f cs) :: [(String,[String])]
->     f' (h,c) = map ((h ++ " ")++) c
+>     f' (h,c) = map (\cm -> h ++ " (" ++ cm ++ ")") c
 >     x = map f' csNames
 >   in
 >     concat x
@@ -184,23 +185,29 @@ Given a higher order function, we want all compenent functions that fit that typ
 The HO typ sig can generalize the example type, but so must the component sig 
 we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]->[Bool]
 
+> exCurry :: Show a => Sig -> a -> Sig
+> exCurry (name, ty) x = (Ident newName, ty)
+>  where newName = (toString name) ++ " (" ++ (show x) ++ ")"
+
 > coerceSig :: Type -> Sig -> [Sig]
 > coerceSig target cur =
 >   if (isJust (isConcreteTypeOf (snd cur) target))
 >   then [cur]
->   else []
+>   else case snd cur of
+>          TyFun (TyCon (UnQual (Ident "Int"))) fn ->
+>            let sub = coerceSig target (fst cur, fn)
+>                co ex = map (exCurry ex) [-2, -1, 0, 1, 2]
+>             in concatMap co sub
+>          otherwise -> []
 
 > genComponentFxn :: Type -> (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
 > genComponentFxn exTy hofxnSig allTyps = 
->  let
->    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
->    f cs = concatMap (coerceSig cs) allTyps
->  in
->    case componentSig of
->      Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
->      Right cs -> f cs
+>  let componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
+>   in case componentSig of
+>        Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
+>        Right cs -> concatMap (coerceSig cs) allTyps
 
-> sortWith f = sortBy (\x y -> compare (f x) (f y))
+> sortWith f = sortBy (compare `on` f)
 
 > fst3 (x,_,_) = x
 > snd3 (_,x,_) = x
