@@ -191,13 +191,15 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 
 > coerceSig :: Type -> Sig -> [Sig]
 > coerceSig target cur =
->   if (isJust (isConcreteTypeOf (snd cur) target))
->   then [cur]
->   else case snd cur of
->          TyFun (TyCon (UnQual (Ident "Int"))) fn ->
->            let fxns = map (exCurry cur fn) [-2, -1, 0, 1, 2]
->             in concatMap (coerceSig target) fxns
->          otherwise -> []
+>     if (isJust (isConcreteTypeOf (snd cur) target))
+>     then [cur]
+>     else case snd cur of
+>            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn [-2, -1, 0, 1, 2]
+>            TyFun (TyCon (UnQual (Ident "Integer"))) fn -> dfl cur fn [-2, -1, 0, 1, 2]
+>            TyFun (TyCon (UnQual (Ident "Double"))) fn -> dfl cur fn [0.0, 1.0]
+>            TyFun (TyList _) fn -> dfl cur fn ["[]"]
+>            otherwise -> []
+>   where dfl cur fn xs = concatMap (coerceSig target) $ map (exCurry cur fn) xs
 
 > genComponentFxn :: Type -> (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
 > genComponentFxn exTy hofxnSig allTyps = 
