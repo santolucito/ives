@@ -71,8 +71,8 @@ NB: a fair amount of time will be added for getting files from disk
 >   mapM print typSigs
 >   hoRTyps <- mapM (addRType fc) (map fst allHOTyps)
 >   let hoRTypsW = zipWith (\(t,r) w -> (t,r,w)) hoRTyps (map snd allHOTyps)
-> --  return (hoRTypsW, typSigs++importSigs++preludeTypSigs)
->   return (hoRTypsW, typSigs++importSigs)
+>   return (hoRTypsW, typSigs++importSigs++preludeTypSigs)
+>  -- return (hoRTypsW, typSigs++importSigs)
 
 
    let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
