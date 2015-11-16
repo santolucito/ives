@@ -8,7 +8,10 @@ import Language.Haskell.TH.Syntax
 
 concretify :: Name -> Q Type
 concretify nm = do
-  VarI _ ty _ _ <- reify nm
+  info <- reify nm
+  let ty = case info of
+        VarI _ ty _ _ -> ty
+        ClassOpI _ ty _ _ -> ty
   Just conTy <- lookupTypeName "Int"
   return $ conc (ConT conTy) ty
 
