@@ -97,7 +97,7 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 >   appendFile tmp fc
 >   S.shelly $ S.errExit False $ S.bash_ "liquid" [T.pack tmp,">tmp/liquid.results 2>&1"]
 >   result <- liftM isSafe (S.shelly $ S.readfile "tmp/liquid.results")
->   putStrLn $ namedTy ++" ||> "++(show result)
+>   --putStrLn $ namedTy ++" ||> "++(show result)
 >   return result
 
 > injectRExType :: Sig -> RType -> RType
