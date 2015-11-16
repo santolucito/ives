@@ -132,15 +132,15 @@ the type signature datas that are curretnly unsupported
 > exAsFunType :: Type -> Type
 > exAsFunType eTy =
 >   let
->     inTy  = getExType 0 eTy
->     outTy = getExType 1 eTy
+>     inTy  = fst $ getExType eTy
+>     outTy = snd $ getExType eTy
 >   in
 >     TyFun inTy outTy
 
-> getExType :: Int -> Type -> Type
-> getExType n = \case
+> getExType :: Type -> (Type,Type)
+> getExType = \case
 >   TyList t -> case t of 
->                 TyTuple b ts -> ts !! n
+>                 TyTuple b ts -> (ts !! 0, ts !! 1)
 >                 otherwise -> error "examples are fucked"
 >   otherwise -> error "examples are fucked"
 

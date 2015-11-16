@@ -51,6 +51,7 @@ fst (a :-> b) = a
 >   ( "{-@ ?f? :: _ -> i:?intype? -> {o:?outtype? | (len i) "++op ++" (len o)} @-}"  --for higher order fxns
 >   , "{-@ ?f? :: [(?intype?,?outtype?)<{\\i o -> (len i) "++op++" (len o)}>] @-}" ) --for examples
 
+> noRType = ("NORTYPE","NORTYPE")
 
 ------ Algorithm ----------
 1) try to assign *every* rtype to *every* identifier definied in the file
@@ -69,7 +70,7 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 >   print $ getFxnType $ snd t --only test fxn where types match	
 >   print t
 >   let testR = isJust $ uncurry compareTypes $ lastTyps $ snd t --only test fxn where types match	
->   x <- if testR then rTypeAssign HigherOrderFxn c t else return []
+>   x <- if testR then rTypeAssign HigherOrderFxn c t else return [noRType]
 >   return (t, x)
    
 > -- | a hof only fits if one of the rtypes overlaps with the one of the examples rtypes
@@ -101,8 +102,8 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 
 > injectRExType :: Sig -> RType -> RType
 > injectRExType fxn baseRTy =
->   let f i s r = replace s (prettyPrint $ getExType i $ snd fxn) r
->   in f 1 "?outtype?" $ f 0 "?intype?" baseRTy
+>   let f sel s r = replace s (prettyPrint $ sel $ getExType $ snd fxn) r
+>   in f snd "?outtype?" $ f fst "?intype?" baseRTy
      
 > injectRFxnType :: Sig -> RType -> RType
 > injectRFxnType fxn baseRTy =
