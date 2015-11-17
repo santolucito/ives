@@ -18,7 +18,6 @@ mapR f (x:xs)= mapR f xs ++ [f x]
 f :: a -> [a]
 f x = [x,x]
 
---and wants to use it synthesize
-
+-- map2 id, map f
 exs :: [([Int],[Int])]
 exs=[ ([1, 2, 3],[1, 1, 2, 2, 3, 3]) ]

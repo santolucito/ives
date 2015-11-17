@@ -1,6 +1,8 @@
+> {-# LANGUAGE LambdaCase #-}
 > module Ives.SynthEngine.Types where
 
 > import Language.Haskell.Exts
+> import Language.Haskell.Exts.Pretty
 
 > data SynthSrc = HigherOrderFxn | Example
 > type Code = String -- maybe use Text?
@@ -11,3 +13,9 @@ http://hackage.haskell.org/package/haskell-src-exts-1.16.0.1/docs/Language-Haske
 > type RType = String
 
 > type Sig = (Name,Type)
+
+
+> toString :: Name -> String
+> toString = \case
+>   Ident s -> s
+>   Symbol s -> s 

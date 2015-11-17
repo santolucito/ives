@@ -13,7 +13,6 @@
 > import Data.Either
 > import Data.Function
 > import Data.Either.Combinators
-> import qualified Data.Map.Strict as Map
 
 > import Control.Monad
 > import Control.Applicative
@@ -76,7 +75,7 @@ NB: a fair amount of time will be added for getting files from disk
 >   hoRTyps <- mapM (addRType fc) (map fst allHOTyps)
 >   let hoRTypsW = zipWith (\(t,r) w -> (t,r,w)) hoRTyps (map snd allHOTyps)
 >   return (hoRTypsW, typSigs++importSigs++preludeTypSigs)
->  -- return (hoRTypsW, typSigs++importSigs)
+> --  return (hoRTypsW, typSigs++importSigs)
 
 
    let exsTyp = fromJust $ find (\x->"exs"==(toString$fst x)) typSigs
@@ -117,9 +116,9 @@ then with the ranks, begin searching for a program
 >   let candidateFxns = makeFxns (snd exsTyp) (map fst hoFxns) allTyps
 > --  mapM print (map fstsnd hoTyps')
 >   print candidateFxns
-> --  validProgs <- applyAll c candidateFxns
+>   validProgs <- applyAll c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
-> --  mapM_ (putStrLn.("* "++)) validProgs
+>   mapM_ (putStrLn.("* "++)) validProgs
 
 
 ==================== Move this stuff =================
@@ -134,8 +133,6 @@ then with the ranks, begin searching for a program
 
 some nice printers
 
-> --f' :: Pretty a => a -> IO()
-> -- f' = putStrLn . prettyPrint
 
 
 when we finally have some functions and we want to check if the satisfy the examples
@@ -176,8 +173,8 @@ we need to compose these functions and run them on the examples until we find on
 >   let 
 >     sOn hTy n = specializeOn (exAsFunType exTy) hTy
 >     hoFxnSig' = map (\s -> (fst s, sOn (snd s) (fst s))) hoFxnSig
->     codePieces = map (\x -> (x,genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
->     hoWithComp = trace (show codePieces) buildFxns codePieces :: [Sig]--with comp fxn applied
+>     codePieces = map (\x -> (x,t3 genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
+>     hoWithComp = buildFxns codePieces :: [Sig]--with comp fxn applied
 >     needsInit t = (length $ tyFunToList t)>2
 >     finalTy t = TyFun (fst $lastTyps t) (snd$ lastTyps t)
 >     hoWithInit = concatMap (\t -> if trace ((show $fst t) ++ "\n"++
@@ -188,41 +185,6 @@ we need to compose these functions and run them on the examples until we find on
 >                                   else [t]) hoWithComp
 >   in
 >     map (toString.fst) $ hoWithInit
-
-> -- | instantiate the tyVars in abstTy with the TyCons in concTy
-> --   we assume that the concTy is the ex fxn for the abstTy (a higher order fxn)
-> specializeOn :: Type -> Type -> Type
-> specializeOn concTy abstTy = 
->   let
->     abstTyFxn = lastAsFunType abstTy
->     funMap = makeFunMap concTy (lastAsFunType abstTy) Map.empty
->   in
->     replaceTysIn abstTy funMap
-
-> replaceTysIn :: Type -> Map.Map Type Type -> Type
-> replaceTysIn (TyVar n) m = fromMaybe (TyVar n)  (Map.lookup (TyVar n) m)
-> replaceTysIn (TyCon n) m = TyCon n 
-> replaceTysIn (TyApp t1 t2) m = TyApp (replaceTysIn t1 m) (replaceTysIn t2 m)
-> replaceTysIn (TyFun t1 t2) m = TyFun (replaceTysIn t1 m) (replaceTysIn t2 m)
-> replaceTysIn (TyList t) m = TyList (replaceTysIn t m)
-> replaceTysIn (TyParen t) m = TyParen (replaceTysIn t m)
-> replaceTysIn ty m = ty --add tuple case!
-
-> makeFunMap :: Type -> Type -> Map.Map Type Type -> Map.Map Type Type
-> makeFunMap (TyCon _) (TyCon _) m = m --its not gonna work out between us
-> makeFunMap (TyCon n) ty m = Map.insert ty (TyCon n) m --this might be too strong
-> makeFunMap (TyVar n) (TyVar n') m = m
-> makeFunMap (TyParen t1) (TyParen t2) m = makeFunMap t1 t2 m
-> makeFunMap (TyList t1) (TyList t2) m = makeFunMap t1 t2 m
-> makeFunMap (TyTuple _ ts1) (TyTuple _ ts2) m =  m --if we hit a tuple give up, TODO FIX THIS
-> makeFunMap (TyParArray t1) (TyParArray t2) m = makeFunMap t1 t2 m
-> makeFunMap (TyApp t11 t12) (TyApp t21 t22) m = Map.union (makeFunMap t11 t21 m) (makeFunMap t12 t22 m)
-> makeFunMap (TyFun t11 t12) (TyFun t21 t22) m = Map.union (makeFunMap t11 t21 m) (makeFunMap t12 t22 m)
-> makeFunMap (TyKind t1 _) (TyKind t2 _) m = makeFunMap t1 t2 m
-> makeFunMap (TyForall _ _ t1) (TyForall _ _ t2) m = makeFunMap t1 t2 m
-> makeFunMap _ _ m = m
-
-
 
 
 take a higher order function that still needs some initial values to be ready for application to examples
@@ -247,9 +209,12 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 > exCurry (name, _) ty x = (Ident newName, ty)
 >   where newName = toString name ++ " (" ++ x ++ ")"
 
+
+> -- | turn a current sig in to a target, by applying all different combos of init vals
 > coerceSig :: Type -> Sig -> [Sig]
 > coerceSig target cur =
->     if isJust (isConcreteTypeOf (snd cur) target)
+>     if isJust (isConcreteTypeOf (snd cur) target) ||
+>        isJust (isConcreteTypeOf target (snd cur))
 >     then [cur]
 >     else case snd cur of
 >            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2"]
@@ -265,9 +230,30 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >    componentSig = getComp $ snd hofxnSig :: Either String Type
 >    progs = case componentSig of
 >              Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
->              Right cs -> concatMap (coerceSig cs) allTyps
+>              Right cs -> concatMap (\t -> t2 coerceSig cs t) allTyps
 >  in
 >    progs
+
+> --f' :: Pretty a => a -> IO()
+> -- f' = putStrLn . prettyPrint
+
+> t1 p1 = trace (show p1) p1
+
+> t2 f p1 p2 =
+>   let 
+>     s1 = prettyPrint p1
+>     s2 = (toString $fst p2) ++" :: "++ (prettyPrint $snd p2)
+>    -- s2 = prettyPrint p2
+>    in trace ("Testing with\n"++s1++",\n"++s2++" =\n"++
+>             (show $ f p1 p2)++"\n\n") (f p1 p2)
+
+> t3 f p1 p2 p3 =
+>   let 
+>     s1 = prettyPrint p1
+>     s2 = (toString $fst p2) ++ (prettyPrint $snd p2)
+>     s3 = ""
+>    in trace ("Testing with\n"++s1++",\n"++s2++","++s3++" =\n"++
+>             (show $ f p1 p2 p3)++"\n\n") (f p1 p2 p3)
 
 > sortWith f = sortBy (compare `on` f)
 

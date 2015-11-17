@@ -7,6 +7,7 @@
 > import qualified Data.Char as C
 > import Data.Either.Combinators
 > import Data.Maybe
+> import qualified Data.Map.Strict as Map
 > import Control.Applicative
 
 > import Language.Haskell.GhcMod
@@ -80,10 +81,6 @@ The approach here is just fine since we put everything into the haskell-src-exts
 >     TypeSig _ n _-> n
 >     otherwise -> [Ident "Never do this"]
 
-> toString :: Name -> String
-> toString = \case
->   Ident s -> s
->   Symbol s -> s 
 
 > showImport :: ImportDecl -> String
 > showImport (ImportDecl _ mn _ _ _ _ _ _) = 
@@ -136,9 +133,9 @@ the type signature datas that are curretnly unsupported
 >   TyParArray t     -> tyFunToList t
 >   TyApp   t1 t2    -> tyFunToList t2
 >   TyKind  t k      -> tyFunToList t  
+>   TyParen t1       -> [ty] --this will unravel the component fxns
 >   TyTuple b ts     -> [TyTuple b ts] 
 >   TyList  t        -> [ty]
->   TyParen t1       -> [ty]
 >   TyVar   n        -> [ty]
 >   TyCon   qn       -> [ty]
 >   otherwise        -> [] --unsupported
@@ -214,6 +211,10 @@ the type signature datas that are curretnly unsupported
 > isConcreteTypeOf = compareTypes
 > compareTypes (TyParen t1) (TyParen t2) = 
 >   fmap (1+) $ compareTypes t1 t2
+> compareTypes (t1) (TyParen t2) = 
+>   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyParen t1) (t2) = 
+>   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = 
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyList t1) (TyList t2) = 
@@ -249,4 +250,39 @@ the type signature datas that are curretnly unsupported
 >   case c of 
 >     Right r -> Right r --should only have one succesful result, so just stop here 
 >     Left e1 -> tryAll cs (e++e1) --carry all the errors in case we fail in the end
+
+
+> -- | instantiate the tyVars in abstTy with the TyCons in concTy
+> --   we assume that the concTy is the ex fxn for the abstTy (a higher order fxn)
+> specializeOn :: Type -> Type -> Type
+> specializeOn concTy abstTy = 
+>   let
+>     abstTyFxn = lastAsFunType abstTy
+>     funMap = makeFunMap concTy (lastAsFunType abstTy) Map.empty
+>   in
+>     replaceTysIn abstTy funMap
+
+> replaceTysIn :: Type -> Map.Map Type Type -> Type
+> replaceTysIn (TyVar n) m = fromMaybe (TyVar n)  (Map.lookup (TyVar n) m)
+> replaceTysIn (TyCon n) m = TyCon n 
+> replaceTysIn (TyApp t1 t2) m = TyApp (replaceTysIn t1 m) (replaceTysIn t2 m)
+> replaceTysIn (TyFun t1 t2) m = TyFun (replaceTysIn t1 m) (replaceTysIn t2 m)
+> replaceTysIn (TyList t) m = TyList (replaceTysIn t m)
+> replaceTysIn (TyParen t) m = TyParen (replaceTysIn t m)
+> replaceTysIn ty m = ty --add tuple case!
+
+> makeFunMap :: Type -> Type -> Map.Map Type Type -> Map.Map Type Type
+> makeFunMap (TyCon _) (TyCon _) m = m --its not gonna work out between us
+> makeFunMap (TyCon n) ty m = Map.insert ty (TyCon n) m --this might be too strong
+> makeFunMap (TyVar n) (TyVar n') m = m
+> makeFunMap (TyParen t1) (TyParen t2) m = makeFunMap t1 t2 m
+> makeFunMap (TyList t1) (TyList t2) m = makeFunMap t1 t2 m
+> makeFunMap (TyTuple _ ts1) (TyTuple _ ts2) m =  m --if we hit a tuple give up, TODO FIX THIS
+> makeFunMap (TyParArray t1) (TyParArray t2) m = makeFunMap t1 t2 m
+> makeFunMap (TyApp t11 t12) (TyApp t21 t22) m = Map.union (makeFunMap t11 t21 m) (makeFunMap t12 t22 m)
+> makeFunMap (TyFun t11 t12) (TyFun t21 t22) m = Map.union (makeFunMap t11 t21 m) (makeFunMap t12 t22 m)
+> makeFunMap (TyKind t1 _) (TyKind t2 _) m = makeFunMap t1 t2 m
+> makeFunMap (TyForall _ _ t1) (TyForall _ _ t2) m = makeFunMap t1 t2 m
+> makeFunMap _ _ m = m
+
 
