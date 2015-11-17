@@ -132,34 +132,33 @@ the type signature datas that are curretnly unsupported
 > tyFunToList :: Type -> [Type]
 > tyFunToList ty = case ty of 
 >   TyFun t1 t2      -> tyFunToList t1 ++ tyFunToList t2
->   TyParen t1       -> tyFunToList t1
 >   TyForall m c t   -> tyFunToList t
->   TyList  t        -> tyFunToList t
 >   TyParArray t     -> tyFunToList t
 >   TyApp   t1 t2    -> tyFunToList t2
 >   TyKind  t k      -> tyFunToList t  
 >   TyTuple b ts     -> [TyTuple b ts] 
->   TyVar   n        -> [TyVar n]
->   TyCon   qn       -> [TyCon qn]
+>   TyList  t        -> [ty]
+>   TyParen t1       -> [ty]
+>   TyVar   n        -> [ty]
+>   TyCon   qn       -> [ty]
 >   otherwise        -> [] --unsupported
 
-> -- |if we are working witha  HOFxn like fold
-> --  where we need an initial value to use it
-> isInitHOFxn :: Type -> Bool
-> isInitHOFxn ty = 
->   let 
->     f t = drop 2 $ tail $ tyFunToList t
->     hasInit ty = not $ null $ tyFunToList ty
->   in
->     isHigherOrder ty && hasInit ty
+ -- |if we are working witha  HOFxn like fold
+ --  where we need an initial value to use it
+ isInitHOFxn :: Type - Bool
+ isInitHOFxn ty = 
+   let 
+     f t = drop 2 $ tail $ tyFunToList t
+     hasInit ty = not $ null $ tyFunToList ty
+   in
+     isHigherOrder ty && hasInit ty
 
-
-> getInitHOFxn :: Type -> Type
-> getInitHOFxn ty = 
->   let 
->     f t = drop 2 $ tail $ tyFunToList t
->   in
->     foldr1 TyFun $ tyFunToList ty
+ getInitHOFxn :: Type - Type
+ getInitHOFxn ty = 
+   let 
+     f t = drop 2 $ tail $ tyFunToList t
+   in
+     foldr1 TyFun $ tyFunToList ty
 
 
 > exAsFunType :: Type -> Type

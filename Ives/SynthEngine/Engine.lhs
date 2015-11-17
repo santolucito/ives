@@ -10,6 +10,7 @@
 > import Data.List
 > import Data.Char
 > import Data.Maybe
+> import Data.Either
 > import Data.Function
 > import Data.Either.Combinators
 > import Control.Monad
@@ -108,8 +109,7 @@ First we want to rank our higher order functions
 
 then with the ranks, begin searching for a program
 
->   let hoFxns' = filter (matchRType exsRTyp) (map fstsnd hoTyps')
->   let hoFxns  = if exsRTyp==[noRType] then genInitValues hoFxns' else hoFxns'
+>   let hoFxns = filter (matchRType exsRTyp) (map fstsnd hoTyps')
 >   let candidateFxns = makeFxns (snd exsTyp) hoFxns allTyps
 >   mapM print hoTyps
 >   mapM print (map fstsnd hoTyps')
@@ -161,16 +161,14 @@ each hofxn has a number of possible component fxns
 we need to compose these functions and run them on the examples until we find on that works.
 
 > -- | [hofxns,[componentFxns]] -> [Programs]
-> buildFxns :: [(Sig,[Sig])] -> [String]
+> buildFxns :: [(Sig,[Sig])] -> [Sig]
 > buildFxns cands =
 >   let
->     f = map (toString.fst) 
->     (hs,cs) = unzip cands
->     csNames = zip (f hs) (map f cs) :: [(String,[String])]
->     f' (h,c) = map (\cm -> h ++ " (" ++ cm ++ ")") c
->     x = map f' csNames
+>     newHOtyp hoTy = foldr1 TyFun $ tail $ tyFunToList hoTy
+>     f' (h,cs) = map (\c -> exCurry h (newHOtyp $ snd h) (toString$fst c) ) cs
+>     x = concatMap f' cands
 >   in
->     concat x
+>     x
 
      ["hofxns"]++map show hs ++ ["componentFxns"]++map show cs
 
@@ -179,10 +177,30 @@ we need to compose these functions and run them on the examples until we find on
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
 >   let 
 >     codePieces = map (\x -> (fst x,genComponentFxn exTy x allTyps)) hoFxnSig --a list of compnent fxns for each hofxn
+>     hoWithComp = buildFxns codePieces :: [Sig]--with comp fxn applied
+>     needsInit t = (length $ tyFunToList t)==2
+>     finalTy t = TyFun (fst $lastTyps t) (snd$ lastTyps t)
+>     hoWithInit = concatMap (\t -> if trace (show $ needsInit $snd t) needsInit $ snd t 
+>                                   then coerceSig (finalTy$ snd t) t
+>                                   else [t]) hoWithComp
 >   in
->     buildFxns codePieces
+>     map (toString.fst) $ hoWithInit
 
-> genInitValues = id
+
+
+take a higher order function that still needs some initial values to be ready for application to examples
+
+> genInitValues :: Sig -> [Sig]
+> genInitValues ty = 
+>   let
+>     (inTy,outTy) = lastTyps $ snd ty
+>     target = foldr1 TyFun [inTy,outTy]
+>     funList = tail $ tyFunToList $ snd ty 
+>     cur = (fst ty, if length funList ==0 then TyVar (Ident ":(") else foldr1 TyFun funList)
+>     newFxns' = trace (show target ++ "\n"++show cur) $ coerceSig target cur
+>     newFxns  = mapSnd (TyFun $ head $ rights $ [getComp (snd ty)]) newFxns'
+>   in 
+>     newFxns
 
 Given a higher order function, we want all compenent functions that fit that type sig
 The HO typ sig can generalize the example type, but so must the component sig 
@@ -204,10 +222,13 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 
 > genComponentFxn :: Type -> (Sig, [(RType, RType)]) -> [Sig] -> [Sig]
 > genComponentFxn exTy hofxnSig allTyps = 
->  let componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
->   in case componentSig of
->        Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
->        Right cs -> concatMap (coerceSig cs) allTyps
+>  let
+>    componentSig = getComp $ snd $ fst hofxnSig :: Either String Type
+>    progs = case componentSig of
+>              Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
+>              Right cs -> concatMap (coerceSig cs) allTyps
+>  in
+>    progs
 
 > sortWith f = sortBy (compare `on` f)
 
@@ -215,3 +236,14 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 > snd3 (_,x,_) = x
 > trd3 (_,_,x) = x
 > fstsnd (x,y,_) = (x,y)
+> mapSnd f = map (\(x,y) -> (x,f y))
+> mapFst f = map (\(x,y) -> (f x,y))
+
+
+
+
+
+
+
+
+
