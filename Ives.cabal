@@ -82,7 +82,8 @@ executable Ives
                        directory >=1.2,
                        filepath >=1.2,
                        temporary >=1.2,
-                       haskell-src-exts >=1.16
+                       haskell-src-exts >=1.16,
+                       containers >= 0.5.5.1
   
   -- Directories containing source files.
   -- hs-source-dirs:      

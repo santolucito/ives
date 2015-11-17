@@ -183,6 +183,14 @@ the type signature datas that are curretnly unsupported
 >   in 
 >     (T.unpack . last $ init tf ,T.unpack $last tf)
 
+> lastAsFunType :: Type -> Type
+> lastAsFunType eTy =
+>   let
+>     inTy  = fst $ lastTyps eTy
+>     outTy = snd $ lastTyps eTy
+>   in
+>     TyFun inTy outTy
+
 > -- | get last two types
 > lastTyps :: Type -> (Type,Type)
 > lastTyps (TyFun t1 t2) = 

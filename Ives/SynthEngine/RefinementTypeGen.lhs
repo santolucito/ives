@@ -67,8 +67,8 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 
 > addRType :: Code -> Sig -> IO(Sig, [(RType,RType)])
 > addRType c t = do
->   print $ getFxnType $ snd t --only test fxn where types match	
->   print t
+>   --print $ getFxnType $ snd t --only test fxn where types match	
+>   --print t
 >   let testR = isJust $ uncurry compareTypes $ lastTyps $ snd t --only test fxn where types match	
 >   x <- if testR then rTypeAssign HigherOrderFxn c t else return [noRType]
 >   return (t, x)
