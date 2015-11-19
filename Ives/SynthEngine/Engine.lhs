@@ -112,7 +112,8 @@ First we want to rank our higher order functions
 
 then with the ranks, begin searching for a program
 
->   let hoFxns = filter (matchRType exsRTyp) (map fstsnd hoTyps')
+>   let hoFxns1 = filter (matchRType exsRTyp) (map fstsnd hoTyps') 
+>   let hoFxns = filter (\(t,r) -> isJust $ isConcreteTypeOf (exAsFunType$ snd exsTyp) (lastAsFunType $snd t)) hoFxns1
 >   --mapM print hoFxns
 >   let candidateFxns = makeFxns (snd exsTyp) (map fst hoFxns) allTyps
 > --  mapM print (map fstsnd hoTyps')
