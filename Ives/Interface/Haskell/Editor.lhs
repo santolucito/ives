@@ -35,6 +35,9 @@
 
 > runCode c = 
 >   runInterpreter $ setImports ["Prelude"] >> interpret c (as::String)
+>   --fxnNames = map fst (getTypesfromCode c)
+>   --getExamples c fxnNames 
+
 
 > collect :: [Either InterpreterError String] -> [String]
 > collect (x:xs) =

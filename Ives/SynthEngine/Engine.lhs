@@ -73,6 +73,7 @@ NB: a fair amount of time will be added for getting files from disk
 > --  mapM print allHOTyps
 > --  mapM print typSigs
 >   hoRTyps <- mapM (addRType fc) (map fst allHOTyps)
+>   print $ length $ filter (\(s,r) -> r/=[]) hoRTyps
 >   let hoRTypsW = zipWith (\(t,r) w -> (t,r,w)) hoRTyps (map snd allHOTyps)
 >   return (hoRTypsW, typSigs++importSigs++preludeTypSigs)
 > --  return (hoRTypsW, typSigs++importSigs)
@@ -162,7 +163,7 @@ we need to compose these functions and run them on the examples until we find on
 > buildFxns cands =
 >   let
 >     newHOtyp hoTy = foldr1 TyFun $ tail $ tyFunToList hoTy
->     f' (h,cs) = map (\c -> exCurry h (newHOtyp $ snd h) (toString$fst c) ) cs
+>     f' (h,cs) = map (\c -> sigCurry h (newHOtyp $ snd h) (toString$fst c) ) cs
 >     x = concatMap f' cands
 >   in
 >     x
@@ -205,8 +206,8 @@ Given a higher order function, we want all compenent functions that fit that typ
 The HO typ sig can generalize the example type, but so must the component sig 
 we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]->[Bool]
 
-> exCurry :: Sig -> Type -> String -> Sig
-> exCurry (name, _) ty x = (Ident newName, ty)
+> sigCurry :: Sig -> Type -> String -> Sig
+> sigCurry (name, _) ty x = (Ident newName, ty)
 >   where newName = toString name ++ " (" ++ x ++ ")"
 
 
@@ -217,12 +218,13 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >        isJust (isConcreteTypeOf target (snd cur))
 >     then [cur]
 >     else case snd cur of
->            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2"]
+>            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2", "3"]
 >            TyFun (TyCon (UnQual (Ident "Integer"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2"]
 >            TyFun (TyCon (UnQual (Ident "Double"))) fn -> dfl cur fn ["0.0", "1.0"]
 >            TyFun (TyList _) fn -> dfl cur fn ["[]"]
+>            -- Instance of Monoid ->  dfl cur fn ["mempty"]
 >            otherwise ->  []
->   where dfl cur fn = concatMap (coerceSig target . exCurry cur fn)
+>   where dfl cur fn = concatMap (coerceSig target . sigCurry cur fn)
 
 > genComponentFxn :: Type -> Sig -> [Sig] -> [Sig]
 > genComponentFxn exTy hofxnSig allTyps = 
