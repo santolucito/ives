@@ -217,6 +217,10 @@ the type signature datas that are curretnly unsupported
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = 
 >   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyForall _ _ t1) t2 = 
+>   fmap (1+) $ compareTypes t1 t2
+> compareTypes t1 (TyForall _ _ t2) = 
+>   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyList t1) (TyList t2) = 
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyParArray t1) (TyParArray t2) =
@@ -255,12 +259,11 @@ the type signature datas that are curretnly unsupported
 > -- | instantiate the tyVars in abstTy with the TyCons in concTy
 > --   we assume that the concTy is the ex fxn for the abstTy (a higher order fxn)
 > specializeOn :: Type -> Type -> Type
-> specializeOn concTy abstTy = 
+> specializeOn concTy hoTy = 
 >   let
->     abstTyFxn = lastAsFunType abstTy
->     funMap = makeFunMap concTy (lastAsFunType abstTy) Map.empty
+>     typeMap = makeTypeMap concTy (lastAsFunType hoTy) Map.empty
 >   in
->     replaceTysIn abstTy funMap
+>     replaceTysIn hoTy typeMap
 
 > replaceTysIn :: Type -> Map.Map Type Type -> Type
 > replaceTysIn (TyVar n) m = fromMaybe (TyVar n)  (Map.lookup (TyVar n) m)
@@ -271,18 +274,18 @@ the type signature datas that are curretnly unsupported
 > replaceTysIn (TyParen t) m = TyParen (replaceTysIn t m)
 > replaceTysIn ty m = ty --add tuple case!
 
-> makeFunMap :: Type -> Type -> Map.Map Type Type -> Map.Map Type Type
-> makeFunMap (TyCon _) (TyCon _) m = m --its not gonna work out between us
-> makeFunMap (TyCon n) ty m = Map.insert ty (TyCon n) m --this might be too strong
-> makeFunMap (TyVar n) (TyVar n') m = m
-> makeFunMap (TyParen t1) (TyParen t2) m = makeFunMap t1 t2 m
-> makeFunMap (TyList t1) (TyList t2) m = makeFunMap t1 t2 m
-> makeFunMap (TyTuple _ ts1) (TyTuple _ ts2) m =  m --if we hit a tuple give up, TODO FIX THIS
-> makeFunMap (TyParArray t1) (TyParArray t2) m = makeFunMap t1 t2 m
-> makeFunMap (TyApp t11 t12) (TyApp t21 t22) m = Map.union (makeFunMap t11 t21 m) (makeFunMap t12 t22 m)
-> makeFunMap (TyFun t11 t12) (TyFun t21 t22) m = Map.union (makeFunMap t11 t21 m) (makeFunMap t12 t22 m)
-> makeFunMap (TyKind t1 _) (TyKind t2 _) m = makeFunMap t1 t2 m
-> makeFunMap (TyForall _ _ t1) (TyForall _ _ t2) m = makeFunMap t1 t2 m
-> makeFunMap _ _ m = m
+> makeTypeMap :: Type -> Type -> Map.Map Type Type -> Map.Map Type Type
+> makeTypeMap (TyCon _) (TyCon _) m = m --its not gonna work out between us
+> makeTypeMap (TyCon n) ty m = Map.insert ty (TyCon n) m --this might be too strong
+> makeTypeMap (TyVar n) (TyVar n') m = m
+> makeTypeMap (TyParen t1) (TyParen t2) m = makeTypeMap t1 t2 m
+> makeTypeMap (TyList t1) (TyList t2) m = makeTypeMap t1 t2 m
+> makeTypeMap (TyTuple _ ts1) (TyTuple _ ts2) m =  m --if we hit a tuple give up, TODO FIX THIS
+> makeTypeMap (TyParArray t1) (TyParArray t2) m = makeTypeMap t1 t2 m
+> makeTypeMap (TyApp t11 t12) (TyApp t21 t22) m = Map.union (makeTypeMap t11 t21 m) (makeTypeMap t12 t22 m)
+> makeTypeMap (TyFun t11 t12) (TyFun t21 t22) m = Map.union (makeTypeMap t11 t21 m) (makeTypeMap t12 t22 m)
+> makeTypeMap (TyKind t1 _) (TyKind t2 _) m = makeTypeMap t1 t2 m
+> makeTypeMap (TyForall _ _ t1) (TyForall _ _ t2) m = makeTypeMap t1 t2 m
+> makeTypeMap _ _ m = m
 
 
