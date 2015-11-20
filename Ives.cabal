@@ -83,7 +83,8 @@ executable Ives
                        filepath >=1.2,
                        temporary >=1.2,
                        haskell-src-exts >=1.16,
-                       containers >= 0.5.5.1
+                       containers >= 0.5.5.1,
+                       async >= 2.0
   
   -- Directories containing source files.
   -- hs-source-dirs:      

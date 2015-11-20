@@ -13,6 +13,10 @@
 > import Data.Either.Combinators
 > import Data.String.Utils
 > import Language.Haskell.Exts
+> import System.IO
+> import System.IO.Temp
+
+> import Control.Concurrent.Async
 
 > import Ives.SynthEngine.Types
 > import Ives.SynthEngine.Extractor
@@ -81,24 +85,26 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 > rTypeAssign s c fxn =
 >   let
 >     f = case s of
->           HigherOrderFxn -> (injectRFxnType fxn .fst)
->           Example -> (injectRExType fxn . snd)
->   in
->     filterM (test c fxn . f) templates
+>           HigherOrderFxn -> (injectRFxnType fxn . fst)
+>           Example        -> (injectRExType fxn . snd)
+>   in do
+>     results <- mapConcurrently (test c fxn . f) templates
+>     return $ map fst $ filter snd $ zip templates results
 
 > -- | check if a file (with a single definition) matches the RType using liquidhaskell
-> test :: Code -> Sig -> RType -> IO(Bool)
+> test :: Code -> Sig -> RType -> IO (Bool)
 > test fc fxn ty = do
 >   let fxnName = toString $ fst fxn
 >   let namedTy = replace "?f?" fxnName ty
 >
->   let tmp = "tmp/liquidTypeInjected.hs"
->   writeFile tmp (namedTy ++"\n")
->   appendFile tmp fc
->   S.shelly $ S.errExit False $ S.bash_ "liquid" [T.pack tmp,">tmp/liquid.results 2>&1"]
->   result <- liftM isSafe (S.shelly $ S.readfile "tmp/liquid.results")
->   putStrLn $ namedTy ++" ||> "++(show result)
->   return result
+>   withTempFile "tmp/" "lti.hs" $ \tmpName hnd -> do
+>     let outName = tmpName ++ ".results"
+>     hPutStrLn hnd (namedTy ++ "\n" ++ fc)
+>     hFlush hnd
+>     S.shelly $ S.errExit False $ S.bash_ "liquid" $ map T.pack [tmpName, ">" ++ outName ++ " 2>&1"]
+>     result <- liftM isSafe (S.shelly $ S.readfile $ S.fromText $ T.pack outName)
+>     putStrLn $ namedTy ++ " ||> " ++ show result
+>     return result
 
 > injectRExType :: Sig -> RType -> RType
 > injectRExType fxn baseRTy =
