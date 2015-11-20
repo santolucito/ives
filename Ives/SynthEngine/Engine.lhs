@@ -115,8 +115,10 @@ First we want to rank our higher order functions
 
 then with the ranks, begin searching for a program
 
->   let hoFxns1 = filter (matchRType exsRTyp) (map fstsnd hoTyps') 
->   let hoFxns = filter (\(t,r) -> isJust $ isConcreteTypeOf (exAsFunType$ snd exsTyp) (lastAsFunType $snd t)) hoFxns1
+>   let hoFxns1 = filter (matchRType exsRTyp) (map fstsnd hoTyps')
+>   let exFunType = exAsFunType $ snd exsTyp
+>   mapM print hoFxns1
+>   let hoFxns = filter (\(t,r) -> isJust $ isConcreteTypeOf exFunType (lastAsFunType $ snd t)) hoFxns1
 >   --mapM print hoFxns
 >   let candidateFxns = makeFxns (snd exsTyp) (map fst hoFxns) allTyps
 > --  mapM print (map fstsnd hoTyps')
@@ -141,7 +143,7 @@ when we finally have some functions and we want to check if the satisfy the exam
 
 > applyAll :: Code -> [String] -> IO [String]
 > applyAll fc fns =
->   let prog fx = fc ++ "\n\nmain = print $ and $ map (\\(i, o) -> ((" ++ fx ++ ") i) == o) exs\n"
+>   let prog fx = "import qualified Prelude as PPP\nimport Prelude\n" ++ fc ++ "\n\nmain = PPP.print $ PPP.and $ PPP.map (\\(i, o) -> ((" ++ fx ++ ") i) == o) exs\n"
 >       run fx = withTempFile "tmp/" "testCmptFxn.hs" $ \tmpName hnd -> do
 >           hPutStrLn hnd (prog fx)
 >           hFlush hnd
@@ -179,7 +181,7 @@ we need to compose these functions and run them on the examples until we find on
 >   let 
 >     sOn hTy n = specializeOn (exAsFunType exTy) hTy
 >     hoFxnSig' = map (\s -> (fst s, sOn (snd s) (fst s))) hoFxnSig
->     codePieces = map (\x -> (x,t3 genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
+>     codePieces = map (\x -> (x, genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
 >     hoWithComp = buildFxns codePieces :: [Sig]--with comp fxn applied
 >     needsInit t = (length $ tyFunToList t)>2
 >     finalTy t = TyFun (fst $lastTyps t) (snd$ lastTyps t)
@@ -226,6 +228,7 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2", "3"]
 >            TyFun (TyCon (UnQual (Ident "Integer"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2"]
 >            TyFun (TyCon (UnQual (Ident "Double"))) fn -> dfl cur fn ["0.0", "1.0"]
+>            TyFun (TyApp (TyApp (TyCon (UnQual (Ident "Map"))) _) _) fn -> dfl cur fn ["empty"]
 >            TyFun (TyList _) fn -> dfl cur fn ["[]"]
 >            -- Instance of Monoid ->  dfl cur fn ["mempty"]
 >            otherwise ->  []
@@ -237,7 +240,7 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >    componentSig = getComp $ snd hofxnSig :: Either String Type
 >    progs = case componentSig of
 >              Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
->              Right cs -> concatMap (\t -> t2 coerceSig cs t) allTyps
+>              Right cs -> concatMap (\t -> coerceSig cs t) allTyps
 >  in
 >    progs
 
@@ -246,11 +249,16 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 
 > t1 p1 = trace (show p1) p1
 
+> tr2 f p1 p2 = trace message result
+>   where pp1 = prettyPrint p1
+>         pp2 = prettyPrint p2
+>         result = f p1 p2
+>         message = "(" ++ pp1 ++ ", " ++ pp2 ++ ") -> " ++ show result ++ "\n"
+
 > t2 f p1 p2 =
 >   let 
 >     s1 = prettyPrint p1
->     s2 = (toString $fst p2) ++" :: "++ (prettyPrint $snd p2)
->    -- s2 = prettyPrint p2
+>     s2 = (toString $ fst p2) ++ " :: " ++ (prettyPrint $ snd p2)
 >    in trace ("Testing with\n"++s1++",\n"++s2++" =\n"++
 >             (show $ f p1 p2)++"\n\n") (f p1 p2)
 
@@ -270,12 +278,4 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 > fstsnd (x,y,_) = (x,y)
 > mapSnd f = map (\(x,y) -> (x,f y))
 > mapFst f = map (\(x,y) -> (f x,y))
-
-
-
-
-
-
-
-
 

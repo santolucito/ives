@@ -1,12 +1,10 @@
 import Prelude hiding (map, foldr, foldl)
 import Data.Map.Strict
 
-type IntMap = Map Int Int
-
 add :: Int -> Int -> Int
 add = (+)
 
-exs :: [(IntMap, Int)]
+exs :: [(Map Int Int, Int)]
 exs = [( insert 1 1 $
          insert 2 2 $
          insert 3 3 $
