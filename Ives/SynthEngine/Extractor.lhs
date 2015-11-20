@@ -233,12 +233,44 @@ the type signature datas that are curretnly unsupported
 >   fmap (1+) (liftA2 (+) (compareTypes t1 t2) (compareTypes t1' t2'))
 > compareTypes (TyFun t1 t1') (TyFun t2 t2') = 
 >   fmap (1+) (liftA2 (+) (compareTypes t1 t2) (compareTypes t1' t2'))
-> compareTypes (TyVar _) (TyVar _) = Just 10 
 > compareTypes (TyCon q1) (TyCon q2) = if (q1==q2) then Just 20 else Nothing
-> compareTypes (TyCon _) (TyVar _) = Just 10
+> compareTypes _         (TyVar _) = Just 10
 > compareTypes (TyVar _) (TyCon _) = Nothing
-> compareTypes _ (TyVar _) = Nothing
 > compareTypes _ _ = Nothing --inlucdes unsupported types
+
+> compareTopLevel :: Type -> Type -> Bool
+> compareTopLevel (TyParen t1) (TyParen t2) = 
+>   compareTopLevel t1 t2
+> compareTopLevel (t1) (TyParen t2) = 
+>   compareTopLevel t1 t2
+> compareTopLevel (TyParen t1) (t2) = 
+>   compareTopLevel t1 t2
+> compareTopLevel (TyForall _ _ t1) (TyForall _ _ t2) = 
+>   compareTopLevel t1 t2
+> compareTopLevel (TyForall _ _ t1) t2 = 
+>   compareTopLevel t1 t2
+> compareTopLevel t1 (TyForall _ _ t2) = 
+>   compareTopLevel t1 t2
+> compareTopLevel (TyList t1) (TyList t2) = 
+>   True
+> compareTopLevel (TyList t1) (TyVar _) = 
+>   True
+> compareTopLevel (TyVar _) (TyList t1) = 
+>   True
+> compareTopLevel (TyParArray t1) (TyParArray t2) =
+>   True
+> compareTopLevel (TyKind t1 _) (TyKind t2 _) =
+>   compareTopLevel t1 t2
+> compareTopLevel (TyTuple _ ts1) (TyTuple _ ts2) = 
+>   and (zipWith compareTopLevel ts1 ts2)
+> compareTopLevel (TyApp t1 t1') (TyApp t2 t2') =
+>   t1==t2
+> compareTopLevel (TyFun t1 t1') (TyFun t2 t2') = 
+>   (compareTopLevel t1 t2) && (compareTopLevel t1' t2')
+> compareTopLevel (TyCon q1) (TyCon q2) = q1==q2
+> compareTopLevel _         (TyVar _) = True
+> compareTopLevel (TyVar _) ( _) = True
+> compareTopLevel _ _ = False --inlucdes unsupported types
 
 > -- | the out type of the examples is whatever is last type in the tuples
 > --   the examples will be wrapped in a a list tho

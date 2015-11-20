@@ -73,7 +73,7 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 > addRType c t = do
 >   --print $ getFxnType $ snd t --only test fxn where types match	
 >   --print t
->   let testR = isJust $ uncurry compareTypes $ lastTyps $ snd t --only test fxn where types match	
+>   let testR = uncurry compareTopLevel $ lastTyps $ snd t --only test fxn where types match	
 >   x <- if testR then rTypeAssign HigherOrderFxn c t else return [noRType]
 >   return (t, x)
    
@@ -89,7 +89,9 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 >           Example        -> (injectRExType fxn . snd)
 >   in do
 >     results <- mapConcurrently (test c fxn . f) templates
->     return $ map fst $ filter snd $ zip templates results
+>     let x = map fst $ filter snd $ zip templates results
+>     let x1 = if length x == 0 then [noRType] else x
+>     return x1
 
 > -- | check if a file (with a single definition) matches the RType using liquidhaskell
 > test :: Code -> Sig -> RType -> IO (Bool)

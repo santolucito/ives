@@ -103,8 +103,8 @@ synth will need the code file with examples, and all the HOFxns with RTypes
 > synthTime :: Code -> [(Sig,[(RType,RType)],Maybe Int)] -> [Sig] -> IO()
 > synthTime c hoTyps allTyps = do
 >   let exsTyp = fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps
->   let exsTyMatch = isJust $ uncurry compareTypes $ getExType $ snd exsTyp
->   print exsTyMatch
+>   let exsTyMatch = uncurry compareTopLevel $ getExType $ snd exsTyp
+>   --print (show exsTyMatch ++ " --- " ++ show (getExType $ snd exsTyp))
 >   exsRTyp  <- if exsTyMatch 
 >               then rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
 >               else return [noRType]
@@ -179,7 +179,7 @@ we need to compose these functions and run them on the examples until we find on
 > makeFxns exTy hoFxnSig allTyps = 
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
 >   let 
->     sOn hTy n = specializeOn (exAsFunType exTy) hTy
+>     sOn hTy n = tr2 specializeOn (exAsFunType exTy) hTy
 >     hoFxnSig' = map (\s -> (fst s, sOn (snd s) (fst s))) hoFxnSig
 >     codePieces = map (\x -> (x, genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
 >     hoWithComp = buildFxns codePieces :: [Sig]--with comp fxn applied
