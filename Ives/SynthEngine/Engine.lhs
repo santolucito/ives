@@ -17,6 +17,9 @@
 > import Control.Monad
 > import Control.Applicative
 > import Control.Arrow
+> import Control.Concurrent.Async
+> import System.IO
+> import System.IO.Temp
 > import qualified Shelly as S
 
 > import Ives.SynthEngine.RefinementTypeGen
@@ -132,22 +135,23 @@ then with the ranks, begin searching for a program
 >   in
 >     map f tys
 
-
 some nice printers
-
-
 
 when we finally have some functions and we want to check if the satisfy the examples
 
 > applyAll :: Code -> [String] -> IO [String]
 > applyAll fc fns =
 >   let prog fx = fc ++ "\n\nmain = print $ and $ map (\\(i, o) -> ((" ++ fx ++ ") i) == o) exs\n"
->       run fx = do
->           putStrLn $ "testing component: "++fx
->           writeFile "tmp/testCmptFxn.hs" (prog fx)
->           result <- S.shelly $ S.errExit False $ S.run "runhaskell" ["tmp/testCmptFxn.hs"]
->           return ((T.filter isAlpha result) == "True")
->   in filterM run fns
+>       run fx = withTempFile "tmp/" "testCmptFxn.hs" $ \tmpName hnd -> do
+>           hPutStrLn hnd (prog fx)
+>           hFlush hnd
+>           result <- S.shelly $ S.errExit False $ S.silently $ S.run "runhaskell" [T.pack tmpName]
+>           let success = T.filter isAlpha result == "True"
+>           putStrLn $ "[" ++ show success ++ "] " ++ fx
+>           return success
+>   in do
+>     results <- mapConcurrently run fns
+>     return $ map fst $ filter snd $ zip fns results
 >      
 
 once we know which hofxns we are interested in we need to generate the component function.
