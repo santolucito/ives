@@ -10,51 +10,72 @@ send :: Name -> Q Exp
 send nm = do
   return $ VarE nm
 
+preferredTys :: Q [Type]
+preferredTys = do
+  Just intTy <- lookupTypeName "Int"
+  Just boolTy <- lookupTypeName "Bool"
+  Just charTy <- lookupTypeName "Char"
+  return $ map ConT [intTy, boolTy, charTy]
+
+preferredTyCons :: Q [Type]
+preferredTyCons = do
+  Just maybeTy <- lookupTypeName "Maybe"
+  Just eitherTy <- lookupTypeName "Either"
+  return $ ListT:(map ConT [maybeTy, eitherTy])
+
 concretify :: Name -> Q Type
 concretify nm = do
   info <- reify nm
   let ty = case info of
         VarI _ ty _ _ -> ty
         ClassOpI _ ty _ _ -> ty
-  Just conTy <- lookupTypeName "Int"
-  conc Map.empty (ConT conTy) ListT ty
+  prefTys <- preferredTys
+  prefTyCons <- preferredTyCons
+  let getTy = getType prefTys Map.empty
+  let getTyCon = getType prefTyCons Map.empty
+  conc getTy getTyCon ty
 
--- type map, default concrete type, default concrete type constructor, function type, concrete function type
-conc :: (Map.Map Name Type) -> Type -> Type -> Type -> Q Type
+-- concrete type generator -> concrete type constructor generator -> function type -> concrete function type
+conc :: (Name -> Type) -> (Name -> Type) -> Type -> Q Type
 -- replace type variable with a concrete one
-conc constraints defTy defTyCon (VarT nm) = conc constraints defTy defTyCon ty
-  where ty = Map.findWithDefault defTy nm constraints
-conc constraints defTy defTyCon (AppT ArrowT ty) = do
-  newTy <- conc constraints defTy defTyCon ty
+conc getTy getTyCon (VarT nm) = conc getTy getTyCon ty
+  where ty = getTy nm
+conc getTy getTyCon (AppT ArrowT ty) = do
+  newTy <- conc getTy getTyCon ty
   return $ AppT ArrowT newTy
-conc constraints defTy defTyCon (AppT tyCon tyVar) = do
-  -- if the type constructor is variable, use the default concrete type constructor
+conc getTy getTyCon (AppT tyCon tyVar) = do
+  -- if the type constructor is variable, get a type constructor instead of a type variable
   newTyCon <- case tyCon of
-    VarT _ -> conc constraints defTyCon defTyCon tyCon
-    otherwise -> conc constraints defTy defTyCon tyCon
-  newTyVar <- conc constraints defTy defTyCon tyVar
+    VarT nm -> return $ getTyCon nm
+    otherwise -> conc getTy getTyCon tyCon
+  newTyVar <- conc getTy getTyCon tyVar
   return $ AppT newTyCon newTyVar
-conc _ defTy defTyCon (ForallT _ cxt ty) = do
-  constraints <- getCxtTypes cxt
-  conc constraints defTy defTyCon ty
-conc _ _ _ ty = return ty
+conc _ _ (ForallT _ cxt ty) = do
+  constraints <- processConstraints cxt Map.empty
+  -- curry getType with preferred types and constraints
+  prefTys <- preferredTys
+  prefTyCons <- preferredTyCons
+  let getTy = getType prefTys constraints
+  let getTyCon = getType prefTyCons constraints
+  conc getTy getTyCon ty
+conc _ _ ty = return ty
 
-getCxtTypes :: Cxt -> Q (Map.Map Name Type)
-getCxtTypes cxt = do
-  constraints <- mapM cxtConstraint cxt
-  let instMap = processConstraints constraints Map.empty
-  -- just picks the first type in the set
-  return $ Map.map (\instSet -> Set.elemAt (Set.size instSet - 1) instSet) instMap
-  
-processConstraints :: [(Name, Set.Set Type)] -> Map.Map Name (Set.Set Type) -> Map.Map Name (Set.Set Type)
-processConstraints [] m = m
-processConstraints ((var, tys):xs) m = processConstraints xs newM
-  where newM = Map.insertWith Set.intersection var tys m
+-- Gets type from a map given a name and a list of preffered types
+getType :: [Type] -> Map.Map Name (Set.Set Type) -> Name -> Type
+getType [] m nm = case Map.lookup nm m of
+  Just instances -> Set.elemAt (Set.size instances - 1) instances
+  Nothing -> ListT -- shouldn't ever happen
+getType (ty:tys) m nm = case Map.lookup nm m of
+  Just instances -> if Set.member ty instances then ty else getType tys m nm
+  Nothing -> ty
 
-cxtConstraint :: Pred -> Q (Name, Set.Set Type)
-cxtConstraint (AppT (ConT cls) (VarT var)) = do
+-- Cxt = [Pred] = [Type]
+processConstraints :: Cxt -> Map.Map Name (Set.Set Type) -> Q (Map.Map Name (Set.Set Type))
+processConstraints [] m = return m
+processConstraints (AppT (ConT cls) (VarT var):xs) m = do
   tys <- getInstances cls
-  return (var, Set.fromList tys)
+  let newM = Map.insertWith Set.intersection var (Set.fromList tys) m
+  processConstraints xs newM
 
 getInstances :: Name -> Q [Type]
 getInstances nm = do
