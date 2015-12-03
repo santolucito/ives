@@ -1,6 +1,6 @@
 > {-# LANGUAGE ExistentialQuantification, TemplateHaskell #-}
 
-> module Ives.ExampleGen.Gen (exGen, genExamplesStr, createProgram, genExample, evalExample, arguments, result, AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
+> module Ives.ExampleGen.Gen (exGen, genExamplesStr, createProgram, genExample, evalExample, Example (arguments, result), AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
 
 > import Ives.Types
 > import Ives.ExampleGen.Conc
@@ -188,7 +188,7 @@ Generates n examples of the provided size for the function name provided as a st
 >       Nothing -> return Nothing
 >   hPutStrLn h $ "main :: IO ()\n\
 >                 \main = do\n\
->                 \  let f = $(send '" ++ f ++ ") :: $(concretify '" ++ f ++ ")\n\
+>                 \  let f = $(concretify '" ++ f ++ ")\n\
 >                 \  examples <- replicateM " ++ show n ++ " (genExample f " ++ show size ++ ")\n\
 >                 \  print $ (show $ typeOf f) : (map show examples)"
 >   hClose h

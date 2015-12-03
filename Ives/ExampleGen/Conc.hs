@@ -1,4 +1,4 @@
-module Ives.ExampleGen.Conc (concretify, send) where
+module Ives.ExampleGen.Conc (concretify) where
 
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
@@ -6,10 +6,6 @@ import Control.Monad
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
                               
-send :: Name -> Q Exp
-send nm = do
-  return $ VarE nm
-
 preferredTys :: Q [Type]
 preferredTys = do
   Just intTy <- lookupTypeName "Int"
@@ -23,7 +19,7 @@ preferredTyCons = do
   Just eitherTy <- lookupTypeName "Either"
   return $ ListT:(map ConT [maybeTy, eitherTy])
 
-concretify :: Name -> Q Type
+concretify :: Name -> Q Exp
 concretify nm = do
   info <- reify nm
   let ty = case info of
@@ -33,7 +29,8 @@ concretify nm = do
   prefTyCons <- preferredTyCons
   let getTy = getType prefTys Map.empty
   let getTyCon = getType prefTyCons Map.empty
-  conc getTy getTyCon ty
+  concTy <- conc getTy getTyCon ty
+  return $ SigE (VarE nm) concTy
 
 -- concrete type generator -> concrete type constructor generator -> function type -> concrete function type
 conc :: (Name -> Type) -> (Name -> Type) -> Type -> Q Type
