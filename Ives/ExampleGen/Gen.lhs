@@ -1,6 +1,6 @@
 > {-# LANGUAGE ExistentialQuantification, TemplateHaskell #-}
 
-> module Ives.ExampleGen.Gen (exGen, genExamplesStr, genExample, evalExample, arguments, result, AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
+> module Ives.ExampleGen.Gen (exGen, genExamplesStr, createProgram, genExample, evalExample, arguments, result, AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
 
 > import Ives.Types
 > import Ives.ExampleGen.Conc
@@ -141,12 +141,7 @@ Generates n examples of the provided size for the function name provided as a st
 
 > genExamplesStr :: String -> Maybe FilePath -> Int -> Int -> IO (String, [String])
 > genExamplesStr f file n size = do
->   mod <- case file of
->     Just path -> do
->       mod <- createModule f path
->       return $ Just mod
->     Nothing -> return $ Nothing
->   program <- createProgram f mod n size
+>   (program, mod) <- createProgram f file n size
 > 
 >   (e, out, err) <- readProcessWithExitCode "runhaskell" [program] ""
 >   
@@ -175,23 +170,27 @@ Generates n examples of the provided size for the function name provided as a st
 >   hClose h
 >   return temp
 
-> createProgram :: String -> Maybe FilePath -> Int -> Int -> IO String
-> createProgram f mod n size = do
+> createProgram :: String -> Maybe FilePath -> Int -> Int -> IO (FilePath, Maybe FilePath)
+> createProgram f file n size = do
 >   dir <- getCurrentDirectory
 >   (temp, h) <- openTempFile dir (addExtension f "hs")
+>
 >   hPutStrLn h "{-# LANGUAGE TemplateHaskell #-}\n\
 >               \import Ives.ExampleGen.Gen\n\
 >               \import Ives.ExampleGen.Conc\n\
 >               \import Control.Monad\n\
 >               \import Data.Typeable"
->   case mod of
->     Just path -> hPutStrLn h $ "import " ++ takeBaseName path
->     Nothing -> return ()
+>   mod <- case file of
+>       Just path -> do
+>         mod <- createModule f path
+>         hPutStrLn h $ "import " ++ takeBaseName mod
+>         return $ Just mod
+>       Nothing -> return Nothing
 >   hPutStrLn h $ "main :: IO ()\n\
 >                 \main = do\n\
 >                 \  let f = $(send '" ++ f ++ ") :: $(concretify '" ++ f ++ ")\n\
 >                 \  examples <- replicateM " ++ show n ++ " (genExample f " ++ show size ++ ")\n\
 >                 \  print $ (show $ typeOf f) : (map show examples)"
 >   hClose h
->   return temp
+>   return (temp, mod)
 
