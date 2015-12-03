@@ -1,4 +1,4 @@
-module Ives.ExampleGen.Conc (concretify) where
+module Ives.ExampleGen.Conc (concretify, concretifyType) where
 
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
@@ -21,6 +21,11 @@ preferredTyCons = do
 
 concretify :: Name -> Q Exp
 concretify nm = do
+  ty <- concretifyType nm
+  return $ SigE (VarE nm) ty
+
+concretifyType :: Name -> Q Type
+concretifyType nm = do
   info <- reify nm
   let ty = case info of
         VarI _ ty _ _ -> ty
@@ -29,8 +34,7 @@ concretify nm = do
   prefTyCons <- preferredTyCons
   let getTy = getType prefTys Map.empty
   let getTyCon = getType prefTyCons Map.empty
-  concTy <- conc getTy getTyCon ty
-  return $ SigE (VarE nm) concTy
+  conc getTy getTyCon ty
 
 -- concrete type generator -> concrete type constructor generator -> function type -> concrete function type
 conc :: (Name -> Type) -> (Name -> Type) -> Type -> Q Type
