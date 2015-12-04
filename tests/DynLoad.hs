@@ -1,9 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module DynLoad (
-  loadSourceGhc,
-  execFnGhc
-  ) where
+module DynLoad (loadSourceGhc, execFnGhc) where
 
+import qualified Data.IntSet as IntSet
 import Control.Exception (throw)
 import GHC hiding (loadModule)
 import GHC.Paths (libdir)
@@ -25,11 +23,11 @@ execFnGhc modStr fn = do
 loadSourceGhc :: String -> Ghc (Maybe String)
 loadSourceGhc path = do
   dflags <- getSessionDynFlags
-  setSessionDynFlags (dflags{
-    ghcLink = LinkInMemory,
+  setSessionDynFlags dflags{
     hscTarget = HscInterpreted,
-    packageFlags = [ExposePackage (PackageArg "ghc") $ ModRenaming True []]
-  })
+    packageFlags = [ExposePackage (PackageArg "ghc") $ ModRenaming True []],
+    generalFlags = IntSet.singleton $ fromEnum Opt_Hpc
+    }
   target <- guessTarget path Nothing
   addTarget target
   r <- load LoadAllTargets

@@ -1,4 +1,4 @@
-module Foo (doh, tix) where
+module Bar (doh, tix) where
 
 import Trace.Hpc.Reflect
 import Trace.Hpc.Tix

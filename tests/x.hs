@@ -1,17 +1,19 @@
 {-# LANGUAGE TemplateHaskell #-}
 import Ives.ExampleGen.Gen
 import Ives.ExampleGen.Conc
-import Foo
+import Bar
 import DynLoad
 import System.INotify
 import GHC hiding (loadModule)
 import GHC.Paths (libdir)
+import Trace.Hpc.Tix
 
 main :: IO ()
 main = do
-  inotify <- initINotify
-  wd <- addWatch inotify [Modify] "Foo.hs" handler
-  waitForBye
+  execExample
+  -- inotify <- initINotify
+  -- wd <- addWatch inotify [Modify] "Foo.hs" handler
+  -- waitForBye
 
 waitForBye :: IO ()
 waitForBye = do
@@ -21,18 +23,24 @@ waitForBye = do
 handler :: Event -> IO ()
 handler (Modified _ _) = do
   putStrLn "*** FILE UPDATED ***"
-  f <- getFunc
+
+execExample :: IO ()
+execExample = do
+  (f, getTix) <- getFuncs
   example <- genExample f 10
   print example
+  tix <- getTix
+  return ()
 
-getFunc :: IO $(concretifyType 'doh)
-getFunc = runGhc (Just libdir) $ do
-  loadrst <- loadSourceGhc "Foo.hs"
-  case loadrst of
+getFuncs :: IO ($(concretifyType 'doh), IO Tix)
+getFuncs = runGhc (Just libdir) $ do
+  res <- loadSourceGhc "Foo.hs"
+  case res of
     Just err -> error err
     Nothing  -> do
-      b <- execFnGhc "Foo" "doh"
-      return b
+      f <- execFnGhc "Foo" "doh" 
+      tix <- execFnGhc "Foo" "tix"
+      return (f, tix)
 
 -- getExample :: IO Example
 -- getExample = do
