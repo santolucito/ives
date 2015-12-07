@@ -24,7 +24,7 @@ loadSourceGhc :: String -> Ghc (Maybe String)
 loadSourceGhc path = do
   dflags <- getSessionDynFlags
   setSessionDynFlags dflags{
-    hscTarget = HscInterpreted,
+    hscTarget = HscAsm,
     packageFlags = [ExposePackage (PackageArg "ghc") $ ModRenaming True []],
     generalFlags = IntSet.singleton $ fromEnum Opt_Hpc
     }

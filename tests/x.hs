@@ -1,15 +1,25 @@
 {-# LANGUAGE TemplateHaskell #-}
 import Ives.ExampleGen.Gen
 import Ives.ExampleGen.Conc
-import Bar
+import Ives.ExampleGen.Exampler
+import Foo
 import DynLoad
 import System.INotify
+import System.Directory
+import System.Process
 import GHC hiding (loadModule)
 import GHC.Paths (libdir)
+import Trace.Hpc.Reflect
 import Trace.Hpc.Tix
+import Language.Haskell.Exts
+import System.FilePath
+import System.IO.Temp
+import System.IO
+import Control.Monad.IO.Class
 
 main :: IO ()
 main = do
+  execExample
   execExample
   -- inotify <- initINotify
   -- wd <- addWatch inotify [Modify] "Foo.hs" handler
@@ -23,24 +33,33 @@ waitForBye = do
 handler :: Event -> IO ()
 handler (Modified _ _) = do
   putStrLn "*** FILE UPDATED ***"
+  execExample
 
 execExample :: IO ()
 execExample = do
-  (f, getTix) <- getFuncs
+  dir <- getCurrentDirectory
+  (temp, h) <- openTempFile dir "Foo.hs"
+  let mod = takeBaseName temp
+  res <- parseFile "Foo.hs"
+  let Module src nm pragmas warning export imports decls = fromParseResult res
+  (hPutStrLn h) . prettyPrint $ Module src (ModuleName mod) pragmas warning export imports decls
+  hClose h
+  out <- readProcess "ghc" ["-fhpc", temp] ""
+
+  f <- getFuncs mod "doh"
   example <- genExample f 10
   print example
-  tix <- getTix
-  return ()
+  tix <- examineTix
+  print tix
 
-getFuncs :: IO ($(concretifyType 'doh), IO Tix)
-getFuncs = runGhc (Just libdir) $ do
-  res <- loadSourceGhc "Foo.hs"
+getFuncs :: String -> String -> IO $(concretifyType 'doh)
+getFuncs mod func = runGhc (Just libdir) $ do
+  res <- loadSourceGhc $ addExtension mod "hs"
   case res of
     Just err -> error err
     Nothing  -> do
-      f <- execFnGhc "Foo" "doh" 
-      tix <- execFnGhc "Foo" "tix"
-      return (f, tix)
+      f <- execFnGhc mod func
+      return f
 
 -- getExample :: IO Example
 -- getExample = do
