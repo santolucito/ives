@@ -41,7 +41,7 @@ the actual synth engine - take a file and generate a program that satifies examp
 >
 >   putStrLn "starting synth stage"
 >   startSynthT <- getPOSIXTime
->   synthTime fc hoTyps allTyps
+>   synthTime startSynthT fc hoTyps allTyps
 >   synthT <- liftM2 (-) getPOSIXTime (return startSynthT)
 >
 >   putStrLn $ "built in "++(show buildT)
@@ -100,11 +100,11 @@ this one need to run as quickly as possible
 the "exs" should only be read here
 synth will need the code file with examples, and all the HOFxns with RTypes
 
-> synthTime :: Code -> [(Sig,[(RType,RType)],Maybe Int)] -> [Sig] -> IO()
-> synthTime c hoTyps allTyps = do
+> synthTime :: POSIXTime -> Code -> [(Sig,[(RType,RType)],Maybe Int)] -> [Sig] -> IO()
+> synthTime startTime c hoTyps allTyps = do
 >   let exsTyp = fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps
->   let exsTyMatch = uncurry compareTopLevel $ getExType $ snd exsTyp
->   --print (show exsTyMatch ++ " --- " ++ show (getExType $ snd exsTyp))
+>   let exsTyMatch = isJust $ uncurry compareTypes $ getExType $ snd exsTyp
+> --  print exsTyMatch
 >   exsRTyp  <- if exsTyMatch 
 >               then rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
 >               else return [noRType]
@@ -117,13 +117,13 @@ then with the ranks, begin searching for a program
 
 >   let hoFxns1 = filter (matchRType exsRTyp) (map fstsnd hoTyps')
 >   let exFunType = exAsFunType $ snd exsTyp
->   mapM print hoFxns1
+> --  mapM print hoFxns1
 >   let hoFxns = filter (\(t,r) -> isJust $ isConcreteTypeOf exFunType (lastAsFunType $ snd t)) hoFxns1
 >   --mapM print hoFxns
 >   let candidateFxns = makeFxns (snd exsTyp) (map fst hoFxns) allTyps
 > --  mapM print (map fstsnd hoTyps')
->   print candidateFxns
->   validProgs <- applyAll c candidateFxns
+> --  print candidateFxns
+>   validProgs <- applyAll startTime c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
 >   mapM_ (putStrLn.("* "++)) validProgs
 
@@ -141,15 +141,17 @@ some nice printers
 
 when we finally have some functions and we want to check if the satisfy the examples
 
-> applyAll :: Code -> [String] -> IO [String]
-> applyAll fc fns =
->   let prog fx = "import qualified Prelude as PPP\nimport Prelude\n" ++ fc ++ "\n\nmain = PPP.print $ PPP.and $ PPP.map (\\(i, o) -> ((" ++ fx ++ ") i) == o) exs\n"
+> applyAll :: POSIXTime -> Code -> [String] -> IO [String]
+> applyAll startTime fc fns =
+>   let imports = if isInfixOf "import Prelude" fc then "" else "import Prelude\n"
+>       prog fx = "import qualified Prelude as PPP\n" ++ imports ++ fc ++ "\n\nmain = PPP.print $ PPP.and $ PPP.map (\\(i, o) -> ((" ++ fx ++ ") i) == o) exs\n"
 >       run fx = withTempFile "tmp/" "testCmptFxn.hs" $ \tmpName hnd -> do
 >           hPutStrLn hnd (prog fx)
 >           hFlush hnd
 >           result <- S.shelly $ S.errExit False $ S.silently $ S.run "runhaskell" [T.pack tmpName]
 >           let success = T.filter isAlpha result == "True"
->           putStrLn $ "[" ++ show success ++ "] " ++ fx
+>           if success then getPOSIXTime >>= (\x-> print (fx ++" found in "++ (show (x - startTime)))) else return ()
+>           --putStrLn $ "[" ++ show success ++ "] " ++ fx
 >           return success
 >   in do
 >     results <- mapConcurrently run fns
@@ -185,11 +187,8 @@ we need to compose these functions and run them on the examples until we find on
 >     hoWithComp = buildFxns codePieces :: [Sig]--with comp fxn applied
 >     needsInit t = (length $ tyFunToList t)>2
 >     finalTy t = TyFun (fst $lastTyps t) (snd$ lastTyps t)
->     hoWithInit = concatMap (\t -> if trace ((show $fst t) ++ "\n"++
->                                             (show $ tyFunToList $ snd t)++"~~"++
->                                             (show $ needsInit $ snd t)) needsInit $ snd t  
->                                   then trace ((show$finalTy$snd t)++" "
->                                               ++(show t)++" --"++(show $coerceSig (finalTy$ snd t) t)) coerceSig (finalTy$ snd t) t
+>     hoWithInit = concatMap (\t -> if needsInit $ snd t  
+>                                   then coerceSig (finalTy$ snd t) t
 >                                   else [t]) hoWithComp
 >   in
 >     map (toString.fst) $ hoWithInit
@@ -225,9 +224,10 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >        isJust (isConcreteTypeOf target (snd cur))
 >     then [cur]
 >     else case snd cur of
->            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2", "3"]
->            TyFun (TyCon (UnQual (Ident "Integer"))) fn -> dfl cur fn ["-2", "-1", "0", "1", "2"]
+>            TyFun (TyCon (UnQual (Ident "Int"))) fn -> dfl cur fn ["-1", "0", "1", "2"]
+>            TyFun (TyCon (UnQual (Ident "Integer"))) fn -> dfl cur fn ["-1", "0", "1", "2"]
 >            TyFun (TyCon (UnQual (Ident "Double"))) fn -> dfl cur fn ["0.0", "1.0"]
+>            TyFun (TyCon (UnQual (Ident "Bool"))) fn -> dfl cur fn ["True", "False"]
 >            TyFun (TyApp (TyApp (TyCon (UnQual (Ident "Map"))) _) _) fn -> dfl cur fn ["empty"]
 >            TyFun (TyList _) fn -> dfl cur fn ["[]"]
 >            -- Instance of Monoid ->  dfl cur fn ["mempty"]

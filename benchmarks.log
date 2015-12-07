@@ -1,0 +1,1151 @@
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+23
+starting synth stage
+"any (odd) found in 4.077488s"
+the following programs satisfy the examples: 
+* any (odd)
+built in 10.683127s
+synth in 4.466827s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> False
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> False
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> False
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ adjust :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ adjust :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ adjust :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ adjustWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ adjustWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ adjustWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ alter :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ alter :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ alter :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ differenceWith :: _ -> i:Map k b -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ differenceWith :: _ -> i:Map k b -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ differenceWith :: _ -> i:Map k b -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ differenceWithKey :: _ -> i:Map k b -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ differenceWithKey :: _ -> i:Map k b -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ differenceWithKey :: _ -> i:Map k b -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ filter :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ filterWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ filterWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ filterWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ foldMapWithKey :: _ -> i:Map k a -> {o:m | (len i) <= (len o)} @-} ||> False
+{-@ foldMapWithKey :: _ -> i:Map k a -> {o:m | (len i) >= (len o)} @-} ||> False
+{-@ foldMapWithKey :: _ -> i:Map k a -> {o:m | (len i) = (len o)} @-} ||> False
+{-@ fromAscListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ fromAscListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ fromAscListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ fromAscListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ fromAscListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ fromAscListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ fromListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ fromListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ fromListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ fromListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ fromListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ fromListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ insertLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) >= (len o)} @-} ||> False
+{-@ insertLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) = (len o)} @-} ||> False
+{-@ insertLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) <= (len o)} @-} ||> False
+{-@ insertWith :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ insertWith :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ insertWith :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ insertWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ insertWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ insertWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ intersectionWith :: _ -> i:Map k b -> {o:Map k c | (len i) >= (len o)} @-} ||> False
+{-@ intersectionWith :: _ -> i:Map k b -> {o:Map k c | (len i) = (len o)} @-} ||> False
+{-@ intersectionWith :: _ -> i:Map k b -> {o:Map k c | (len i) <= (len o)} @-} ||> False
+{-@ intersectionWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) <= (len o)} @-} ||> False
+{-@ intersectionWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) = (len o)} @-} ||> False
+{-@ intersectionWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) >= (len o)} @-} ||> False
+{-@ isProperSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) >= (len o)} @-} ||> False
+{-@ isProperSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) = (len o)} @-} ||> False
+{-@ isProperSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) <= (len o)} @-} ||> False
+{-@ isSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) <= (len o)} @-} ||> False
+{-@ isSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) >= (len o)} @-} ||> False
+{-@ isSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) = (len o)} @-} ||> False
+{-@ map :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> False
+{-@ map :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> False
+{-@ map :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> False
+{-@ mapKeys :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) = (len o)} @-} ||> False
+{-@ mapKeys :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) >= (len o)} @-} ||> False
+{-@ mapKeys :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) <= (len o)} @-} ||> False
+{-@ mapKeysMonotonic :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) >= (len o)} @-} ||> False
+{-@ mapKeysMonotonic :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) = (len o)} @-} ||> False
+{-@ mapKeysMonotonic :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) <= (len o)} @-} ||> False
+{-@ mapKeysWith :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) >= (len o)} @-} ||> False
+{-@ mapKeysWith :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) <= (len o)} @-} ||> False
+{-@ mapKeysWith :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) = (len o)} @-} ||> False
+{-@ mapMaybe :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> False
+{-@ mapMaybe :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> False
+{-@ mapMaybe :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> False
+{-@ mapMaybeWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> False
+{-@ mapMaybeWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> False
+{-@ mapMaybeWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> False
+{-@ mapWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> False
+{-@ mapWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> False
+{-@ mapWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> False
+{-@ mergeWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) >= (len o)} @-} ||> False
+{-@ mergeWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) = (len o)} @-} ||> False
+{-@ mergeWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) <= (len o)} @-} ||> False
+{-@ traverseWithKey :: _ -> i:Map k a -> {o:t (Map k b) | (len i) = (len o)} @-} ||> False
+{-@ traverseWithKey :: _ -> i:Map k a -> {o:t (Map k b) | (len i) >= (len o)} @-} ||> False
+{-@ traverseWithKey :: _ -> i:Map k a -> {o:t (Map k b) | (len i) <= (len o)} @-} ||> False
+{-@ unionWith :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ unionWith :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ unionWith :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ unionWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ unionWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ unionWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ unionsWith :: _ -> i:[Map k a] -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ unionsWith :: _ -> i:[Map k a] -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ unionsWith :: _ -> i:[Map k a] -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ update :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ update :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ update :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateAt :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateAt :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateAt :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ updateLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) >= (len o)} @-} ||> False
+{-@ updateLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) = (len o)} @-} ||> False
+{-@ updateLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) <= (len o)} @-} ||> False
+{-@ updateMax :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ updateMax :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateMax :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateMaxWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateMaxWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ updateMaxWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateMin :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ updateMin :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateMin :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateMinWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateMinWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ updateMinWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> False
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> False
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> False
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+43
+starting synth stage
+{-@ exs :: [(Map Int Int,Map Int Int)<{\i o -> (len i) >= (len o)}>] @-} ||> False
+{-@ exs :: [(Map Int Int,Map Int Int)<{\i o -> (len i) <= (len o)}>] @-} ||> False
+{-@ exs :: [(Map Int Int,Map Int Int)<{\i o -> (len i) = (len o)}>] @-} ||> False
+the following programs satisfy the examples: 
+built in 30.832391s
+synth in 0.412816s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+23
+starting synth stage
+the following programs satisfy the examples: 
+built in 10.721338s
+synth in 0.000024s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+23
+starting synth stage
+{-@ exs :: [([Int],[Int])<{\i o -> (len i) >= (len o)}>] @-} ||> True
+{-@ exs :: [([Int],[Int])<{\i o -> (len i) = (len o)}>] @-} ||> False
+{-@ exs :: [([Int],[Int])<{\i o -> (len i) <= (len o)}>] @-} ||> False
+"takeWhile (odd) found in 8.964081s"
+the following programs satisfy the examples: 
+* takeWhile (odd)
+built in 9.988876s
+synth in 8.998792s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+23
+starting synth stage
+{-@ exs :: [([Int],[Int])<{\i o -> (len i) >= (len o)}>] @-} ||> False
+{-@ exs :: [([Int],[Int])<{\i o -> (len i) <= (len o)}>] @-} ||> True
+{-@ exs :: [([Int],[Int])<{\i o -> (len i) = (len o)}>] @-} ||> False
+"concatMap (replicate (2)) found in 1.828868s"
+the following programs satisfy the examples: 
+* concatMap (replicate (2))
+built in 10.265574s
+synth in 9.313786s
+{-@ f :: _ -> i:Int -> {o:Int) | (len i) <= (len o)} @-} ||> False
+{-@ f :: _ -> i:Int -> {o:Int) | (len i) >= (len o)} @-} ||> False
+{-@ f :: _ -> i:Int -> {o:Int) | (len i) = (len o)} @-} ||> False
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+24
+starting synth stage
+"myfold (f) (0) found in 0.849246s"
+"myfold (lcm) (-1) found in 2.689009s"
+"myfold (lcm) (1) found in 2.869336s"
+"myfold (lcm) (2) found in 2.997464s"
+"foldl (f) (0) found in 4.853355s"
+"foldl (lcm) (-1) found in 5.785s"
+"foldl (lcm) (1) found in 5.785099s"
+"foldl (lcm) (2) found in 5.865222s"
+"foldl1 (f) found in 7.426865s"
+"foldl1 (lcm) found in 7.772566s"
+"foldr (f) (0) found in 8.271371s"
+"foldr (lcm) (-1) found in 9.108738s"
+"foldr (lcm) (2) found in 9.176245s"
+"foldr (lcm) (1) found in 9.200082s"
+"foldr1 (f) found in 9.914063s"
+"foldr1 (lcm) found in 9.982466s"
+the following programs satisfy the examples: 
+* myfold (f) (0)
+* myfold (lcm) (-1)
+* myfold (lcm) (1)
+* myfold (lcm) (2)
+* foldl (f) (0)
+* foldl (lcm) (-1)
+* foldl (lcm) (1)
+* foldl (lcm) (2)
+* foldl1 (f)
+* foldl1 (lcm)
+* foldr (f) (0)
+* foldr (lcm) (-1)
+* foldr (lcm) (1)
+* foldr (lcm) (2)
+* foldr1 (f)
+* foldr1 (lcm)
+built in 9.909927s
+synth in 10.008961s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+23
+starting synth stage
+"all (even) found in 1.930859s"
+the following programs satisfy the examples: 
+* all (even)
+built in 10.741152s
+synth in 4.45735s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+23
+starting synth stage
+{-@ exs :: [([Bool],[Bool])<{\i o -> (len i) >= (len o)}>] @-} ||> True
+{-@ exs :: [([Bool],[Bool])<{\i o -> (len i) = (len o)}>] @-} ||> True
+{-@ exs :: [([Bool],[Bool])<{\i o -> (len i) <= (len o)}>] @-} ||> True
+"map (not) found in 7.064093s"
+the following programs satisfy the examples: 
+* map (not)
+built in 10.001632s
+synth in 9.305526s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+23
+starting synth stage
+"any (id) found in 3.721341s"
+"foldl1 (max) found in 4.378872s"
+"foldr1 (max) found in 4.450404s"
+the following programs satisfy the examples: 
+* any (id)
+* foldl1 (max)
+* foldr1 (max)
+built in 11.069242s
+synth in 4.450517s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+23
+starting synth stage
+"all (id) found in 2.363709s"
+"foldl1 (min) found in 4.531729s"
+"foldr1 (min) found in 4.579524s"
+the following programs satisfy the examples: 
+* all (id)
+* foldl1 (min)
+* foldr1 (min)
+built in 10.507038s
+synth in 4.603573s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ adjust :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ adjust :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ adjust :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ adjustWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ adjustWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ adjustWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ alter :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ alter :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ alter :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ differenceWith :: _ -> i:Map k b -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ differenceWith :: _ -> i:Map k b -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ differenceWith :: _ -> i:Map k b -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ differenceWithKey :: _ -> i:Map k b -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ differenceWithKey :: _ -> i:Map k b -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ differenceWithKey :: _ -> i:Map k b -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ filter :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ filter :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ filterWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ filterWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ filterWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ foldMapWithKey :: _ -> i:Map k a -> {o:m | (len i) >= (len o)} @-} ||> True
+{-@ foldMapWithKey :: _ -> i:Map k a -> {o:m | (len i) = (len o)} @-} ||> True
+{-@ foldMapWithKey :: _ -> i:Map k a -> {o:m | (len i) <= (len o)} @-} ||> True
+{-@ fromAscListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ fromAscListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ fromAscListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ fromAscListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ fromAscListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ fromAscListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ fromListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ fromListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ fromListWith :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ fromListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ fromListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ fromListWithKey :: _ -> i:[(k, a)] -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ insertLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) <= (len o)} @-} ||> False
+{-@ insertLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) >= (len o)} @-} ||> False
+{-@ insertLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) = (len o)} @-} ||> False
+{-@ insertWith :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ insertWith :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ insertWith :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ insertWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ insertWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ insertWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ intersectionWith :: _ -> i:Map k b -> {o:Map k c | (len i) = (len o)} @-} ||> False
+{-@ intersectionWith :: _ -> i:Map k b -> {o:Map k c | (len i) <= (len o)} @-} ||> False
+{-@ intersectionWith :: _ -> i:Map k b -> {o:Map k c | (len i) >= (len o)} @-} ||> False
+{-@ intersectionWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) >= (len o)} @-} ||> False
+{-@ intersectionWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) <= (len o)} @-} ||> False
+{-@ intersectionWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) = (len o)} @-} ||> False
+{-@ isProperSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) = (len o)} @-} ||> False
+{-@ isProperSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) >= (len o)} @-} ||> False
+{-@ isProperSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) <= (len o)} @-} ||> False
+{-@ isSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) <= (len o)} @-} ||> False
+{-@ isSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) = (len o)} @-} ||> False
+{-@ isSubmapOfBy :: _ -> i:Map k b -> {o:Bool | (len i) >= (len o)} @-} ||> False
+{-@ map :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> True
+{-@ mapKeys :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) = (len o)} @-} ||> True
+{-@ mapKeys :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) >= (len o)} @-} ||> True
+{-@ mapKeys :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) <= (len o)} @-} ||> True
+{-@ mapKeysMonotonic :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) >= (len o)} @-} ||> True
+{-@ mapKeysMonotonic :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) <= (len o)} @-} ||> True
+{-@ mapKeysMonotonic :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) = (len o)} @-} ||> True
+{-@ mapKeysWith :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) = (len o)} @-} ||> False
+{-@ mapKeysWith :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) >= (len o)} @-} ||> False
+{-@ mapKeysWith :: _ -> i:Map k1 a -> {o:Map k2 a | (len i) <= (len o)} @-} ||> False
+{-@ mapMaybe :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> True
+{-@ mapMaybe :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> True
+{-@ mapMaybe :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> True
+{-@ mapMaybeWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> True
+{-@ mapMaybeWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> True
+{-@ mapMaybeWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> True
+{-@ mapWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) = (len o)} @-} ||> True
+{-@ mapWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) >= (len o)} @-} ||> True
+{-@ mapWithKey :: _ -> i:Map k a -> {o:Map k b | (len i) <= (len o)} @-} ||> True
+{-@ mergeWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) <= (len o)} @-} ||> False
+{-@ mergeWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) = (len o)} @-} ||> False
+{-@ mergeWithKey :: _ -> i:Map k b -> {o:Map k c | (len i) >= (len o)} @-} ||> False
+{-@ traverseWithKey :: _ -> i:Map k a -> {o:t (Map k b) | (len i) = (len o)} @-} ||> True
+{-@ traverseWithKey :: _ -> i:Map k a -> {o:t (Map k b) | (len i) >= (len o)} @-} ||> True
+{-@ traverseWithKey :: _ -> i:Map k a -> {o:t (Map k b) | (len i) <= (len o)} @-} ||> True
+{-@ unionWith :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ unionWith :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ unionWith :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ unionWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ unionWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ unionWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ unionsWith :: _ -> i:[Map k a] -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ unionsWith :: _ -> i:[Map k a] -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ unionsWith :: _ -> i:[Map k a] -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ update :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ update :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ update :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ updateAt :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateAt :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateAt :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ updateLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) >= (len o)} @-} ||> False
+{-@ updateLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) = (len o)} @-} ||> False
+{-@ updateLookupWithKey :: _ -> i:Map k a -> {o:(Maybe a, Map k a) | (len i) <= (len o)} @-} ||> False
+{-@ updateMax :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ updateMax :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ updateMax :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ updateMaxWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ updateMaxWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ updateMaxWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ updateMin :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ updateMin :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ updateMin :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ updateMinWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> True
+{-@ updateMinWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> True
+{-@ updateMinWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> True
+{-@ updateWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) = (len o)} @-} ||> False
+{-@ updateWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) <= (len o)} @-} ||> False
+{-@ updateWithKey :: _ -> i:Map k a -> {o:Map k a | (len i) >= (len o)} @-} ||> False
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> False
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+77
+starting synth stage
+"foldl (add) (0) found in 1.688294s"
+"foldl' (add) (0) found in 7.560477s"
+"foldr (add) (0) found in 13.954503s"
+"foldr' (add) (0) found in 19.941509s"
+the following programs satisfy the examples: 
+* foldl (add) (0)
+* foldl' (add) (0)
+* foldr (add) (0)
+* foldr' (add) (0)
+built in 41.999547s
+synth in 23.494482s
+{-@ mapBTree :: _ -> i:BTree a -> {o:BTree a | (len i) = (len o)} @-} ||> True
+{-@ mapBTree :: _ -> i:BTree a -> {o:BTree a | (len i) >= (len o)} @-} ||> True
+{-@ mapBTree :: _ -> i:BTree a -> {o:BTree a | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+24
+starting synth stage
+{-@ exs :: [(BTree Bool,BTree Bool)<{\i o -> (len i) = (len o)}>] @-} ||> True
+{-@ exs :: [(BTree Bool,BTree Bool)<{\i o -> (len i) >= (len o)}>] @-} ||> True
+{-@ exs :: [(BTree Bool,BTree Bool)<{\i o -> (len i) <= (len o)}>] @-} ||> True
+"mapBTree (id) found in 2.180041s"
+the following programs satisfy the examples: 
+* mapBTree (id)
+built in 11.544994s
+synth in 2.642898s
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ concatMap :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ curry :: _ -> i:b -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ curry :: _ -> i:b -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ dropWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ filter :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ flip :: _ -> i:a -> {o:c | (len i) >= (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) = (len o)} @-} ||> False
+{-@ flip :: _ -> i:a -> {o:c | (len i) <= (len o)} @-} ||> False
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) >= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) <= (len o)} @-} ||> True
+{-@ fmap :: _ -> i:f a -> {o:f b | (len i) = (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> True
+{-@ map :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) >= (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) = (len o)} @-} ||> True
+{-@ mapM :: _ -> i:[a] -> {o:m [b] | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) <= (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) = (len o)} @-} ||> True
+{-@ mapM_ :: _ -> i:[a] -> {o:m () | (len i) >= (len o)} @-} ||> True
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanl :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ scanl1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) >= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-} ||> False
+{-@ scanr :: _ -> i:[a] -> {o:[b] | (len i) = (len o)} @-} ||> False
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ scanr1 :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) <= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) >= (len o)} @-} ||> True
+{-@ takeWhile :: _ -> i:[a] -> {o:[a] | (len i) = (len o)} @-} ||> True
+{-@ until :: _ -> i:a -> {o:a | (len i) >= (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) = (len o)} @-} ||> False
+{-@ until :: _ -> i:a -> {o:a | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) = (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith :: _ -> i:[b] -> {o:[c] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) >= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) <= (len o)} @-} ||> False
+{-@ zipWith3 :: _ -> i:[c] -> {o:[d] | (len i) = (len o)} @-} ||> False
+23
+starting synth stage
+"foldl (count) (0) found in 1.16767s"
+the following programs satisfy the examples: 
+* foldl (count) (0)
+built in 10.698655s
+synth in 7.098626s

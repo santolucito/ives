@@ -1,0 +1,984 @@
+------------------------------
+
+
+========================================================
+© Copyright 2009 Regents of the University of California.
+All Rights Reserved.
+========================================================
+.|./.-Unsatisfied Constraints:
+ constraint:
+ env  [ xsListSelector:{VV : func(1, [FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; xs#aKo:{lq_tmp_x_203 : FAppTy (List ) a_aKG | [(len([lq_tmp_x_203]) >= 0)]}
+      ; x_Tuple77:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(6)]) | []}
+      ; x_Tuple76:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(5)]) | []}
+      ; x_Tuple75:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(4)]) | []}
+      ; x_Tuple74:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(3)]) | []}
+      ; x_Tuple73:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(2)]) | []}
+      ; x_Tuple72:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(1)]) | []}
+      ; x_Tuple71:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(0)]) | []}
+      ; x_Tuple66:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(5)]) | []}
+      ; x_Tuple65:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(4)]) | []}
+      ; x_Tuple64:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(3)]) | []}
+      ; x_Tuple63:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(2)]) | []}
+      ; x_Tuple62:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(1)]) | []}
+      ; x_Tuple61:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(0)]) | []}
+      ; x_Tuple55:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(4)]) | []}
+      ; x_Tuple54:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(3)]) | []}
+      ; x_Tuple53:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(2)]) | []}
+      ; x_Tuple52:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(1)]) | []}
+      ; x_Tuple51:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(0)]) | []}
+      ; x_Tuple44:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(3)]) | []}
+      ; x_Tuple43:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(2)]) | []}
+      ; x_Tuple42:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(1)]) | []}
+      ; x_Tuple41:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(0)]) | []}
+      ; x_Tuple33:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(2)]) | []}
+      ; x_Tuple32:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(1)]) | []}
+      ; x_Tuple31:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(0)]) | []}
+      ; x_Tuple22:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; x_Tuple21:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; xListSelector:{VV : func(1, [FAppTy (List ) @(0) ; @(0)]) | []}
+      ; x#aKn:{VV : a_aKG | []}
+      ; strLen:{VV : func(0, [int ; int]) | []}
+      ; snd:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; papp4:{VV : func(8, [FAppTy (FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2)) @(6) ; @(3) ; @(4) ; @(5) ; @(7) ; bool]) | []}
+      ; papp3:{VV : func(6, [FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2) ; @(3) ; @(4) ; @(5) ; bool]) | []}
+      ; papp2:{VV : func(4, [FAppTy (FAppTy (Pred ) @(0)) @(1) ; @(2) ; @(3) ; bool]) | []}
+      ; papp1:{VV : func(1, [FAppTy (Pred ) @(0) ; @(0) ; bool]) | []}
+      ; null:{VV : func(1, [FAppTy (List ) @(0) ; bool]) | []}
+      ; lq_anf__dKW:{lq_tmp_x_242 : FAppTy (List ) t_aKF | [(len([lq_tmp_x_242]) = (1 + len([lq_anf__dKV])))
+                                                           ; (null(lq_tmp_x_242) <=> false)
+                                                           ; (xsListSelector([lq_tmp_x_242]) = lq_anf__dKV)
+                                                           ; (xListSelector([lq_tmp_x_242]) = lq_anf__dKU)
+                                                           ; (len([lq_tmp_x_242]) >= 0)]}
+      ; lq_anf__dKV:{lq_tmp_x_222 : FAppTy (List ) t_aKF | [(len([lq_tmp_x_222]) = len([xs#aKo]))
+                                                           ; (len([lq_tmp_x_222]) >= 0)]}
+      ; lq_anf__dKU:{VV : t_aKF | []}
+      ; lq_anf__dKT:{VV : t_aKF | []}
+      ; lq_anf__dKS:{lq_tmp_x_193 : FAppTy (List ) a_aKG | [(lq_tmp_x_193 = ds_dKR)
+                                                           ; (len([lq_tmp_x_193]) >= 0)
+                                                           ; (len([lq_tmp_x_193]) = (1 + len([xs#aKo])))
+                                                           ; (null(lq_tmp_x_193) <=> false)
+                                                           ; (xsListSelector([lq_tmp_x_193]) = xs#aKo)
+                                                           ; (xListSelector([lq_tmp_x_193]) = x#aKn)
+                                                           ; (lq_tmp_x_193 = fix#GHC.Types.#58##35#64([x#aKn; xs#aKo]))
+                                                           ; (len([lq_tmp_x_193]) = (1 + len([xs#aKo])))
+                                                           ; (null(lq_tmp_x_193) <=> false)
+                                                           ; (xsListSelector([lq_tmp_x_193]) = xs#aKo)
+                                                           ; (xListSelector([lq_tmp_x_193]) = x#aKn)
+                                                           ; (len([lq_tmp_x_193]) >= 0)]}
+      ; len:{VV : func(2, [FAppTy @(0) @(1) ; int]) | []}
+      ; isJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; bool]) | []}
+      ; fst:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; fromJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; @(0)]) | []}
+      ; fix#GHC.Types.#91##93##35#6m:{VV : func(1, [FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Types.#58##35#64:{VV : func(1, [@(0) ; FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##44##41##35#7e:{VV : func(7, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; @(6) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##41##35#7c:{VV : func(6, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##41##35#7a:{VV : func(5, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##41##35#78:{VV : func(4, [@(0) ; @(1) ; @(2) ; @(3) ; FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##41##35#76:{VV : func(3, [@(0) ; @(1) ; @(2) ; FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)]) | []}
+      ; fix#GHC.Tuple.#40##44##41##35#74:{VV : func(2, [@(0) ; @(1) ; FAppTy (FAppTy (Tuple ) @(0)) @(1)]) | []}
+      ; fix#GHC.Real.D#58#Integral#35#r6o:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; int]) ; FAppTy (GHC.Real.Integral ) @(0)]) | []}
+      ; fix#GHC.Real.D#58#Fractional#35#rkT:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0)]) ; func(0, [FAppTy (GHC.Real.Ratio ) int ; @(0)]) ; FAppTy (GHC.Real.Fractional ) @(0)]) | []}
+      ; fix#GHC.Prim.#62##61##35##35#9n:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#62##35##35#9m:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#61##61##35##35#9o:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##61##35##35#9r:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##35##35#9q:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#45##35##35#99:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#43##35##35#98:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Num.#45##35#02B:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#43##35#rt:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#42##35#ru:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; ds_dKR:{VV#170 : FAppTy (List ) a_aKG | [(len([VV#170]) >= 0)]}
+      ; ds_dKQ:{VV : func(0, [a_aKG ; t_aKF]) | []}
+      ; cmp:{VV : func(0, [GHC.Types.Ordering  ; GHC.Types.Ordering ]) | []}
+      ; bvor:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; bvand:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; autolen:{VV : func(1, [@(0) ; int]) | []}
+      ; addrLen:{VV : func(0, [int ; int]) | []}
+      ; VV#277:{VV#277 : FAppTy (List ) t_aKF | [(len([VV#277]) = (1 + len([lq_anf__dKW])))
+                                                ; (null(VV#277) <=> false)
+                                                ; (xsListSelector([VV#277]) = lq_anf__dKW)
+                                                ; (xListSelector([VV#277]) = lq_anf__dKT)
+                                                ; (len([VV#277]) >= 0)]}
+      ; Set_sub:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_sng:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_mem:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_empty:{VV : func(1, [int ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_emp:{VV : func(1, [FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_dif:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cup:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cap:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Prop:{VV : func(0, [GHC.Types.Bool  ; bool]) | []}
+      ; Map_store:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1) ; FAppTy (FAppTy (Map_t ) @(0)) @(1)]) | []}
+      ; Map_select:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1)]) | []}
+      ; GHC.Types.LT#6S:{VV#161 : GHC.Types.Ordering  | [(cmp([VV#161]) = GHC.Types.LT#6S)]}
+      ; GHC.Types.I##6c:{VV : func(0, [int ; int]) | []}
+      ; GHC.Types.GT#6W:{VV#162 : GHC.Types.Ordering  | [(cmp([VV#162]) = GHC.Types.GT#6W)]}
+      ; GHC.Types.EQ#6U:{VV#160 : GHC.Types.Ordering  | [(cmp([VV#160]) = GHC.Types.EQ#6U)]}
+      ; GHC.Integer.Type.smallInteger#0Z:{VV : func(0, [int ; int]) | []}
+      ; GHC.Base.map#01X:{VV : func(2, [func(0, [@(0) ; @(1)]) ; FAppTy (List ) @(0) ; FAppTy (List ) @(1)]) | []}
+      ; GHC.Base..#r2q:{VV : func(3, [func(0, [@(0) ; @(1)]) ; func(0, [@(2) ; @(0)]) ; @(2) ; @(1)]) | []}
+      ; Data.Maybe.Nothing#r19:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0)]) | []}
+      ; Data.Maybe.Just#r1a:{VV : func(1, [@(0) ; FAppTy (Data.Maybe.Maybe ) @(0)]) | []}] 
+ grd true 
+ lhs {VV#F1 : FAppTy (List ) t_aKF | [(len([VV#F1]) = (1 + len([lq_anf__dKW])))
+                                     ; (null(VV#F1) <=> false)
+                                     ; (xsListSelector([VV#F1]) = lq_anf__dKW)
+                                     ; (xListSelector([VV#F1]) = lq_anf__dKT)
+                                     ; (len([VV#F1]) >= 0)]} 
+ rhs {VV#F1 : FAppTy (List ) t_aKF | [(len([ds_dKR]) = len([VV#F1]))]} 
+ id 1 tag [1] // 
+
+UNSAT
+LiquidHaskell Copyright 2009-15 Regents of the University of California. All Rights Reserved.
+
+[1;94m
+**** DONE:  Extracted Core using GHC *******************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  generateConstraints ************************************************
+[0m[1;90m 
+[0m[1;94m
+**** START: fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  solve **************************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  annotate ***********************************************************
+[0m[1;90m 
+[0m[1;91m
+**** UNSAFE ********************************************************************
+[0m
+
+ tests/hofxn.hstmp.hs:3:18-44: Error: Liquid Type Mismatch
+   Inferred type
+     VV : {VV : [a] | len VV == 1 + len ?a && (null VV <=> false) && xsListSelector VV == ?a && xListSelector VV == ?d && len VV >= 0}
+  
+   not a subtype of Required type
+     VV : {VV : [a] | len ?c == len VV}
+  
+   In Context
+     VV : {VV : [a] | len VV == 1 + len ?a && (null VV <=> false) && xsListSelector VV == ?a && xListSelector VV == ?d && len VV >= 0}
+     ?e : a
+     ?a : {?a : [a] | len ?a == 1 + len ?b && (null ?a <=> false) && xsListSelector ?a == ?b && xListSelector ?a == ?e && len ?a >= 0}
+     ?c : {?c : [a] | len ?c >= 0}
+     xs : {v : [a] | len v >= 0}
+     ?d : a
+     ?b : {?b : [a] | len ?b == len xs && len ?b >= 0}
+
+
+========================================================
+© Copyright 2009 Regents of the University of California.
+All Rights Reserved.
+========================================================
+.|./.-
+SAT
+LiquidHaskell Copyright 2009-15 Regents of the University of California. All Rights Reserved.
+
+[1;94m
+**** DONE:  Extracted Core using GHC *******************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  generateConstraints ************************************************
+[0m[1;90m 
+[0m[1;94m
+**** START: fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  solve **************************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  annotate ***********************************************************
+[0m[1;90m 
+[0m[1;92m
+**** SAFE **********************************************************************
+[0m
+
+
+========================================================
+© Copyright 2009 Regents of the University of California.
+All Rights Reserved.
+========================================================
+.|./.-Unsatisfied Constraints:
+ constraint:
+ env  [ xsListSelector:{VV : func(1, [FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; xs#aKo:{lq_tmp_x_203 : FAppTy (List ) a_aKG | [(len([lq_tmp_x_203]) >= 0)]}
+      ; x_Tuple77:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(6)]) | []}
+      ; x_Tuple76:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(5)]) | []}
+      ; x_Tuple75:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(4)]) | []}
+      ; x_Tuple74:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(3)]) | []}
+      ; x_Tuple73:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(2)]) | []}
+      ; x_Tuple72:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(1)]) | []}
+      ; x_Tuple71:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(0)]) | []}
+      ; x_Tuple66:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(5)]) | []}
+      ; x_Tuple65:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(4)]) | []}
+      ; x_Tuple64:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(3)]) | []}
+      ; x_Tuple63:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(2)]) | []}
+      ; x_Tuple62:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(1)]) | []}
+      ; x_Tuple61:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(0)]) | []}
+      ; x_Tuple55:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(4)]) | []}
+      ; x_Tuple54:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(3)]) | []}
+      ; x_Tuple53:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(2)]) | []}
+      ; x_Tuple52:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(1)]) | []}
+      ; x_Tuple51:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(0)]) | []}
+      ; x_Tuple44:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(3)]) | []}
+      ; x_Tuple43:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(2)]) | []}
+      ; x_Tuple42:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(1)]) | []}
+      ; x_Tuple41:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(0)]) | []}
+      ; x_Tuple33:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(2)]) | []}
+      ; x_Tuple32:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(1)]) | []}
+      ; x_Tuple31:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(0)]) | []}
+      ; x_Tuple22:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; x_Tuple21:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; xListSelector:{VV : func(1, [FAppTy (List ) @(0) ; @(0)]) | []}
+      ; x#aKn:{VV : a_aKG | []}
+      ; strLen:{VV : func(0, [int ; int]) | []}
+      ; snd:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; papp4:{VV : func(8, [FAppTy (FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2)) @(6) ; @(3) ; @(4) ; @(5) ; @(7) ; bool]) | []}
+      ; papp3:{VV : func(6, [FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2) ; @(3) ; @(4) ; @(5) ; bool]) | []}
+      ; papp2:{VV : func(4, [FAppTy (FAppTy (Pred ) @(0)) @(1) ; @(2) ; @(3) ; bool]) | []}
+      ; papp1:{VV : func(1, [FAppTy (Pred ) @(0) ; @(0) ; bool]) | []}
+      ; null:{VV : func(1, [FAppTy (List ) @(0) ; bool]) | []}
+      ; lq_anf__dKW:{lq_tmp_x_242 : FAppTy (List ) t_aKF | [(len([lq_tmp_x_242]) = (1 + len([lq_anf__dKV])))
+                                                           ; (null(lq_tmp_x_242) <=> false)
+                                                           ; (xsListSelector([lq_tmp_x_242]) = lq_anf__dKV)
+                                                           ; (xListSelector([lq_tmp_x_242]) = lq_anf__dKU)
+                                                           ; (len([lq_tmp_x_242]) >= 0)]}
+      ; lq_anf__dKV:{lq_tmp_x_222 : FAppTy (List ) t_aKF | [(len([lq_tmp_x_222]) = len([xs#aKo]))
+                                                           ; (len([lq_tmp_x_222]) >= 0)]}
+      ; lq_anf__dKU:{VV : t_aKF | []}
+      ; lq_anf__dKT:{VV : t_aKF | []}
+      ; lq_anf__dKS:{lq_tmp_x_193 : FAppTy (List ) a_aKG | [(lq_tmp_x_193 = ds_dKR)
+                                                           ; (len([lq_tmp_x_193]) >= 0)
+                                                           ; (len([lq_tmp_x_193]) = (1 + len([xs#aKo])))
+                                                           ; (null(lq_tmp_x_193) <=> false)
+                                                           ; (xsListSelector([lq_tmp_x_193]) = xs#aKo)
+                                                           ; (xListSelector([lq_tmp_x_193]) = x#aKn)
+                                                           ; (lq_tmp_x_193 = fix#GHC.Types.#58##35#64([x#aKn; xs#aKo]))
+                                                           ; (len([lq_tmp_x_193]) = (1 + len([xs#aKo])))
+                                                           ; (null(lq_tmp_x_193) <=> false)
+                                                           ; (xsListSelector([lq_tmp_x_193]) = xs#aKo)
+                                                           ; (xListSelector([lq_tmp_x_193]) = x#aKn)
+                                                           ; (len([lq_tmp_x_193]) >= 0)]}
+      ; len:{VV : func(2, [FAppTy @(0) @(1) ; int]) | []}
+      ; isJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; bool]) | []}
+      ; fst:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; fromJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; @(0)]) | []}
+      ; fix#GHC.Types.#91##93##35#6m:{VV : func(1, [FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Types.#58##35#64:{VV : func(1, [@(0) ; FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##44##41##35#7e:{VV : func(7, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; @(6) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##41##35#7c:{VV : func(6, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##41##35#7a:{VV : func(5, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##41##35#78:{VV : func(4, [@(0) ; @(1) ; @(2) ; @(3) ; FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##41##35#76:{VV : func(3, [@(0) ; @(1) ; @(2) ; FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)]) | []}
+      ; fix#GHC.Tuple.#40##44##41##35#74:{VV : func(2, [@(0) ; @(1) ; FAppTy (FAppTy (Tuple ) @(0)) @(1)]) | []}
+      ; fix#GHC.Real.D#58#Integral#35#r6o:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; int]) ; FAppTy (GHC.Real.Integral ) @(0)]) | []}
+      ; fix#GHC.Real.D#58#Fractional#35#rkT:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0)]) ; func(0, [FAppTy (GHC.Real.Ratio ) int ; @(0)]) ; FAppTy (GHC.Real.Fractional ) @(0)]) | []}
+      ; fix#GHC.Prim.#62##61##35##35#9n:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#62##35##35#9m:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#61##61##35##35#9o:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##61##35##35#9r:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##35##35#9q:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#45##35##35#99:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#43##35##35#98:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Num.#45##35#02B:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#43##35#rt:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#42##35#ru:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; ds_dKR:{VV#170 : FAppTy (List ) a_aKG | [(len([VV#170]) >= 0)]}
+      ; ds_dKQ:{VV : func(0, [a_aKG ; t_aKF]) | []}
+      ; cmp:{VV : func(0, [GHC.Types.Ordering  ; GHC.Types.Ordering ]) | []}
+      ; bvor:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; bvand:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; autolen:{VV : func(1, [@(0) ; int]) | []}
+      ; addrLen:{VV : func(0, [int ; int]) | []}
+      ; VV#277:{VV#277 : FAppTy (List ) t_aKF | [(len([VV#277]) = (1 + len([lq_anf__dKW])))
+                                                ; (null(VV#277) <=> false)
+                                                ; (xsListSelector([VV#277]) = lq_anf__dKW)
+                                                ; (xListSelector([VV#277]) = lq_anf__dKT)
+                                                ; (len([VV#277]) >= 0)]}
+      ; Set_sub:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_sng:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_mem:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_empty:{VV : func(1, [int ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_emp:{VV : func(1, [FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_dif:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cup:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cap:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Prop:{VV : func(0, [GHC.Types.Bool  ; bool]) | []}
+      ; Map_store:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1) ; FAppTy (FAppTy (Map_t ) @(0)) @(1)]) | []}
+      ; Map_select:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1)]) | []}
+      ; GHC.Types.LT#6S:{VV#161 : GHC.Types.Ordering  | [(cmp([VV#161]) = GHC.Types.LT#6S)]}
+      ; GHC.Types.I##6c:{VV : func(0, [int ; int]) | []}
+      ; GHC.Types.GT#6W:{VV#162 : GHC.Types.Ordering  | [(cmp([VV#162]) = GHC.Types.GT#6W)]}
+      ; GHC.Types.EQ#6U:{VV#160 : GHC.Types.Ordering  | [(cmp([VV#160]) = GHC.Types.EQ#6U)]}
+      ; GHC.Integer.Type.smallInteger#0Z:{VV : func(0, [int ; int]) | []}
+      ; GHC.Base.map#01X:{VV : func(2, [func(0, [@(0) ; @(1)]) ; FAppTy (List ) @(0) ; FAppTy (List ) @(1)]) | []}
+      ; GHC.Base..#r2q:{VV : func(3, [func(0, [@(0) ; @(1)]) ; func(0, [@(2) ; @(0)]) ; @(2) ; @(1)]) | []}
+      ; Data.Maybe.Nothing#r19:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0)]) | []}
+      ; Data.Maybe.Just#r1a:{VV : func(1, [@(0) ; FAppTy (Data.Maybe.Maybe ) @(0)]) | []}] 
+ grd true 
+ lhs {VV#F1 : FAppTy (List ) t_aKF | [(len([VV#F1]) = (1 + len([lq_anf__dKW])))
+                                     ; (null(VV#F1) <=> false)
+                                     ; (xsListSelector([VV#F1]) = lq_anf__dKW)
+                                     ; (xListSelector([VV#F1]) = lq_anf__dKT)
+                                     ; (len([VV#F1]) >= 0)]} 
+ rhs {VV#F1 : FAppTy (List ) t_aKF | [(len([ds_dKR]) >= len([VV#F1]))]} 
+ id 1 tag [1] // 
+
+UNSAT
+LiquidHaskell Copyright 2009-15 Regents of the University of California. All Rights Reserved.
+
+[1;94m
+**** DONE:  Extracted Core using GHC *******************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  generateConstraints ************************************************
+[0m[1;90m 
+[0m[1;94m
+**** START: fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  solve **************************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  annotate ***********************************************************
+[0m[1;90m 
+[0m[1;91m
+**** UNSAFE ********************************************************************
+[0m
+
+ tests/hofxn.hstmp.hs:3:18-44: Error: Liquid Type Mismatch
+   Inferred type
+     VV : {VV : [a] | len VV == 1 + len ?a && (null VV <=> false) && xsListSelector VV == ?a && xListSelector VV == ?d && len VV >= 0}
+  
+   not a subtype of Required type
+     VV : {VV : [a] | len ?c >= len VV}
+  
+   In Context
+     VV : {VV : [a] | len VV == 1 + len ?a && (null VV <=> false) && xsListSelector VV == ?a && xListSelector VV == ?d && len VV >= 0}
+     ?e : a
+     ?a : {?a : [a] | len ?a == 1 + len ?b && (null ?a <=> false) && xsListSelector ?a == ?b && xListSelector ?a == ?e && len ?a >= 0}
+     ?c : {?c : [a] | len ?c >= 0}
+     xs : {v : [a] | len v >= 0}
+     ?d : a
+     ?b : {?b : [a] | len ?b == len xs && len ?b >= 0}
+
+
+========================================================
+© Copyright 2009 Regents of the University of California.
+All Rights Reserved.
+========================================================
+.|./.-.\.|./.-.\.|./.-.\.|./.-.\.|./Unsatisfied Constraints:
+ constraint:
+ env  [ xsListSelector:{VV : func(1, [FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; x_Tuple77:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(6)]) | []}
+      ; x_Tuple76:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(5)]) | []}
+      ; x_Tuple75:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(4)]) | []}
+      ; x_Tuple74:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(3)]) | []}
+      ; x_Tuple73:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(2)]) | []}
+      ; x_Tuple72:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(1)]) | []}
+      ; x_Tuple71:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(0)]) | []}
+      ; x_Tuple66:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(5)]) | []}
+      ; x_Tuple65:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(4)]) | []}
+      ; x_Tuple64:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(3)]) | []}
+      ; x_Tuple63:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(2)]) | []}
+      ; x_Tuple62:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(1)]) | []}
+      ; x_Tuple61:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(0)]) | []}
+      ; x_Tuple55:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(4)]) | []}
+      ; x_Tuple54:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(3)]) | []}
+      ; x_Tuple53:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(2)]) | []}
+      ; x_Tuple52:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(1)]) | []}
+      ; x_Tuple51:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(0)]) | []}
+      ; x_Tuple44:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(3)]) | []}
+      ; x_Tuple43:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(2)]) | []}
+      ; x_Tuple42:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(1)]) | []}
+      ; x_Tuple41:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(0)]) | []}
+      ; x_Tuple33:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(2)]) | []}
+      ; x_Tuple32:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(1)]) | []}
+      ; x_Tuple31:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(0)]) | []}
+      ; x_Tuple22:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; x_Tuple21:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; xListSelector:{VV : func(1, [FAppTy (List ) @(0) ; @(0)]) | []}
+      ; strLen:{VV : func(0, [int ; int]) | []}
+      ; snd:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; papp4:{VV : func(8, [FAppTy (FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2)) @(6) ; @(3) ; @(4) ; @(5) ; @(7) ; bool]) | []}
+      ; papp3:{VV : func(6, [FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2) ; @(3) ; @(4) ; @(5) ; bool]) | []}
+      ; papp2:{VV : func(4, [FAppTy (FAppTy (Pred ) @(0)) @(1) ; @(2) ; @(3) ; bool]) | []}
+      ; papp1:{VV : func(1, [FAppTy (Pred ) @(0) ; @(0) ; bool]) | []}
+      ; null:{VV : func(1, [FAppTy (List ) @(0) ; bool]) | []}
+      ; lq_anf__dKz:{lq_tmp_x_565 : FAppTy (List ) int | [(len([lq_tmp_x_565]) = (1 + len([lq_anf__dKy])))
+                                                         ; (null(lq_tmp_x_565) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_565]) = lq_anf__dKy)
+                                                         ; (xListSelector([lq_tmp_x_565]) = lq_anf__dKx)
+                                                         ; (len([lq_tmp_x_565]) >= 0)]}
+      ; lq_anf__dKy:{lq_tmp_x_551 : FAppTy (List ) int | [(len([lq_tmp_x_551]) = 0)
+                                                         ; (null(lq_tmp_x_551) <=> true)
+                                                         ; (len([lq_tmp_x_551]) >= 0)]}
+      ; lq_anf__dKx:{lq_tmp_x_545 : int | [(lq_tmp_x_545 = (5 : int))]}
+      ; lq_anf__dKw:{lq_tmp_x_539 : int | [(lq_tmp_x_539 = (5 : int))]}
+      ; lq_anf__dKv:{lq_tmp_x_533 : int | [(lq_tmp_x_533 = (4 : int))]}
+      ; lq_anf__dKu:{lq_tmp_x_527 : int | [(lq_tmp_x_527 = (3 : int))]}
+      ; lq_anf__dKt:{lq_tmp_x_506 : FAppTy (List ) int | [(len([lq_tmp_x_506]) = (1 + len([lq_anf__dKs])))
+                                                         ; (null(lq_tmp_x_506) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_506]) = lq_anf__dKs)
+                                                         ; (xListSelector([lq_tmp_x_506]) = lq_anf__dKn)
+                                                         ; (len([lq_tmp_x_506]) >= 0)]}
+      ; lq_anf__dKs:{lq_tmp_x_483 : FAppTy (List ) int | [(len([lq_tmp_x_483]) = (1 + len([lq_anf__dKr])))
+                                                         ; (null(lq_tmp_x_483) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_483]) = lq_anf__dKr)
+                                                         ; (xListSelector([lq_tmp_x_483]) = lq_anf__dKo)
+                                                         ; (len([lq_tmp_x_483]) >= 0)]}
+      ; lq_anf__dKr:{lq_tmp_x_460 : FAppTy (List ) int | [(len([lq_tmp_x_460]) = (1 + len([lq_anf__dKq])))
+                                                         ; (null(lq_tmp_x_460) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_460]) = lq_anf__dKq)
+                                                         ; (xListSelector([lq_tmp_x_460]) = lq_anf__dKp)
+                                                         ; (len([lq_tmp_x_460]) >= 0)]}
+      ; lq_anf__dKq:{lq_tmp_x_446 : FAppTy (List ) int | [(len([lq_tmp_x_446]) = 0)
+                                                         ; (null(lq_tmp_x_446) <=> true)
+                                                         ; (len([lq_tmp_x_446]) >= 0)]}
+      ; lq_anf__dKp:{lq_tmp_x_440 : int | [(lq_tmp_x_440 = (3 : int))]}
+      ; lq_anf__dKo:{lq_tmp_x_434 : int | [(lq_tmp_x_434 = (2 : int))]}
+      ; lq_anf__dKn:{lq_tmp_x_428 : int | [(lq_tmp_x_428 = (1 : int))]}
+      ; lq_anf__dKm:{lq_tmp_x_373 : FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int) | 
+                    [(snd([lq_tmp_x_373]) = lq_anf__dKl)
+                    ; (fst([lq_tmp_x_373]) = lq_anf__dKe)
+                    ; (x_Tuple22([lq_tmp_x_373]) = lq_anf__dKl)
+                    ; (x_Tuple21([lq_tmp_x_373]) = lq_anf__dKe)]}
+      ; lq_anf__dKl:{lq_tmp_x_352 : FAppTy (List ) int | [(len([lq_tmp_x_352]) = (1 + len([lq_anf__dKk])))
+                                                         ; (null(lq_tmp_x_352) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_352]) = lq_anf__dKk)
+                                                         ; (xListSelector([lq_tmp_x_352]) = lq_anf__dKf)
+                                                         ; (len([lq_tmp_x_352]) >= 0)]}
+      ; lq_anf__dKk:{lq_tmp_x_329 : FAppTy (List ) int | [(len([lq_tmp_x_329]) = (1 + len([lq_anf__dKj])))
+                                                         ; (null(lq_tmp_x_329) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_329]) = lq_anf__dKj)
+                                                         ; (xListSelector([lq_tmp_x_329]) = lq_anf__dKg)
+                                                         ; (len([lq_tmp_x_329]) >= 0)]}
+      ; lq_anf__dKj:{lq_tmp_x_306 : FAppTy (List ) int | [(len([lq_tmp_x_306]) = (1 + len([lq_anf__dKi])))
+                                                         ; (null(lq_tmp_x_306) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_306]) = lq_anf__dKi)
+                                                         ; (xListSelector([lq_tmp_x_306]) = lq_anf__dKh)
+                                                         ; (len([lq_tmp_x_306]) >= 0)]}
+      ; lq_anf__dKi:{lq_tmp_x_292 : FAppTy (List ) int | [(len([lq_tmp_x_292]) = 0)
+                                                         ; (null(lq_tmp_x_292) <=> true)
+                                                         ; (len([lq_tmp_x_292]) >= 0)]}
+      ; lq_anf__dKh:{lq_tmp_x_286 : int | [(lq_tmp_x_286 = (4 : int))]}
+      ; lq_anf__dKg:{lq_tmp_x_280 : int | [(lq_tmp_x_280 = (3 : int))]}
+      ; lq_anf__dKf:{lq_tmp_x_274 : int | [(lq_tmp_x_274 = (2 : int))]}
+      ; lq_anf__dKe:{lq_tmp_x_253 : FAppTy (List ) int | [(len([lq_tmp_x_253]) = (1 + len([lq_anf__dKd])))
+                                                         ; (null(lq_tmp_x_253) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_253]) = lq_anf__dKd)
+                                                         ; (xListSelector([lq_tmp_x_253]) = lq_anf__dK8)
+                                                         ; (len([lq_tmp_x_253]) >= 0)]}
+      ; lq_anf__dKd:{lq_tmp_x_230 : FAppTy (List ) int | [(len([lq_tmp_x_230]) = (1 + len([lq_anf__dKc])))
+                                                         ; (null(lq_tmp_x_230) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_230]) = lq_anf__dKc)
+                                                         ; (xListSelector([lq_tmp_x_230]) = lq_anf__dK9)
+                                                         ; (len([lq_tmp_x_230]) >= 0)]}
+      ; lq_anf__dKc:{lq_tmp_x_207 : FAppTy (List ) int | [(len([lq_tmp_x_207]) = (1 + len([lq_anf__dKb])))
+                                                         ; (null(lq_tmp_x_207) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_207]) = lq_anf__dKb)
+                                                         ; (xListSelector([lq_tmp_x_207]) = lq_anf__dKa)
+                                                         ; (len([lq_tmp_x_207]) >= 0)]}
+      ; lq_anf__dKb:{lq_tmp_x_193 : FAppTy (List ) int | [(len([lq_tmp_x_193]) = 0)
+                                                         ; (null(lq_tmp_x_193) <=> true)
+                                                         ; (len([lq_tmp_x_193]) >= 0)]}
+      ; lq_anf__dKa:{lq_tmp_x_187 : int | [(lq_tmp_x_187 = (3 : int))]}
+      ; lq_anf__dKF:{lq_tmp_x_799 : FAppTy (List ) (FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int)) | 
+                    [(len([lq_tmp_x_799]) = (1 + len([lq_anf__dKE])))
+                    ; (null(lq_tmp_x_799) <=> false)
+                    ; (xsListSelector([lq_tmp_x_799]) = lq_anf__dKE)
+                    ; (xListSelector([lq_tmp_x_799]) = lq_anf__dKD)
+                    ; (len([lq_tmp_x_799]) >= 0)]}
+      ; lq_anf__dKE:{lq_tmp_x_710 : FAppTy (List ) (FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int)) | 
+                    [(len([lq_tmp_x_710]) = 0); (null(lq_tmp_x_710) <=> true)
+                    ; (len([lq_tmp_x_710]) >= 0)]}
+      ; lq_anf__dKD:{lq_tmp_x_655 : FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int) | 
+                    [(snd([lq_tmp_x_655]) = lq_anf__dKC)
+                    ; (fst([lq_tmp_x_655]) = lq_anf__dKt)
+                    ; (x_Tuple22([lq_tmp_x_655]) = lq_anf__dKC)
+                    ; (x_Tuple21([lq_tmp_x_655]) = lq_anf__dKt)]}
+      ; lq_anf__dKC:{lq_tmp_x_634 : FAppTy (List ) int | [(len([lq_tmp_x_634]) = (1 + len([lq_anf__dKB])))
+                                                         ; (null(lq_tmp_x_634) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_634]) = lq_anf__dKB)
+                                                         ; (xListSelector([lq_tmp_x_634]) = lq_anf__dKu)
+                                                         ; (len([lq_tmp_x_634]) >= 0)]}
+      ; lq_anf__dKB:{lq_tmp_x_611 : FAppTy (List ) int | [(len([lq_tmp_x_611]) = (1 + len([lq_anf__dKA])))
+                                                         ; (null(lq_tmp_x_611) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_611]) = lq_anf__dKA)
+                                                         ; (xListSelector([lq_tmp_x_611]) = lq_anf__dKv)
+                                                         ; (len([lq_tmp_x_611]) >= 0)]}
+      ; lq_anf__dKA:{lq_tmp_x_588 : FAppTy (List ) int | [(len([lq_tmp_x_588]) = (1 + len([lq_anf__dKz])))
+                                                         ; (null(lq_tmp_x_588) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_588]) = lq_anf__dKz)
+                                                         ; (xListSelector([lq_tmp_x_588]) = lq_anf__dKw)
+                                                         ; (len([lq_tmp_x_588]) >= 0)]}
+      ; lq_anf__dK9:{lq_tmp_x_181 : int | [(lq_tmp_x_181 = (2 : int))]}
+      ; lq_anf__dK8:{lq_tmp_x_175 : int | [(lq_tmp_x_175 = (1 : int))]}
+      ; len:{VV : func(2, [FAppTy @(0) @(1) ; int]) | []}
+      ; isJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; bool]) | []}
+      ; i_0:{VV#1096 : FAppTy (List ) int | [(len([VV#1096]) >= 0)]}
+      ; fst:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; fromJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; @(0)]) | []}
+      ; fix#GHC.Types.#91##93##35#6m:{VV : func(1, [FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Types.#58##35#64:{VV : func(1, [@(0) ; FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##44##41##35#7e:{VV : func(7, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; @(6) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##41##35#7c:{VV : func(6, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##41##35#7a:{VV : func(5, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##41##35#78:{VV : func(4, [@(0) ; @(1) ; @(2) ; @(3) ; FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##41##35#76:{VV : func(3, [@(0) ; @(1) ; @(2) ; FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)]) | []}
+      ; fix#GHC.Tuple.#40##44##41##35#74:{VV : func(2, [@(0) ; @(1) ; FAppTy (FAppTy (Tuple ) @(0)) @(1)]) | []}
+      ; fix#GHC.Real.D#58#Integral#35#r6o:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; int]) ; FAppTy (GHC.Real.Integral ) @(0)]) | []}
+      ; fix#GHC.Real.D#58#Fractional#35#rkT:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0)]) ; func(0, [FAppTy (GHC.Real.Ratio ) int ; @(0)]) ; FAppTy (GHC.Real.Fractional ) @(0)]) | []}
+      ; fix#GHC.Prim.#62##61##35##35#9n:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#62##35##35#9m:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#61##61##35##35#9o:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##61##35##35#9r:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##35##35#9q:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#45##35##35#99:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#43##35##35#98:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Num.#45##35#02B:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#43##35#rt:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#42##35#ru:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; cmp:{VV : func(0, [GHC.Types.Ordering  ; GHC.Types.Ordering ]) | []}
+      ; bvor:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; bvand:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; autolen:{VV : func(1, [@(0) ; int]) | []}
+      ; addrLen:{VV : func(0, [int ; int]) | []}
+      ; VV#1097:{VV#1097 : FAppTy (List ) int | [k__970[lq_tmp_x_987:=VV#1097][lq_tmp_x_983:=i_0][lq_tmp_x_961:=i_0][lq_tmp_x_940:=lq_anf__dKF][lq_tmp_x_939:=lq_anf__dKm][lq_tmp_x_936:=VV#1070][VV#969:=VV#1097]
+                                                ; (len([VV#1097]) >= 0)]}
+      ; VV#1073:{VV#1073 : FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int) | 
+                [k__973[lq_tmp_x_988:=VV#1073][lq_tmp_x_940:=lq_anf__dKF][lq_tmp_x_939:=lq_anf__dKm][lq_tmp_x_936:=VV#1070][VV#972:=VV#1073]]}
+      ; VV#1070:{VV#1070 : FAppTy (List ) (FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int)) | 
+                [(len([VV#1070]) = (1 + len([lq_anf__dKF])))
+                ; (null(VV#1070) <=> false)
+                ; (xsListSelector([VV#1070]) = lq_anf__dKF)
+                ; (xListSelector([VV#1070]) = lq_anf__dKm)
+                ; (len([VV#1070]) >= 0)]}
+      ; Set_sub:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_sng:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_mem:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_empty:{VV : func(1, [int ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_emp:{VV : func(1, [FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_dif:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cup:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cap:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Prop:{VV : func(0, [GHC.Types.Bool  ; bool]) | []}
+      ; Map_store:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1) ; FAppTy (FAppTy (Map_t ) @(0)) @(1)]) | []}
+      ; Map_select:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1)]) | []}
+      ; GHC.Types.LT#6S:{VV#169 : GHC.Types.Ordering  | [(cmp([VV#169]) = GHC.Types.LT#6S)]}
+      ; GHC.Types.I##6c:{VV : func(0, [int ; int]) | []}
+      ; GHC.Types.GT#6W:{VV#170 : GHC.Types.Ordering  | [(cmp([VV#170]) = GHC.Types.GT#6W)]}
+      ; GHC.Types.EQ#6U:{VV#168 : GHC.Types.Ordering  | [(cmp([VV#168]) = GHC.Types.EQ#6U)]}
+      ; GHC.Integer.Type.smallInteger#0Z:{VV : func(0, [int ; int]) | []}
+      ; GHC.Base..#r2q:{VV : func(3, [func(0, [@(0) ; @(1)]) ; func(0, [@(2) ; @(0)]) ; @(2) ; @(1)]) | []}
+      ; Data.Maybe.Nothing#r19:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0)]) | []}
+      ; Data.Maybe.Just#r1a:{VV : func(1, [@(0) ; FAppTy (Data.Maybe.Maybe ) @(0)]) | []}] 
+ grd true 
+ lhs {VV#F1 : FAppTy (List ) int | [k__970[lq_tmp_x_987:=VV#F1][lq_tmp_x_983:=i_0][lq_tmp_x_961:=i_0][lq_tmp_x_940:=lq_anf__dKF][lq_tmp_x_939:=lq_anf__dKm][lq_tmp_x_936:=VV#1070][VV#F:=VV#F1][VV#969:=VV#F1][VV#1097:=VV#F1]
+                                   ; (len([VV#F1]) >= 0)]} 
+ rhs {VV#F1 : FAppTy (List ) int | [(len([i_0]) = len([VV#F1]))]} 
+ id 1 tag [1] // 
+
+UNSAT
+LiquidHaskell Copyright 2009-15 Regents of the University of California. All Rights Reserved.
+
+[1;94m
+**** DONE:  Extracted Core using GHC *******************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  generateConstraints ************************************************
+[0m[1;90m 
+[0m[1;94m
+**** START: fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  solve **************************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  annotate ***********************************************************
+[0m[1;90m 
+[0m[1;91m
+**** UNSAFE ********************************************************************
+[0m
+
+ tests/examples.hstmp.hs:(4,3)-(6,3): Error: Liquid Type Mismatch
+   Inferred type
+     VV : {VV : [Int] | len VV > len ?i && len VV > 0 && len VV >= len i_0 && len VV >= len ?a && len VV >= len ?v && len VV > len ?h && len VV > len ?s && len VV > len ?a5 && len VV > len ?p && len VV > len ?a0 && len VV > len ?f && VV /= i_0 && VV /= ?h && VV /= ?s && VV /= ?a5 && VV /= ?v && VV /= ?p && VV /= ?a0 && VV /= ?f && len VV >= len ?q && len VV >= len ?d && len VV > len ?t && len VV > len ?a4 && len VV > len ?a1 && len VV > len ?e && len VV > len ?n && len VV > len ?w && len VV > len ?l && len VV <= len ?a2 && VV /= ?t && VV /= ?a4 && VV /= ?q && VV /= ?a1 && VV /= ?e && VV /= ?n && VV /= ?d && VV /= ?l && len VV >= 0}
+  
+   not a subtype of Required type
+     VV : {VV : [Int] | len i_0 == len VV}
+  
+   In Context
+     VV  : {VV : [Int] | len VV > len ?i && len VV > 0 && len VV >= len i_0 && len VV >= len ?a && len VV >= len ?v && len VV > len ?h && len VV > len ?s && len VV > len ?a5 && len VV > len ?p && len VV > len ?a0 && len VV > len ?f && VV /= i_0 && VV /= ?h && VV /= ?s && VV /= ?a5 && VV /= ?v && VV /= ?p && VV /= ?a0 && VV /= ?f && len VV >= len ?q && len VV >= len ?d && len VV > len ?t && len VV > len ?a4 && len VV > len ?a1 && len VV > len ?e && len VV > len ?n && len VV > len ?w && len VV > len ?l && len VV <= len ?a2 && VV /= ?t && VV /= ?a4 && VV /= ?q && VV /= ?a1 && VV /= ?e && VV /= ?n && VV /= ?d && VV /= ?l && len VV >= 0}
+     ?e  : {?e : [Int] | len ?e == 1 + len ?n && (null ?e <=> false) && xsListSelector ?e == ?n && xListSelector ?e == ?g && len ?e >= 0}
+     ?c  : {?c : Int | ?c == 3}
+     ?q  : {?q : [Int] | len ?q == 1 + len ?a1 && (null ?q <=> false) && xsListSelector ?q == ?a1 && xListSelector ?q == ?a3 && len ?q >= 0}
+     i_0 : {i_0 : [Int] | len i_0 >= 0}
+     ?x  : {?x : Int | ?x == 5}
+     ?a  : {?a : [Int] | len ?a == 1 + len ?h && (null ?a <=> false) && xsListSelector ?a == ?h && xListSelector ?a == ?k && len ?a >= 0}
+     ?s  : {?s : [Int] | len ?s == 1 + len ?a5 && (null ?s <=> false) && xsListSelector ?s == ?a5 && xListSelector ?s == ?z && len ?s >= 0}
+     ?b  : {?b : Int | ?b == 5}
+     ?o  : {?o : ([Int], [Int]) | snd ?o == ?a2 && fst ?o == ?q && x_Tuple22 ?o == ?a2 && x_Tuple21 ?o == ?q}
+     ?i  : {?i : [([Int], [Int])] | len ?i == 1 + len ?w && (null ?i <=> false) && xsListSelector ?i == ?w && xListSelector ?i == ?o && len ?i >= 0}
+     ?a6 : {?a6 : Int | ?a6 == 2}
+     ?w  : {?w : [([Int], [Int])] | len ?w == 0 && (null ?w <=> true) && len ?w >= 0}
+     ?f  : {?f : [Int] | len ?f == 0 && (null ?f <=> true) && len ?f >= 0}
+     ?u  : {?u : Int | ?u == 3}
+     ?r  : {?r : Int | ?r == 2}
+     ?d  : {?d : [Int] | len ?d == 1 + len ?l && (null ?d <=> false) && xsListSelector ?d == ?l && xListSelector ?d == ?j && len ?d >= 0}
+     ?a5 : {?a5 : [Int] | len ?a5 == 0 && (null ?a5 <=> true) && len ?a5 >= 0}
+     ?h  : {?h : [Int] | len ?h == 1 + len ?s && (null ?h <=> false) && xsListSelector ?h == ?s && xListSelector ?h == ?c && len ?h >= 0}
+     ?j  : {?j : Int | ?j == 4}
+     ?a3 : {?a3 : Int | ?a3 == 1}
+     ?n  : {?n : [Int] | len ?n == 0 && (null ?n <=> true) && len ?n >= 0}
+     ?y  : {?y : Int | ?y == 1}
+     ?t  : {?t : [Int] | len ?t == 1 + len ?a4 && (null ?t <=> false) && xsListSelector ?t == ?a4 && xListSelector ?t == ?x && len ?t >= 0}
+     ?v  : {?v : [Int] | len ?v == 1 + len ?p && (null ?v <=> false) && xsListSelector ?v == ?p && xListSelector ?v == ?y && len ?v >= 0}
+     ?a1 : {?a1 : [Int] | len ?a1 == 1 + len ?e && (null ?a1 <=> false) && xsListSelector ?a1 == ?e && xListSelector ?a1 == ?r && len ?a1 >= 0}
+     ?z  : {?z : Int | ?z == 4}
+     ?k  : {?k : Int | ?k == 2}
+     ?a0 : {?a0 : [Int] | len ?a0 == 1 + len ?f && (null ?a0 <=> false) && xsListSelector ?a0 == ?f && xListSelector ?a0 == ?m && len ?a0 >= 0}
+     ?p  : {?p : [Int] | len ?p == 1 + len ?a0 && (null ?p <=> false) && xsListSelector ?p == ?a0 && xListSelector ?p == ?a6 && len ?p >= 0}
+     ?g  : {?g : Int | ?g == 3}
+     ?m  : {?m : Int | ?m == 3}
+     ?a2 : {?a2 : [Int] | len ?a2 == 1 + len ?d && (null ?a2 <=> false) && xsListSelector ?a2 == ?d && xListSelector ?a2 == ?u && len ?a2 >= 0}
+     ?a4 : {?a4 : [Int] | len ?a4 == 0 && (null ?a4 <=> true) && len ?a4 >= 0}
+     ?l  : {?l : [Int] | len ?l == 1 + len ?t && (null ?l <=> false) && xsListSelector ?l == ?t && xListSelector ?l == ?b && len ?l >= 0}
+
+
+========================================================
+© Copyright 2009 Regents of the University of California.
+All Rights Reserved.
+========================================================
+.|./.-.\.|./.-.\.|./.-.\.|./.-.\.|./
+SAT
+LiquidHaskell Copyright 2009-15 Regents of the University of California. All Rights Reserved.
+
+[1;94m
+**** DONE:  Extracted Core using GHC *******************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  generateConstraints ************************************************
+[0m[1;90m 
+[0m[1;94m
+**** START: fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  solve **************************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  annotate ***********************************************************
+[0m[1;90m 
+[0m[1;92m
+**** SAFE **********************************************************************
+[0m
+
+
+========================================================
+© Copyright 2009 Regents of the University of California.
+All Rights Reserved.
+========================================================
+.|./.-.\.|./.-.\.|./.-.\.|./.-.\.|./Unsatisfied Constraints:
+ constraint:
+ env  [ xsListSelector:{VV : func(1, [FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; x_Tuple77:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(6)]) | []}
+      ; x_Tuple76:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(5)]) | []}
+      ; x_Tuple75:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(4)]) | []}
+      ; x_Tuple74:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(3)]) | []}
+      ; x_Tuple73:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(2)]) | []}
+      ; x_Tuple72:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(1)]) | []}
+      ; x_Tuple71:{VV : func(7, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6) ; @(0)]) | []}
+      ; x_Tuple66:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(5)]) | []}
+      ; x_Tuple65:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(4)]) | []}
+      ; x_Tuple64:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(3)]) | []}
+      ; x_Tuple63:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(2)]) | []}
+      ; x_Tuple62:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(1)]) | []}
+      ; x_Tuple61:{VV : func(6, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5) ; @(0)]) | []}
+      ; x_Tuple55:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(4)]) | []}
+      ; x_Tuple54:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(3)]) | []}
+      ; x_Tuple53:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(2)]) | []}
+      ; x_Tuple52:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(1)]) | []}
+      ; x_Tuple51:{VV : func(5, [FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4) ; @(0)]) | []}
+      ; x_Tuple44:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(3)]) | []}
+      ; x_Tuple43:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(2)]) | []}
+      ; x_Tuple42:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(1)]) | []}
+      ; x_Tuple41:{VV : func(4, [FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3) ; @(0)]) | []}
+      ; x_Tuple33:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(2)]) | []}
+      ; x_Tuple32:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(1)]) | []}
+      ; x_Tuple31:{VV : func(3, [FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2) ; @(0)]) | []}
+      ; x_Tuple22:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; x_Tuple21:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; xListSelector:{VV : func(1, [FAppTy (List ) @(0) ; @(0)]) | []}
+      ; strLen:{VV : func(0, [int ; int]) | []}
+      ; snd:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(1)]) | []}
+      ; papp4:{VV : func(8, [FAppTy (FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2)) @(6) ; @(3) ; @(4) ; @(5) ; @(7) ; bool]) | []}
+      ; papp3:{VV : func(6, [FAppTy (FAppTy (FAppTy (Pred ) @(0)) @(1)) @(2) ; @(3) ; @(4) ; @(5) ; bool]) | []}
+      ; papp2:{VV : func(4, [FAppTy (FAppTy (Pred ) @(0)) @(1) ; @(2) ; @(3) ; bool]) | []}
+      ; papp1:{VV : func(1, [FAppTy (Pred ) @(0) ; @(0) ; bool]) | []}
+      ; null:{VV : func(1, [FAppTy (List ) @(0) ; bool]) | []}
+      ; lq_anf__dKz:{lq_tmp_x_565 : FAppTy (List ) int | [(len([lq_tmp_x_565]) = (1 + len([lq_anf__dKy])))
+                                                         ; (null(lq_tmp_x_565) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_565]) = lq_anf__dKy)
+                                                         ; (xListSelector([lq_tmp_x_565]) = lq_anf__dKx)
+                                                         ; (len([lq_tmp_x_565]) >= 0)]}
+      ; lq_anf__dKy:{lq_tmp_x_551 : FAppTy (List ) int | [(len([lq_tmp_x_551]) = 0)
+                                                         ; (null(lq_tmp_x_551) <=> true)
+                                                         ; (len([lq_tmp_x_551]) >= 0)]}
+      ; lq_anf__dKx:{lq_tmp_x_545 : int | [(lq_tmp_x_545 = (5 : int))]}
+      ; lq_anf__dKw:{lq_tmp_x_539 : int | [(lq_tmp_x_539 = (5 : int))]}
+      ; lq_anf__dKv:{lq_tmp_x_533 : int | [(lq_tmp_x_533 = (4 : int))]}
+      ; lq_anf__dKu:{lq_tmp_x_527 : int | [(lq_tmp_x_527 = (3 : int))]}
+      ; lq_anf__dKt:{lq_tmp_x_506 : FAppTy (List ) int | [(len([lq_tmp_x_506]) = (1 + len([lq_anf__dKs])))
+                                                         ; (null(lq_tmp_x_506) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_506]) = lq_anf__dKs)
+                                                         ; (xListSelector([lq_tmp_x_506]) = lq_anf__dKn)
+                                                         ; (len([lq_tmp_x_506]) >= 0)]}
+      ; lq_anf__dKs:{lq_tmp_x_483 : FAppTy (List ) int | [(len([lq_tmp_x_483]) = (1 + len([lq_anf__dKr])))
+                                                         ; (null(lq_tmp_x_483) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_483]) = lq_anf__dKr)
+                                                         ; (xListSelector([lq_tmp_x_483]) = lq_anf__dKo)
+                                                         ; (len([lq_tmp_x_483]) >= 0)]}
+      ; lq_anf__dKr:{lq_tmp_x_460 : FAppTy (List ) int | [(len([lq_tmp_x_460]) = (1 + len([lq_anf__dKq])))
+                                                         ; (null(lq_tmp_x_460) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_460]) = lq_anf__dKq)
+                                                         ; (xListSelector([lq_tmp_x_460]) = lq_anf__dKp)
+                                                         ; (len([lq_tmp_x_460]) >= 0)]}
+      ; lq_anf__dKq:{lq_tmp_x_446 : FAppTy (List ) int | [(len([lq_tmp_x_446]) = 0)
+                                                         ; (null(lq_tmp_x_446) <=> true)
+                                                         ; (len([lq_tmp_x_446]) >= 0)]}
+      ; lq_anf__dKp:{lq_tmp_x_440 : int | [(lq_tmp_x_440 = (3 : int))]}
+      ; lq_anf__dKo:{lq_tmp_x_434 : int | [(lq_tmp_x_434 = (2 : int))]}
+      ; lq_anf__dKn:{lq_tmp_x_428 : int | [(lq_tmp_x_428 = (1 : int))]}
+      ; lq_anf__dKm:{lq_tmp_x_373 : FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int) | 
+                    [(snd([lq_tmp_x_373]) = lq_anf__dKl)
+                    ; (fst([lq_tmp_x_373]) = lq_anf__dKe)
+                    ; (x_Tuple22([lq_tmp_x_373]) = lq_anf__dKl)
+                    ; (x_Tuple21([lq_tmp_x_373]) = lq_anf__dKe)]}
+      ; lq_anf__dKl:{lq_tmp_x_352 : FAppTy (List ) int | [(len([lq_tmp_x_352]) = (1 + len([lq_anf__dKk])))
+                                                         ; (null(lq_tmp_x_352) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_352]) = lq_anf__dKk)
+                                                         ; (xListSelector([lq_tmp_x_352]) = lq_anf__dKf)
+                                                         ; (len([lq_tmp_x_352]) >= 0)]}
+      ; lq_anf__dKk:{lq_tmp_x_329 : FAppTy (List ) int | [(len([lq_tmp_x_329]) = (1 + len([lq_anf__dKj])))
+                                                         ; (null(lq_tmp_x_329) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_329]) = lq_anf__dKj)
+                                                         ; (xListSelector([lq_tmp_x_329]) = lq_anf__dKg)
+                                                         ; (len([lq_tmp_x_329]) >= 0)]}
+      ; lq_anf__dKj:{lq_tmp_x_306 : FAppTy (List ) int | [(len([lq_tmp_x_306]) = (1 + len([lq_anf__dKi])))
+                                                         ; (null(lq_tmp_x_306) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_306]) = lq_anf__dKi)
+                                                         ; (xListSelector([lq_tmp_x_306]) = lq_anf__dKh)
+                                                         ; (len([lq_tmp_x_306]) >= 0)]}
+      ; lq_anf__dKi:{lq_tmp_x_292 : FAppTy (List ) int | [(len([lq_tmp_x_292]) = 0)
+                                                         ; (null(lq_tmp_x_292) <=> true)
+                                                         ; (len([lq_tmp_x_292]) >= 0)]}
+      ; lq_anf__dKh:{lq_tmp_x_286 : int | [(lq_tmp_x_286 = (4 : int))]}
+      ; lq_anf__dKg:{lq_tmp_x_280 : int | [(lq_tmp_x_280 = (3 : int))]}
+      ; lq_anf__dKf:{lq_tmp_x_274 : int | [(lq_tmp_x_274 = (2 : int))]}
+      ; lq_anf__dKe:{lq_tmp_x_253 : FAppTy (List ) int | [(len([lq_tmp_x_253]) = (1 + len([lq_anf__dKd])))
+                                                         ; (null(lq_tmp_x_253) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_253]) = lq_anf__dKd)
+                                                         ; (xListSelector([lq_tmp_x_253]) = lq_anf__dK8)
+                                                         ; (len([lq_tmp_x_253]) >= 0)]}
+      ; lq_anf__dKd:{lq_tmp_x_230 : FAppTy (List ) int | [(len([lq_tmp_x_230]) = (1 + len([lq_anf__dKc])))
+                                                         ; (null(lq_tmp_x_230) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_230]) = lq_anf__dKc)
+                                                         ; (xListSelector([lq_tmp_x_230]) = lq_anf__dK9)
+                                                         ; (len([lq_tmp_x_230]) >= 0)]}
+      ; lq_anf__dKc:{lq_tmp_x_207 : FAppTy (List ) int | [(len([lq_tmp_x_207]) = (1 + len([lq_anf__dKb])))
+                                                         ; (null(lq_tmp_x_207) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_207]) = lq_anf__dKb)
+                                                         ; (xListSelector([lq_tmp_x_207]) = lq_anf__dKa)
+                                                         ; (len([lq_tmp_x_207]) >= 0)]}
+      ; lq_anf__dKb:{lq_tmp_x_193 : FAppTy (List ) int | [(len([lq_tmp_x_193]) = 0)
+                                                         ; (null(lq_tmp_x_193) <=> true)
+                                                         ; (len([lq_tmp_x_193]) >= 0)]}
+      ; lq_anf__dKa:{lq_tmp_x_187 : int | [(lq_tmp_x_187 = (3 : int))]}
+      ; lq_anf__dKF:{lq_tmp_x_799 : FAppTy (List ) (FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int)) | 
+                    [(len([lq_tmp_x_799]) = (1 + len([lq_anf__dKE])))
+                    ; (null(lq_tmp_x_799) <=> false)
+                    ; (xsListSelector([lq_tmp_x_799]) = lq_anf__dKE)
+                    ; (xListSelector([lq_tmp_x_799]) = lq_anf__dKD)
+                    ; (len([lq_tmp_x_799]) >= 0)]}
+      ; lq_anf__dKE:{lq_tmp_x_710 : FAppTy (List ) (FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int)) | 
+                    [(len([lq_tmp_x_710]) = 0); (null(lq_tmp_x_710) <=> true)
+                    ; (len([lq_tmp_x_710]) >= 0)]}
+      ; lq_anf__dKD:{lq_tmp_x_655 : FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int) | 
+                    [(snd([lq_tmp_x_655]) = lq_anf__dKC)
+                    ; (fst([lq_tmp_x_655]) = lq_anf__dKt)
+                    ; (x_Tuple22([lq_tmp_x_655]) = lq_anf__dKC)
+                    ; (x_Tuple21([lq_tmp_x_655]) = lq_anf__dKt)]}
+      ; lq_anf__dKC:{lq_tmp_x_634 : FAppTy (List ) int | [(len([lq_tmp_x_634]) = (1 + len([lq_anf__dKB])))
+                                                         ; (null(lq_tmp_x_634) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_634]) = lq_anf__dKB)
+                                                         ; (xListSelector([lq_tmp_x_634]) = lq_anf__dKu)
+                                                         ; (len([lq_tmp_x_634]) >= 0)]}
+      ; lq_anf__dKB:{lq_tmp_x_611 : FAppTy (List ) int | [(len([lq_tmp_x_611]) = (1 + len([lq_anf__dKA])))
+                                                         ; (null(lq_tmp_x_611) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_611]) = lq_anf__dKA)
+                                                         ; (xListSelector([lq_tmp_x_611]) = lq_anf__dKv)
+                                                         ; (len([lq_tmp_x_611]) >= 0)]}
+      ; lq_anf__dKA:{lq_tmp_x_588 : FAppTy (List ) int | [(len([lq_tmp_x_588]) = (1 + len([lq_anf__dKz])))
+                                                         ; (null(lq_tmp_x_588) <=> false)
+                                                         ; (xsListSelector([lq_tmp_x_588]) = lq_anf__dKz)
+                                                         ; (xListSelector([lq_tmp_x_588]) = lq_anf__dKw)
+                                                         ; (len([lq_tmp_x_588]) >= 0)]}
+      ; lq_anf__dK9:{lq_tmp_x_181 : int | [(lq_tmp_x_181 = (2 : int))]}
+      ; lq_anf__dK8:{lq_tmp_x_175 : int | [(lq_tmp_x_175 = (1 : int))]}
+      ; len:{VV : func(2, [FAppTy @(0) @(1) ; int]) | []}
+      ; isJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; bool]) | []}
+      ; i_0:{VV#1096 : FAppTy (List ) int | [(len([VV#1096]) >= 0)]}
+      ; fst:{VV : func(2, [FAppTy (FAppTy (Tuple ) @(0)) @(1) ; @(0)]) | []}
+      ; fromJust:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0) ; @(0)]) | []}
+      ; fix#GHC.Types.#91##93##35#6m:{VV : func(1, [FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Types.#58##35#64:{VV : func(1, [@(0) ; FAppTy (List ) @(0) ; FAppTy (List ) @(0)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##44##41##35#7e:{VV : func(7, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; @(6) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)) @(6)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##44##41##35#7c:{VV : func(6, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; @(5) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)) @(5)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##44##41##35#7a:{VV : func(5, [@(0) ; @(1) ; @(2) ; @(3) ; @(4) ; FAppTy (FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)) @(4)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##44##41##35#78:{VV : func(4, [@(0) ; @(1) ; @(2) ; @(3) ; FAppTy (FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)) @(3)]) | []}
+      ; fix#GHC.Tuple.#40##44##44##41##35#76:{VV : func(3, [@(0) ; @(1) ; @(2) ; FAppTy (FAppTy (FAppTy (Tuple ) @(0)) @(1)) @(2)]) | []}
+      ; fix#GHC.Tuple.#40##44##41##35#74:{VV : func(2, [@(0) ; @(1) ; FAppTy (FAppTy (Tuple ) @(0)) @(1)]) | []}
+      ; fix#GHC.Real.D#58#Integral#35#r6o:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; @(0) ; FAppTy (FAppTy (Tuple ) @(0)) @(0)]) ; func(0, [@(0) ; int]) ; FAppTy (GHC.Real.Integral ) @(0)]) | []}
+      ; fix#GHC.Real.D#58#Fractional#35#rkT:{VV : func(1, [func(0, [@(0) ; @(0) ; @(0)]) ; func(0, [@(0) ; @(0)]) ; func(0, [FAppTy (GHC.Real.Ratio ) int ; @(0)]) ; FAppTy (GHC.Real.Fractional ) @(0)]) | []}
+      ; fix#GHC.Prim.#62##61##35##35#9n:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#62##35##35#9m:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#61##61##35##35#9o:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##61##35##35#9r:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#60##35##35#9q:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#45##35##35#99:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Prim.#43##35##35#98:{VV : func(0, [int ; int ; int]) | []}
+      ; fix#GHC.Num.#45##35#02B:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#43##35#rt:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; fix#GHC.Num.#42##35#ru:{VV : func(1, [@(0) ; @(0) ; @(0)]) | []}
+      ; cmp:{VV : func(0, [GHC.Types.Ordering  ; GHC.Types.Ordering ]) | []}
+      ; bvor:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; bvand:{VV : func(1, [FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0) ; FAppTy (BitVec ) @(0)]) | []}
+      ; autolen:{VV : func(1, [@(0) ; int]) | []}
+      ; addrLen:{VV : func(0, [int ; int]) | []}
+      ; VV#1097:{VV#1097 : FAppTy (List ) int | [k__970[lq_tmp_x_987:=VV#1097][lq_tmp_x_983:=i_0][lq_tmp_x_961:=i_0][lq_tmp_x_940:=lq_anf__dKF][lq_tmp_x_939:=lq_anf__dKm][lq_tmp_x_936:=VV#1070][VV#969:=VV#1097]
+                                                ; (len([VV#1097]) >= 0)]}
+      ; VV#1073:{VV#1073 : FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int) | 
+                [k__973[lq_tmp_x_988:=VV#1073][lq_tmp_x_940:=lq_anf__dKF][lq_tmp_x_939:=lq_anf__dKm][lq_tmp_x_936:=VV#1070][VV#972:=VV#1073]]}
+      ; VV#1070:{VV#1070 : FAppTy (List ) (FAppTy (FAppTy (Tuple ) (FAppTy (List ) int)) (FAppTy (List ) int)) | 
+                [(len([VV#1070]) = (1 + len([lq_anf__dKF])))
+                ; (null(VV#1070) <=> false)
+                ; (xsListSelector([VV#1070]) = lq_anf__dKF)
+                ; (xListSelector([VV#1070]) = lq_anf__dKm)
+                ; (len([VV#1070]) >= 0)]}
+      ; Set_sub:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_sng:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_mem:{VV : func(1, [@(0) ; FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_empty:{VV : func(1, [int ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_emp:{VV : func(1, [FAppTy (Set_Set ) @(0) ; bool]) | []}
+      ; Set_dif:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cup:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Set_cap:{VV : func(1, [FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0) ; FAppTy (Set_Set ) @(0)]) | []}
+      ; Prop:{VV : func(0, [GHC.Types.Bool  ; bool]) | []}
+      ; Map_store:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1) ; FAppTy (FAppTy (Map_t ) @(0)) @(1)]) | []}
+      ; Map_select:{VV : func(2, [FAppTy (FAppTy (Map_t ) @(0)) @(1) ; @(0) ; @(1)]) | []}
+      ; GHC.Types.LT#6S:{VV#169 : GHC.Types.Ordering  | [(cmp([VV#169]) = GHC.Types.LT#6S)]}
+      ; GHC.Types.I##6c:{VV : func(0, [int ; int]) | []}
+      ; GHC.Types.GT#6W:{VV#170 : GHC.Types.Ordering  | [(cmp([VV#170]) = GHC.Types.GT#6W)]}
+      ; GHC.Types.EQ#6U:{VV#168 : GHC.Types.Ordering  | [(cmp([VV#168]) = GHC.Types.EQ#6U)]}
+      ; GHC.Integer.Type.smallInteger#0Z:{VV : func(0, [int ; int]) | []}
+      ; GHC.Base..#r2q:{VV : func(3, [func(0, [@(0) ; @(1)]) ; func(0, [@(2) ; @(0)]) ; @(2) ; @(1)]) | []}
+      ; Data.Maybe.Nothing#r19:{VV : func(1, [FAppTy (Data.Maybe.Maybe ) @(0)]) | []}
+      ; Data.Maybe.Just#r1a:{VV : func(1, [@(0) ; FAppTy (Data.Maybe.Maybe ) @(0)]) | []}] 
+ grd true 
+ lhs {VV#F1 : FAppTy (List ) int | [k__970[lq_tmp_x_987:=VV#F1][lq_tmp_x_983:=i_0][lq_tmp_x_961:=i_0][lq_tmp_x_940:=lq_anf__dKF][lq_tmp_x_939:=lq_anf__dKm][lq_tmp_x_936:=VV#1070][VV#F:=VV#F1][VV#969:=VV#F1][VV#1097:=VV#F1]
+                                   ; (len([VV#F1]) >= 0)]} 
+ rhs {VV#F1 : FAppTy (List ) int | [(len([i_0]) >= len([VV#F1]))]} 
+ id 1 tag [1] // 
+
+UNSAT
+LiquidHaskell Copyright 2009-15 Regents of the University of California. All Rights Reserved.
+
+[1;94m
+**** DONE:  Extracted Core using GHC *******************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  generateConstraints ************************************************
+[0m[1;90m 
+[0m[1;94m
+**** START: fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  fixpoint ***********************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  solve **************************************************************
+[0m[1;90m 
+[0m[1;94m
+**** DONE:  annotate ***********************************************************
+[0m[1;90m 
+[0m[1;91m
+**** UNSAFE ********************************************************************
+[0m
+
+ tests/examples.hstmp.hs:(4,3)-(6,3): Error: Liquid Type Mismatch
+   Inferred type
+     VV : {VV : [Int] | len VV > len ?i && len VV > 0 && len VV >= len i_0 && len VV >= len ?a && len VV >= len ?v && len VV > len ?h && len VV > len ?s && len VV > len ?a5 && len VV > len ?p && len VV > len ?a0 && len VV > len ?f && VV /= i_0 && VV /= ?h && VV /= ?s && VV /= ?a5 && VV /= ?v && VV /= ?p && VV /= ?a0 && VV /= ?f && len VV >= len ?q && len VV >= len ?d && len VV > len ?t && len VV > len ?a4 && len VV > len ?a1 && len VV > len ?e && len VV > len ?n && len VV > len ?w && len VV > len ?l && len VV <= len ?a2 && VV /= ?t && VV /= ?a4 && VV /= ?q && VV /= ?a1 && VV /= ?e && VV /= ?n && VV /= ?d && VV /= ?l && len ?a2 >= len VV && len VV >= 0}
+  
+   not a subtype of Required type
+     VV : {VV : [Int] | len i_0 >= len VV}
+  
+   In Context
+     VV  : {VV : [Int] | len VV > len ?i && len VV > 0 && len VV >= len i_0 && len VV >= len ?a && len VV >= len ?v && len VV > len ?h && len VV > len ?s && len VV > len ?a5 && len VV > len ?p && len VV > len ?a0 && len VV > len ?f && VV /= i_0 && VV /= ?h && VV /= ?s && VV /= ?a5 && VV /= ?v && VV /= ?p && VV /= ?a0 && VV /= ?f && len VV >= len ?q && len VV >= len ?d && len VV > len ?t && len VV > len ?a4 && len VV > len ?a1 && len VV > len ?e && len VV > len ?n && len VV > len ?w && len VV > len ?l && len VV <= len ?a2 && VV /= ?t && VV /= ?a4 && VV /= ?q && VV /= ?a1 && VV /= ?e && VV /= ?n && VV /= ?d && VV /= ?l && len ?a2 >= len VV && len VV >= 0}
+     ?e  : {?e : [Int] | len ?e == 1 + len ?n && (null ?e <=> false) && xsListSelector ?e == ?n && xListSelector ?e == ?g && len ?e >= 0}
+     ?c  : {?c : Int | ?c == 3}
+     ?q  : {?q : [Int] | len ?q == 1 + len ?a1 && (null ?q <=> false) && xsListSelector ?q == ?a1 && xListSelector ?q == ?a3 && len ?q >= 0}
+     i_0 : {i_0 : [Int] | len i_0 >= 0}
+     ?x  : {?x : Int | ?x == 5}
+     ?a  : {?a : [Int] | len ?a == 1 + len ?h && (null ?a <=> false) && xsListSelector ?a == ?h && xListSelector ?a == ?k && len ?a >= 0}
+     ?s  : {?s : [Int] | len ?s == 1 + len ?a5 && (null ?s <=> false) && xsListSelector ?s == ?a5 && xListSelector ?s == ?z && len ?s >= 0}
+     ?b  : {?b : Int | ?b == 5}
+     ?o  : {?o : ([Int], [Int]) | snd ?o == ?a2 && fst ?o == ?q && x_Tuple22 ?o == ?a2 && x_Tuple21 ?o == ?q}
+     ?i  : {?i : [([Int], [Int])] | len ?i == 1 + len ?w && (null ?i <=> false) && xsListSelector ?i == ?w && xListSelector ?i == ?o && len ?i >= 0}
+     ?a6 : {?a6 : Int | ?a6 == 2}
+     ?w  : {?w : [([Int], [Int])] | len ?w == 0 && (null ?w <=> true) && len ?w >= 0}
+     ?f  : {?f : [Int] | len ?f == 0 && (null ?f <=> true) && len ?f >= 0}
+     ?u  : {?u : Int | ?u == 3}
+     ?r  : {?r : Int | ?r == 2}
+     ?d  : {?d : [Int] | len ?d == 1 + len ?l && (null ?d <=> false) && xsListSelector ?d == ?l && xListSelector ?d == ?j && len ?d >= 0}
+     ?a5 : {?a5 : [Int] | len ?a5 == 0 && (null ?a5 <=> true) && len ?a5 >= 0}
+     ?h  : {?h : [Int] | len ?h == 1 + len ?s && (null ?h <=> false) && xsListSelector ?h == ?s && xListSelector ?h == ?c && len ?h >= 0}
+     ?j  : {?j : Int | ?j == 4}
+     ?a3 : {?a3 : Int | ?a3 == 1}
+     ?n  : {?n : [Int] | len ?n == 0 && (null ?n <=> true) && len ?n >= 0}
+     ?y  : {?y : Int | ?y == 1}
+     ?t  : {?t : [Int] | len ?t == 1 + len ?a4 && (null ?t <=> false) && xsListSelector ?t == ?a4 && xListSelector ?t == ?x && len ?t >= 0}
+     ?v  : {?v : [Int] | len ?v == 1 + len ?p && (null ?v <=> false) && xsListSelector ?v == ?p && xListSelector ?v == ?y && len ?v >= 0}
+     ?a1 : {?a1 : [Int] | len ?a1 == 1 + len ?e && (null ?a1 <=> false) && xsListSelector ?a1 == ?e && xListSelector ?a1 == ?r && len ?a1 >= 0}
+     ?z  : {?z : Int | ?z == 4}
+     ?k  : {?k : Int | ?k == 2}
+     ?a0 : {?a0 : [Int] | len ?a0 == 1 + len ?f && (null ?a0 <=> false) && xsListSelector ?a0 == ?f && xListSelector ?a0 == ?m && len ?a0 >= 0}
+     ?p  : {?p : [Int] | len ?p == 1 + len ?a0 && (null ?p <=> false) && xsListSelector ?p == ?a0 && xListSelector ?p == ?a6 && len ?p >= 0}
+     ?g  : {?g : Int | ?g == 3}
+     ?m  : {?m : Int | ?m == 3}
+     ?a2 : {?a2 : [Int] | len ?a2 == 1 + len ?d && (null ?a2 <=> false) && xsListSelector ?a2 == ?d && xListSelector ?a2 == ?u && len ?a2 >= 0}
+     ?a4 : {?a4 : [Int] | len ?a4 == 0 && (null ?a4 <=> true) && len ?a4 >= 0}
+     ?l  : {?l : [Int] | len ?l == 1 + len ?t && (null ?l <=> false) && xsListSelector ?l == ?t && xListSelector ?l == ?b && len ?l >= 0}
+The rtypes that are common to the higher order fxn and the examples are...
+[("{-@ hofxn :: _ -> i:[a] -> {o:[b] | (len i) <= (len o)} @-}","{-@ f :: [([Int],[Int])<{\\i o -> len i <= len o}>] @-}")]
+------------------------------
+and the types of the fxns that we have 'in scope'
+[TypeSig (SrcLoc "<unknown>.hs" 1 1) [Ident "foo"] (TyList (TyCon (UnQual (Ident "Int")))),TypeSig (SrcLoc "<unknown>.hs" 4 1) [Ident "mapp"] (TyFun (TyParen (TyFun (TyVar (Ident "a")) (TyVar (Ident "b")))) (TyFun (TyList (TyVar (Ident "a"))) (TyList (TyVar (Ident "b")))))]

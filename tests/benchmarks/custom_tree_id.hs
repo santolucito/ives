@@ -14,8 +14,6 @@ mapBTree f Nil = Nil
 mapBTree f (Branch b1 v b2) = Branch (mapBTree f b1) (f v) (mapBTree f b2)
 
 exs :: [(BTree Bool, BTree Bool)]
-exs = [ 
-  (Branch Nil True Nil, 
-  Branch Nil True Nil)]
-
+exs = [ ( Branch Nil True Nil, 
+          Branch Nil True Nil ) ]
 

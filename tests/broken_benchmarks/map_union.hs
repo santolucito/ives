@@ -1,6 +1,10 @@
 import Prelude hiding (map, foldr, foldl)
 import Data.Map.Strict
 
+{-@ measure len @-}
+len :: Map Int Int -> Int
+len m = size
+
 exs :: [([Map Int Int], Map Int Int)]
 exs = [( [ insert 1 1 $ insert 4 4 $ empty,
            insert 2 2 $ insert 3 3 $ empty ]

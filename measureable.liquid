@@ -1,0 +1,23 @@
+class Measurable a where
+  isBase :: a -> Bool
+  peel :: a -> a
+  
+instance Measurable (Vector a) where
+  isBase Emp = True
+  isBase _ = False
+  peel Emp = Emp
+  peel (x :+: xs) = xs
+
+
+{-@ measure size' @-}
+size' :: Measurable a => a -> Int
+size' x =
+  if isBase x
+  then 0
+  else (1::Int) + (size' $ peel x)
+
+{-@ measure size @-}
+size :: Measurable a => a -> Int
+size x
+  | isBase x  = 0
+  | otherwise = 1 + (size $ peel x)
