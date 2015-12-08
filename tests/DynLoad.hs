@@ -1,5 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module DynLoad (loadSourceGhc, execFnGhc) where
+module DynLoad (getFunc) where
 
 import qualified Data.IntSet as IntSet
 import Control.Exception (throw)
@@ -9,6 +9,7 @@ import HscTypes (SourceError, srcErrorMessages)
 import DynFlags
 import Unsafe.Coerce
 import Bag (bagToList)
+import System.FilePath
 
 execFnGhc :: String -> String -> Ghc a
 execFnGhc modStr fn = do
@@ -39,3 +40,13 @@ loadSourceGhc path = do
       errors e = concat $ map show (bagToList $ srcErrorMessages e)
     in
       return $ Just (errors e)
+
+getFunc :: String -> String -> IO a
+getFunc mod func = runGhc (Just libdir) $ do
+  res <- loadSourceGhc $ addExtension mod "hs"
+  case res of
+    Just err -> error err
+    Nothing  -> do
+      f <- execFnGhc mod func
+      return f
+

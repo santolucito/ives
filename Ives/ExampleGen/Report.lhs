@@ -1,14 +1,9 @@
-> module Ives.ExampleGen.Exampler (Report, genReport) where
+> module Ives.ExampleGen.Report (Report(..), genReport, isCovered, hasImproved) where
 
-> import Ives.ExampleGen.Gen
 > import Trace.Hpc.Reflect
 > import Trace.Hpc.Tix
-> import System.Directory
-> import System.IO
-> import System.IO.Error
 > import System.FilePath
 > import System.Process
-> import Control.Exception
 
 Represents an HPC report.
 
@@ -41,33 +36,3 @@ Checks if the second report is an improvement over the first.
 > hasImproved :: Report -> Report -> Bool
 > hasImproved (Report caPrev ta) (Report ca _) = ca > caPrev || ca == ta
 
-Remove all temporary files that are created.
-
-> cleanup :: FilePath -> FilePath -> IO ()
-> cleanup file moduleName = do
->   removeAll moduleName
->   removeAll file
->   removeDirIfExists ".hpc"
-
-> removeAll :: FilePath -> IO ()
-> removeAll file = do
->   let program = takeBaseName file
->   removeIfExists program
->   removeIfExists $ addExtension program "hs"
->   removeIfExists $ addExtension program "dyn_hi"
->   removeIfExists $ addExtension program "hi"
->   removeIfExists $ addExtension program "dyn_o"
->   removeIfExists $ addExtension program "o"
->   removeIfExists $ addExtension program "tix"
-
-> removeIfExists :: FilePath -> IO ()
-> removeIfExists file = removeFile file `catch` handleExists
->   where handleExists e
->           | isDoesNotExistError e = return ()
->           | otherwise = throwIO e
-
-> removeDirIfExists :: FilePath -> IO ()
-> removeDirIfExists dir = removeDirectoryRecursive dir `catch` handleExists
->   where handleExists e
->           | isDoesNotExistError e = return ()
->           | otherwise = throwIO e
