@@ -12,19 +12,15 @@ main = do
   f <- getFunc mod "doh" :: IO $(concretifyType 'doh)
   example <- genExample f 10
   print example
-  tix <- examineTix
-  print tix
-  -- inotify <- initINotify
-  -- wd <- addWatch inotify [Modify] "Foo.hs" handler
-  -- waitForBye
+  cleanup mod
+  -- tix <- examineTix
+  -- print tix
 
--- waitForBye :: IO ()
--- waitForBye = do
---   input <- getLine
---   if input == "bye" then return () else waitForBye
-
--- handler :: Event -> IO ()
--- handler (Modified _ _) = do
---   putStrLn "*** FILE UPDATED ***"
---   execExample
+  mod2 <- dupMod "Foo.hs"
+  f2 <- getFunc mod2 "doh" :: IO $(concretifyType 'doh)
+  example2 <- genExample f2 10
+  print example2
+  cleanup mod2
+  tix2 <- examineTix
+  print tix2
 
