@@ -194,6 +194,7 @@ the type signature datas that are curretnly unsupported
 >   case t2 of
 >     (TyFun t21 t22) -> lastTyps t2
 >     otherwise -> (t1,t2)
+> lastTyps (TyForall _ _ t) = lastTyps t
 > lastTyps t = (t,t)
 
 > lastTyp :: Type -> Type
@@ -227,6 +228,8 @@ the type signature datas that are curretnly unsupported
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyKind t1 _) (TyKind t2 _) =
 >   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyList t1) (TyApp t2 t2') = --[a] -> t a
+>   fmap (1+) $ compareTypes t1 t2'
 > compareTypes (TyTuple _ ts1) (TyTuple _ ts2) = 
 >   foldl (liftA2 (+)) (Just 1) (zipWith compareTypes ts1 ts2)
 > compareTypes (TyApp t1 t1') (TyApp t2 t2') =
