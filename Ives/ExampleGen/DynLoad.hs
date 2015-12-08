@@ -1,5 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module DynLoad (getFunc) where
+module Ives.ExampleGen.DynLoad (getFunc) where
 
 import qualified Data.IntSet as IntSet
 import Control.Exception (throw)

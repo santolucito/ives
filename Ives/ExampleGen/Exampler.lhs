@@ -1,4 +1,4 @@
-> module Exampler (findExamples, dupMod) where
+> module Ives.ExampleGen.Exampler (findExamples, dupMod) where
 
 > import Language.Haskell.Exts
 > import System.FilePath
@@ -7,7 +7,7 @@
 > import System.Directory
 > import System.Process
 > import Ives.ExampleGen.Gen
-> import DynLoad
+> import Ives.ExampleGen.DynLoad
 > import Ives.ExampleGen.Report
 > import System.IO.Error
 > import Control.Exception
