@@ -1,6 +1,6 @@
 > module Ives.ExampleGen.Report (Report(..), genReport, isCovered, hasImproved) where
 
-> import Trace.Hpc.Reflect
+> import Ives.ExampleGen.HpcReflect
 > import Trace.Hpc.Tix
 > import System.FilePath
 > import System.Process

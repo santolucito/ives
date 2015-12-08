@@ -1,4 +1,4 @@
-> module Ives.ExampleGen.Exampler (findExamples, dupMod, cleanup, removeIfExists) where
+> module Ives.ExampleGen.Exampler (findExamples) where
 
 > import Language.Haskell.Exts
 > import System.FilePath
