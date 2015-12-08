@@ -51,6 +51,7 @@ fst :: (a :-> b) -> a
 fst (a :-> b) = a
 
 > -- | (rtype for higherOrderFunction, rtype for list of examples)
+> rTypeTemplate :: String -> (String, String)
 > rTypeTemplate op =
 >   ( "{-@ ?f? :: _ -> i:?intype? -> {o:?outtype? | (len i) "++op ++" (len o)} @-}"  --for higher order fxns
 >   , "{-@ ?f? :: [(?intype?,?outtype?)<{\\i o -> (len i) "++op++" (len o)}>] @-}" ) --for examples
