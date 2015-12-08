@@ -4,7 +4,7 @@ import Ives.ExampleGen.Conc
 import Ives.ExampleGen.DynLoad
 import Ives.ExampleGen.Gen
 import Ives.ExampleGen.Exampler
-import Trace.Hpc.Reflect
+import Ives.ExampleGen.HpcReflect
 
 main :: IO ()
 main = do
@@ -13,8 +13,8 @@ main = do
   example <- genExample f 10
   print example
   cleanup mod
-  -- tix <- examineTix
-  -- print tix
+  tix <- examineTix
+  print tix
 
   mod2 <- dupMod "Foo.hs"
   f2 <- getFunc mod2 "doh" :: IO $(concretifyType 'doh)
