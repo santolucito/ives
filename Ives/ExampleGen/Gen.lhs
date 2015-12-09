@@ -1,22 +1,16 @@
 > {-# LANGUAGE ExistentialQuantification, TemplateHaskell #-}
 
-> module Ives.ExampleGen.Gen (exGen, genExamplesStr, createProgram, genExample, evalExample, Example (..), AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
+> module Ives.ExampleGen.Gen (exGen, genExample, evalExample, Example (..), AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
 
 > import Ives.Types
 > import Ives.ExampleGen.Conc
 > import Data.List
 > import Data.Typeable
-> import System.IO
 > import System.Random
-> import System.IO.Temp
-> import System.Process
-> import System.Exit
 > import System.FilePath
-> import System.Directory
 > import Test.QuickCheck
 > import Test.QuickCheck.Gen
 > import Test.QuickCheck.Random
-> import Language.Haskell.Exts
 
 Placeholder
 
@@ -136,61 +130,4 @@ Useful for recycling examples as a function changes.
 
 > evalExample :: (Exampleable a) => a -> [AnyArbitrary] -> Maybe Example
 > evalExample a args = evalEx a args
-
-Generates n examples of the provided size for the function name provided as a string. 
-
-> genExamplesStr :: String -> Maybe FilePath -> Int -> Int -> IO (String, [String])
-> genExamplesStr f file n size = do
->   (program, mod) <- createProgram f file n size
-> 
->   (e, out, err) <- readProcessWithExitCode "runhaskell" [program] ""
->   
->   removeFile program
->   case mod of
->     Just path -> removeFile path
->     Nothing -> return ()
->     
->   case e of
->     ExitSuccess -> do
->       let ty:examples = read out :: [String]
->       return (ty, examples)
->     ExitFailure _ -> error err
-
-> createModule :: String -> FilePath -> IO String
-> createModule f path = do
->   res <- parseFile path
->   let Module _ _ pragmas _ _ imports decls = fromParseResult res
->   
->   dir <- getCurrentDirectory
->   (temp, h) <- openTempFile dir path
->   mapM_ ((hPutStrLn h) . prettyPrint) pragmas
->   hPutStrLn h $ "module " ++ takeBaseName temp ++ " (" ++ f ++ ") where"
->   mapM_ ((hPutStrLn h) . prettyPrint) imports
->   mapM_ ((hPutStrLn h) . prettyPrint) decls
->   hClose h
->   return temp
-
-> createProgram :: String -> Maybe FilePath -> Int -> Int -> IO (FilePath, Maybe FilePath)
-> createProgram f file n size = do
->   dir <- getCurrentDirectory
->   (temp, h) <- openTempFile dir (addExtension f "hs")
->
->   hPutStrLn h "{-# LANGUAGE TemplateHaskell #-}\n\
->               \import Ives.ExampleGen.Gen\n\
->               \import Ives.ExampleGen.Conc\n\
->               \import Control.Monad\n\
->               \import Data.Typeable"
->   mod <- case file of
->       Just path -> do
->         mod <- createModule f path
->         hPutStrLn h $ "import " ++ takeBaseName mod
->         return $ Just mod
->       Nothing -> return Nothing
->   hPutStrLn h $ "main :: IO ()\n\
->                 \main = do\n\
->                 \  let f = $(concretify '" ++ f ++ ")\n\
->                 \  examples <- replicateM " ++ show n ++ " (genExample f " ++ show size ++ ")\n\
->                 \  print $ (show $ typeOf f) : (map show examples)"
->   hClose h
->   return (temp, mod)
 

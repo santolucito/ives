@@ -1,38 +1,17 @@
 > module Ives.ExampleGen.Exampler (getExamples) where
 
-> import Language.Haskell.Exts
 > import System.FilePath
-> import System.IO.Temp
-> import System.IO
-> import System.Directory
-> import System.Process
 > import Ives.ExampleGen.Gen
 > import Ives.ExampleGen.DynLoad
 > import Ives.ExampleGen.Report
-> import System.IO.Error
-> import Control.Exception
-
-> dupMod :: String -> IO String
-> dupMod file = do
->   dir <- getCurrentDirectory
->   (temp, h) <- openTempFile dir file
->   let mod = takeBaseName temp
->   res <- parseFile file
->   let Module src nm pragmas warning export imports decls = fromParseResult res
->   (hPutStrLn h) . prettyPrint $ Module src (ModuleName mod) pragmas warning export imports decls
->   hClose h
->   callProcess "ghc" ["-fhpc", temp]
->   return mod
 
 First try old examples then generate new ones until coverage is complete.
 
 > getExamples :: (Exampleable a) => String -> String -> [Example] -> IO (a, [Example])
-> getExamples file func prev = do
->   mod <- dupMod file
->   f <- getFunc mod func
->   (report, examples) <- tryExamples f mod (Report 0 1) prev []
->   newExamples <- findExamples f mod report [] 0
->   cleanup mod
+> getExamples moduleName func prev = do
+>   f <- getFunc moduleName func
+>   (report, examples) <- tryExamples f moduleName (Report 0 1) prev []
+>   newExamples <- findExamples f moduleName report [] 0
 >   return (f, examples ++ newExamples)
 
 Tries given examples and returns the ones that improve coverage.
@@ -71,19 +50,4 @@ Keeps generating random examples and printing representative ones until the func
 >       if hasImproved prevReport report
 >         then findExamples f moduleName report (example:examples) newCount
 >         else findExamples f moduleName report examples newCount
-
-Remove all temporary files that are created.
-
-> cleanup :: String -> IO ()
-> cleanup mod = do
->   removeIfExists $ addExtension mod "hs"
->   removeIfExists $ addExtension mod "hi"
->   removeIfExists $ addExtension mod "o"
->   removeIfExists $ addExtension mod "tix"
-
-> removeIfExists :: FilePath -> IO ()
-> removeIfExists file = removeFile file `catch` handleExists
->   where handleExists e
->           | isDoesNotExistError e = return ()
->           | otherwise = throwIO e
 

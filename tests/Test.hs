@@ -1,14 +1,15 @@
 ﻿import Ives.ExampleGen.Gen
+import Ives.ExampleGen.Util
 import System.Environment
 import Foo
+import Data.Typeable
 
 main :: IO ()
 main = do
-  let n = 1
-  let size = 10
-  args <- getArgs
-  examples <- case length args of
-    1 -> genExamplesStr (args!!0) Nothing n size
-    2 -> genExamplesStr (args!!0) (Just $ args!!1) n size
-  print examples
+  (_, mod) <- createModule "Foo.hs" "doh"
+  print $ typeOf doh
+  la <- checkType mod "doh" "Int -> Char"
+  print la
+  cleanup mod
+  return ()
 
