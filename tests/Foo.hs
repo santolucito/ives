@@ -1,7 +1,6 @@
 module Foo (doh) where
 
 doh :: Int -> Char
-doh a
-  | a > 5 = 'h'
-  | otherwise = 'b'
--- weird
+doh x
+  | x > 9 = 'e'
+  | otherwise = 'x'

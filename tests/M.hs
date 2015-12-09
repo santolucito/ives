@@ -6,10 +6,13 @@ import Ives.ExampleGen.Gen
 import Ives.ExampleGen.Exampler
 import System.INotify
 import Control.Concurrent
+import Control.Monad
 import Ives.ExampleGen.HpcReflect
+import System.IO
 
 main :: IO ()
 main = do
+  hSetBuffering stdout LineBuffering
   inotify <- initINotify
   (_, examples) <- getExamples "Foo.hs" "doh" [] :: IO ($(concretifyType 'doh), [Example])
   mPrev <- newEmptyMVar
@@ -19,7 +22,7 @@ main = do
 
 doIt :: MVar [Example] -> MVar [Example] -> [Example] -> IO ()
 doIt mPrev mNew examples = do
-  print examples
+  putStrLn $ "NEW: " ++ show examples
   putMVar mPrev examples
   newExamples <- takeMVar mNew
   doIt mPrev mNew newExamples

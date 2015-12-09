@@ -43,11 +43,11 @@ Tries given examples and returns the ones that improve coverage.
 >     then return (prevReport, keptExamples)
 >     else
 >       case evalExample f (arguments example) of
->         Just example -> do
->           print example -- force eval
+>         Just newExample -> do
+>           print newExample -- force eval
 >           report <- genReport moduleName
 >           if hasImproved prevReport report
->             then tryExamples f moduleName report examples (example:keptExamples)
+>             then tryExamples f moduleName report examples (newExample:keptExamples)
 >             else tryExamples f moduleName report examples keptExamples
 >         Nothing -> tryExamples f moduleName prevReport examples keptExamples
 > tryExamples f moduleName prevReport [] keptExamples = return (prevReport, keptExamples)

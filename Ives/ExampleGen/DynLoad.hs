@@ -46,7 +46,8 @@ getFunc :: String -> String -> IO a
 getFunc mod func = runGhc (Just libdir) $ do
   res <- loadSourceGhc $ addExtension mod "hs"
   case res of
-    Just err -> error err
+    Just err -> do
+      error err
     Nothing  -> do
       f <- execFnGhc mod func
       return f
