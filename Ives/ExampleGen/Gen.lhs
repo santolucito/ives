@@ -1,6 +1,6 @@
 > {-# LANGUAGE ExistentialQuantification, TemplateHaskell #-}
 
-> module Ives.ExampleGen.Gen (exGen, genExamplesStr, createProgram, genExample, evalExample, Example, AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
+> module Ives.ExampleGen.Gen (exGen, genExamplesStr, createProgram, genExample, evalExample, Example (..), AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
 
 > import Ives.Types
 > import Ives.ExampleGen.Conc

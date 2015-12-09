@@ -1,4 +1,4 @@
-> module Ives.ExampleGen.Exampler (findExamples) where
+> module Ives.ExampleGen.Exampler (getExamples) where
 
 > import Language.Haskell.Exts
 > import System.FilePath
@@ -24,33 +24,53 @@
 >   callProcess "ghc" ["-fhpc", temp]
 >   return mod
 
-> findExamples :: (Exampleable a) => String -> String -> IO (a, [Example])
-> findExamples file func = do
+First try old examples then generate new ones until coverage is complete.
+
+> getExamples :: (Exampleable a) => String -> String -> [Example] -> IO (a, [Example])
+> getExamples file func prev = do
 >   mod <- dupMod file
 >   f <- getFunc mod func
->   examples <- findExamplesHelper f mod (Report 0 1) [] 0
+>   (report, examples) <- tryExamples f mod (Report 0 1) prev []
+>   newExamples <- findExamples f mod report [] 0
 >   cleanup mod
->   return (f, examples)
+>   return (f, examples ++ newExamples)
+
+Tries given examples and returns the ones that improve coverage.
+
+> tryExamples :: (Exampleable a) => a -> String -> Report -> [Example] -> [Example] -> IO (Report, [Example])
+> tryExamples f moduleName prevReport (example:examples) keptExamples = do
+>   if isCovered prevReport
+>     then return (prevReport, keptExamples)
+>     else
+>       case evalExample f (arguments example) of
+>         Just example -> do
+>           print example -- force eval
+>           report <- genReport moduleName
+>           if hasImproved prevReport report
+>             then tryExamples f moduleName report examples (example:keptExamples)
+>             else tryExamples f moduleName report examples keptExamples
+>         Nothing -> tryExamples f moduleName prevReport examples keptExamples
+> tryExamples f moduleName prevReport [] keptExamples = return (prevReport, keptExamples)
 
 Keeps generating random examples and printing representative ones until the function is fully covered.
 
-> findExamplesHelper :: (Exampleable a) => a -> String -> Report -> [Example] -> Int -> IO [Example]
-> findExamplesHelper f moduleName prevReport examples count
+> findExamples :: (Exampleable a) => a -> String -> Report -> [Example] -> Int -> IO [Example]
+> findExamples f moduleName prevReport examples count
 >   | isCovered prevReport = do
 >       putStrLn $ "Tried " ++ show count ++ " examples total"
 >       return examples
 >   | otherwise = do
 >       example <- genExample f 10
->       print example
+>       print example -- force eval
 >       let newCount = count + 1
 >       if newCount `mod` 1000 == 0
 >         then putStrLn $ "Tried " ++ show newCount ++ " examples so far"
 >         else return ()
-> 
+>              
 >       report <- genReport moduleName
 >       if hasImproved prevReport report
->         then findExamplesHelper f moduleName report (example:examples) newCount
->         else findExamplesHelper f moduleName report examples newCount
+>         then findExamples f moduleName report (example:examples) newCount
+>         else findExamples f moduleName report examples newCount
 
 Remove all temporary files that are created.
 

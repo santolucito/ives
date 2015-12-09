@@ -10,6 +10,7 @@ import DynFlags
 import Unsafe.Coerce
 import Bag (bagToList)
 import System.FilePath
+import Control.Exception
 
 execFnGhc :: String -> String -> Ghc a
 execFnGhc modStr fn = do

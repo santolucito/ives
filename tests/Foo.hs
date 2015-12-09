@@ -1,8 +1,7 @@
 module Foo (doh) where
 
-doh :: Int -> String
+doh :: Int -> Char
 doh a
-  | a > 5 = "hi"
-  | a > 0 = "why"
-  | otherwise = "bye"
-
+  | a > 5 = 'h'
+  | otherwise = 'b'
+-- weird
