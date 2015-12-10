@@ -39,7 +39,7 @@ First try old examples then generate new ones until coverage is complete.
 > getExamples :: (Exampleable a) => String -> String -> String -> [Example] -> IO (a, [Example])
 > getExamples moduleName func ty prev = do
 >   f <- getFunc moduleName func ty
->   (report, examples) <- tryExamples f moduleName (Report 0 1) prev []
+>   (report, examples) <- tryExamples f moduleName defaultReport prev []
 >   newExamples <- findExamples f moduleName report [] 0
 >   return (f, examples ++ newExamples)
 
