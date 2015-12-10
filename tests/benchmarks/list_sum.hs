@@ -1,6 +1,6 @@
 
-f :: (Int -> Int -> Int)
-f = (+)
+f :: (Int -> Int -> Int) 
+f = (+) 
 
 
 myfold :: (a -> b -> a) -> a -> [b] -> a
@@ -15,4 +15,3 @@ exs = [
   ([1,2,3] , 6) --will also find foldl (lcm) -1, why? (wont happen with different numbers)
   ]
 
-prog = foldr f 0

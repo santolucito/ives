@@ -1,5 +1,5 @@
-import Prelude hiding (map, foldr, foldl)
 import Data.Map.Strict
+import Prelude hiding (map, foldr, foldl)
 
 add :: Int -> Int -> Int
 add = (+)
