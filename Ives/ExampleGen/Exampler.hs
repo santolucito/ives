@@ -35,7 +35,9 @@ start program = do
   (e, out, err) <- readProcessWithExitCode "ghc" ["-fhpc", addExtension program "hs"] ""
   case e of
     ExitSuccess -> putStrLn "Compilation successful"
-    ExitFailure _ -> error $ "Compilation failed: " ++ err
+    ExitFailure _ -> do
+      cleanup program
+      error $ "Compilation failed: " ++ err
   (_, Just hout, _, ph) <- createProcess (shell $ joinPath [".", program])
                            { std_out = CreatePipe
                            , create_group = True }
