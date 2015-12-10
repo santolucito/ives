@@ -76,7 +76,6 @@ executable Ives
                        text >= 1.2.1.3,
                        either >= 4.4.1,
                        time >= 1.4.2,
-                       Euterpea >= 1.0.0,
                        template-haskell >=2.10,
                        process >=1.1,
                        directory >=1.2,
