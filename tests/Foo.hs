@@ -1,6 +1,7 @@
-module Foo (doh) where
+module Foo (bar) where
 
-doh :: Int -> String
-doh x
-  | x > 9 = "hi"
-  | otherwise = "bye"
+bar :: (Show a) => a -> String
+bar a
+  | (length . show $ a) > 2 = "ugh"
+  | otherwise = show a
+

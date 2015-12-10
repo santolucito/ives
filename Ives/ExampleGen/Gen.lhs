@@ -28,7 +28,7 @@ Make sure the module compiles and the type signature hasn't changed.
 >         putStrLn "CHANGE: Function signature changed"
 >         return Nothing
 >         else do
->         (f, examples) <- getExamples moduleName func prevExamples
+>         (f, examples) <- getExamples moduleName func ty prevExamples
 >         putStrLn $ "EXAMPLES: " ++ show examples
 >         return $ Just (f, examples)
 >   cleanup moduleName
@@ -36,9 +36,9 @@ Make sure the module compiles and the type signature hasn't changed.
   
 First try old examples then generate new ones until coverage is complete.
 
-> getExamples :: (Exampleable a) => String -> String -> [Example] -> IO (a, [Example])
-> getExamples moduleName func prev = do
->   f <- getFunc moduleName func
+> getExamples :: (Exampleable a) => String -> String -> String -> [Example] -> IO (a, [Example])
+> getExamples moduleName func ty prev = do
+>   f <- getFunc moduleName func ty
 >   (report, examples) <- tryExamples f moduleName (Report 0 1) prev []
 >   newExamples <- findExamples f moduleName report [] 0
 >   return (f, examples ++ newExamples)
