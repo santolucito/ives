@@ -16,7 +16,6 @@
 > createProgram file func = do
 >   dir <- getCurrentDirectory
 >   (temp, h) <- openTempFile dir (addExtension "Exampler" "hs")
->   let critLine = "maybeExamples <- tryGetExamples \""++file++"\" \""++func++"\" (show $ typeOf $(concretify '"++func++")) [] :: IO (Maybe ($(concretifyType '"++func++"), [Example]))"
 >   hPutStrLn h $ "{-# LANGUAGE TemplateHaskell #-}                          \n\
 >                 \import "++(takeBaseName file)++"                          \n\
 >                 \import Ives.ExampleGen.Conc                               \n\
@@ -32,7 +31,7 @@
 >                 \main :: IO ()                                             \n\
 >                 \main = do                                                 \n\
 >                 \  hSetBuffering stdout LineBuffering                      \n\
->                 \  "++critLine++"                                          \n\
+>                 \  maybeExamples <- tryGetExamples \""++file++"\" \""++func++"\" (show $ typeOf $(concretify '"++func++")) [] :: IO (Maybe ($(concretifyType '"++func++"), [Example]))\n\
 >                 \  let examples = case maybeExamples of                    \n\
 >                 \        Just (_, examples) -> examples                    \n\
 >                 \        Nothing -> []                                     \n\
@@ -44,7 +43,7 @@
 >                 \loop :: MVar () -> [Example] -> IO ()                     \n\
 >                 \loop mNotify prevExamples = do                            \n\
 >                 \  takeMVar mNotify                                        \n\
->                 \  "++critLine++"                                          \n\
+>                 \  maybeExamples <- tryGetExamples \""++file++"\" \""++func++"\" (show $ typeOf $(concretify '"++func++")) prevExamples :: IO (Maybe ($(concretifyType '"++func++"), [Example]))\n\
 >                 \  case maybeExamples of                                   \n\
 >                 \    Just (_, examples) -> loop mNotify examples           \n\
 >                 \    Nothing -> loop mNotify prevExamples                  \n"

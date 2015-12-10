@@ -2,6 +2,7 @@
 
 > import Ives.Types
 > import System.FilePath
+> import System.IO
 > import Ives.ExampleGen.Example
 > import Ives.ExampleGen.DynLoad
 > import Ives.ExampleGen.Report
@@ -19,7 +20,7 @@ Make sure the module compiles and the type signature hasn't changed.
 >   (moduleName, err) <- createModule file func
 >   res <- case err of
 >     Just errMsg -> do
->       putStrLn $ "ERROR: " ++ show errMsg
+>       hPutStrLn stderr $ "ERROR: Failed to compile" ++ errMsg
 >       return Nothing
 >     Nothing -> do
 >       same <- checkType moduleName func ty

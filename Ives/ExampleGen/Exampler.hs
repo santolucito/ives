@@ -40,6 +40,7 @@ start program = do
       error $ "Compilation failed: " ++ err
   (_, Just hout, _, ph) <- createProcess (shell $ joinPath [".", program])
                            { std_out = CreatePipe
+                           , std_err = Inherit
                            , create_group = True }
   hSetBinaryMode hout False
   hSetBuffering hout LineBuffering
@@ -57,7 +58,7 @@ start program = do
 loop :: Handle -> ProcessHandle -> String -> IO ()
 loop h ph program = do
   line <- hGetLine h
-  if any (`startswith` line) ["EXAMPLES: ", "CHANGE: ", "ERROR: "]
+  if any (`startswith` line) ["EXAMPLES: ", "CHANGE: "]
     then do
     putStrLn line
     if startswith "CHANGE: " line
