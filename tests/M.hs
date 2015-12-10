@@ -15,7 +15,7 @@ main :: IO ()
 main = do
   hSetBuffering stdout LineBuffering
 
-  maybeExamples <- tryGetExamples "Foo.hs" "doh" (show $ typeOf doh) [] :: IO (Maybe ($(concretifyType 'doh), [Example]))
+  maybeExamples <- tryGetExamples "Foo.hs" "doh" (show $ typeOf $(concretify 'doh)) [] :: IO (Maybe ($(concretifyType 'doh), [Example]))
   let examples = case maybeExamples of
         Just (_, examples) -> examples
         Nothing -> []

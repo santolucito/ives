@@ -4,7 +4,7 @@
 > import Ives.ExampleGen.Gen
 > import Ives.ExampleGen.DynLoad
 > import Ives.ExampleGen.Report
-> import Ives.ExampleGen.Util
+> import Ives.ExampleGen.Utils
 
 First try old examples then generate new ones until coverage is complete.
 
@@ -13,7 +13,7 @@ First try old examples then generate new ones until coverage is complete.
 >   (moduleName, err) <- createModule file func
 >   res <- case err of
 >     Just errMsg -> do
->       putStrLn $ "ERROR: " ++ errMsg
+>       putStrLn $ "ERROR: " ++ show errMsg
 >       return Nothing
 >     Nothing -> do
 >       same <- checkType moduleName func ty

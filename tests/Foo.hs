@@ -1,6 +1,6 @@
 module Foo (doh) where
 
-doh :: Int -> Char
+doh :: Int -> Int
 doh x
-  | x > 9 = 'd'
-  | otherwise = 'x' --hellod
+  | x > 9 = 3
+  | otherwise = 4

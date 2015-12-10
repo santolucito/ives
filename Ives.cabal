@@ -85,7 +85,7 @@ executable Ives
   default-language:    Haskell2010
   
 Library
-  exposed-modules: Ives.ExampleGen.Gen, Ives.ExampleGen.Conc, Ives.ExampleGen.Report, Ives.ExampleGen.DynLoad, Ives.ExampleGen.Exampler, Ives.ExampleGen.HpcReflect, Ives.ExampleGen.Util
+  exposed-modules: Ives.ExampleGen.Gen, Ives.ExampleGen.Conc, Ives.ExampleGen.Report, Ives.ExampleGen.DynLoad, Ives.ExampleGen.Exampler, Ives.ExampleGen.HpcReflect, Ives.ExampleGen.Utils
 
   -- Other library packages from which modules are imported.
   build-depends:   base >=4.6 && <5.0,

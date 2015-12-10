@@ -1,4 +1,4 @@
-> module Ives.ExampleGen.Util (createModule, checkType, cleanup) where
+> module Ives.ExampleGen.Utils (createModule, checkType, cleanup, removeIfExists) where
 
 > import Language.Haskell.Exts
 > import System.IO.Temp
@@ -35,10 +35,12 @@ Create a program that will print the type of the given function of the given mod
 >   dir <- getCurrentDirectory
 >   (temp, h) <- openTempFile dir (addExtension "checkType" "hs")
 >
->   hPutStrLn h $ "import Data.Typeable\n\
+>   hPutStrLn h $ "{-# LANGUAGE TemplateHaskell #-}\n\
+>                 \import Ives.ExampleGen.Conc\n\
+>                 \import Data.Typeable\n\
 >                 \import " ++ moduleName ++ "\n\
 >                 \main :: IO ()\n\
->                 \main = putStr $ show $ typeOf " ++ func ++ "\n"
+>                 \main = putStr $ show $ typeOf $(concretify '" ++ func ++ ")\n"
 >   hClose h
 >   out <- readProcess "runhaskell" [temp] ""
 >   removeIfExists temp
