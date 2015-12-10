@@ -48,7 +48,6 @@ build-type:          Simple
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
 
-
 executable Ives
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.lhs
@@ -76,7 +75,12 @@ executable Ives
                        filepath >=1.4,
                        temporary >=1.2,
                        haskell-src-exts >=1.16,
-                       containers >=0.5
+                       containers >=0.5,
+                       ghc-paths >=0.1,
+                       ghc >=7.10.2,
+                       hpc >=0.6,
+                       fsnotify >=0.2,
+                       Ives >=0.1
   
   -- Directories containing source files.
   -- hs-source-dirs:      
@@ -85,7 +89,7 @@ executable Ives
   default-language:    Haskell2010
   
 Library
-  exposed-modules: Ives.ExampleGen.Gen, Ives.ExampleGen.Conc, Ives.ExampleGen.Report, Ives.ExampleGen.DynLoad, Ives.ExampleGen.Exampler, Ives.ExampleGen.HpcReflect, Ives.ExampleGen.Utils
+  exposed-modules: Ives.ExampleGen.HpcReflect, Ives.ExampleGen.Report, Ives.ExampleGen.Conc, Ives.ExampleGen.DynLoad, Ives.ExampleGen.Utils, Ives.ExampleGen.Example, Ives.ExampleGen.Gen
 
   -- Other library packages from which modules are imported.
   build-depends:   base >=4.6 && <5.0,
