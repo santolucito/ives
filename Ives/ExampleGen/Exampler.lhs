@@ -1,12 +1,33 @@
-> module Ives.ExampleGen.Exampler (getExamples) where
+> module Ives.ExampleGen.Exampler (tryGetExamples) where
 
 > import System.FilePath
 > import Ives.ExampleGen.Gen
 > import Ives.ExampleGen.DynLoad
 > import Ives.ExampleGen.Report
+> import Ives.ExampleGen.Util
 
 First try old examples then generate new ones until coverage is complete.
 
+> tryGetExamples :: (Exampleable a) => FilePath -> String -> String -> [Example] -> IO (Maybe (a, [Example]))
+> tryGetExamples file func ty prevExamples = do
+>   (moduleName, err) <- createModule file func
+>   res <- case err of
+>     Just errMsg -> do
+>       putStrLn $ "ERROR: " ++ errMsg
+>       return Nothing
+>     Nothing -> do
+>       same <- checkType moduleName func ty
+>       if not same
+>         then do
+>         putStrLn "CHANGE: Function signature changed"
+>         return Nothing
+>         else do
+>         (f, examples) <- getExamples moduleName func prevExamples
+>         putStrLn $ "EXAMPLES: " ++ show examples
+>         return $ Just (f, examples)
+>   cleanup moduleName
+>   return res
+  
 > getExamples :: (Exampleable a) => String -> String -> [Example] -> IO (a, [Example])
 > getExamples moduleName func prev = do
 >   f <- getFunc moduleName func

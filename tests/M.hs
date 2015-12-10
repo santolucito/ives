@@ -1,28 +1,34 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 import Foo
+import System.FSNotify
 import Ives.ExampleGen.Conc
 import Ives.ExampleGen.Gen
 import Ives.ExampleGen.Exampler
-import Ives.ExampleGen.Util
 import System.INotify
 import System.IO
 import Control.Concurrent
 import Data.Typeable
+import Control.Monad
+import Control.Exception
 
 main :: IO ()
 main = do
   hSetBuffering stdout LineBuffering
-  inotify <- initINotify
+  manager <- startManager
+  stop <- watchDir manager "." actionFilter action
 
   mPrev <- newEmptyMVar
   mNew <- newEmptyMVar
-  maybeExamples <- tryGetExamples []
+  maybeExamples <- tryGetExamples "Foo.hs" "doh" (show $ typeOf doh) [] :: IO (Maybe ($(concretifyType 'doh), [Example]))
   let examples = case maybeExamples of
-        Just examples -> examples
+        Just (_, examples) -> examples
         Nothing -> []
-  wd <- addWatch inotify [Modify] "Foo.hs" (handler mPrev mNew)
-  loop mPrev mNew examples
+  stop <- watchDir manager dir actionFilter (action mPrev mNew)
+  catch (loop mPrev mNew examples)
+    (\e -> if e == UserInterrupt
+             then putStrLn "fuck"
+             else throwIO e)
 
 loop :: MVar [Example] -> MVar [Example] -> [Example] -> IO ()
 loop mPrev mNew examples = do
@@ -30,31 +36,15 @@ loop mPrev mNew examples = do
   newExamples <- takeMVar mNew
   loop mPrev mNew newExamples
   
-handler :: MVar [Example] -> MVar [Example] -> Event -> IO ()
-handler mPrev mNew _ = do
+actionFilter :: Event -> Bool
+actionFilter (Modified path _) = takeFileName path == "Foo.hs"
+actionFilter _ = False
+
+action :: MVar [Example] -> MVar [Example] -> Event -> IO ()
+action mPrev mNew _ = do
   prevExamples <- takeMVar mPrev
-  maybeExamples <- tryGetExamples prevExamples
+  maybeExamples <- tryGetExamples "Foo.hs" "doh" (show $ typeOf doh) prevExamples :: IO (Maybe ($(concretifyType 'doh), [Example]))
   case maybeExamples of
-    Just examples -> putMVar mNew examples
+    Just (_, examples) -> putMVar mNew examples
     Nothing -> putMVar mNew prevExamples
 
-tryGetExamples :: [Example] -> IO (Maybe [Example])
-tryGetExamples prevExamples = do
-  (moduleName, err) <- createModule "Foo.hs" "doh"
-  res <- case err of
-    Just errMsg -> do
-      putStrLn $ "ERROR: " ++ errMsg
-      return Nothing
-    Nothing -> do
-      same <- checkType moduleName "doh" (show $ typeOf doh)
-      if not same
-        then do
-        putStrLn "CHANGE: Function signature changed"
-        return Nothing
-        else do
-        (_, examples) <- getExamples moduleName "doh" prevExamples :: IO ($(concretifyType 'doh), [Example])
-        putStrLn $ "EXAMPLES: " ++ show examples
-        return $ Just examples
-  cleanup moduleName
-  return res
-  
