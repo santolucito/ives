@@ -52,21 +52,23 @@
 
 > createModule :: FilePath -> String -> IO (String, Maybe String)
 > createModule file f = do
->   res <- parseFile file
->   let Module src _ pragmas warning _ imports decls = fromParseResult res
->   
 >   dir <- getCurrentDirectory
 >   (temp, h) <- openTempFile dir file
 >   let mod = takeBaseName temp
->   let nm = ModuleName mod
->   let export = Just [EVar $ UnQual $ Ident f]
->   (hPutStrLn h) . prettyPrint $ Module src nm pragmas warning export imports decls
->   hClose h
 >
->   (e, out, err) <- readProcessWithExitCode "ghc" ["-fhpc", temp] ""
->   case e of
->     ExitSuccess -> return (mod, Nothing)
->     ExitFailure _ -> return (mod, Just err)
+>   res <- parseFile file
+>   case res of
+>     ParseOk (Module src _ pragmas warning _ imports decls) -> do
+>       let nm = ModuleName mod
+>       let export = Just [EVar $ UnQual $ Ident f]
+>       (hPutStrLn h) . prettyPrint $ Module src nm pragmas warning export imports decls
+>       hClose h
+>
+>       (e, out, err) <- readProcessWithExitCode "ghc" ["-fhpc", temp] ""
+>       case e of
+>         ExitSuccess -> return (mod, Nothing)
+>         ExitFailure _ -> return (mod, Just err)
+>     ParseFailed srcLoc err -> return (mod, Just $ show srcLoc ++ ": " ++ err)
 
 Create a program that will print the type of the given function of the given module.
 

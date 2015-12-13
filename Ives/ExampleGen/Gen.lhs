@@ -20,7 +20,7 @@ Make sure the module compiles and the type signature hasn't changed.
 >   (moduleName, err) <- createModule file func
 >   res <- case err of
 >     Just errMsg -> do
->       hPutStrLn stderr $ "ERROR: Failed to compile" ++ errMsg
+>       hPutStrLn stderr $ "ERROR: " ++ errMsg
 >       return Nothing
 >     Nothing -> do
 >       same <- checkType moduleName func ty
@@ -69,7 +69,7 @@ Keeps generating random examples and printing representative ones until the func
 >       putStrLn $ "Tried " ++ show count ++ " examples total"
 >       return examples
 >   | otherwise = do
->       example <- genExample f 10
+>       example <- genExample f 1000
 >       print example -- force eval
 >       let newCount = count + 1
 >       if newCount `mod` 1000 == 0

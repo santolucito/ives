@@ -1,7 +1,7 @@
 module Foo (bar) where
 
+import Data.String.Utils
+
 bar :: (Show a) => a -> String
-bar a
-  | (length . show $ a) > 2 = "ugh"
-  | otherwise = show a
+bar a = show a
 
