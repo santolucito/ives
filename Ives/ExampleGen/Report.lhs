@@ -1,3 +1,5 @@
+This module handles hpc report generation and analysis.
+
 > module Ives.ExampleGen.Report (Report(..), genReport, defaultReport, isCovered, hasImproved) where
 
 > import Ives.ExampleGen.HpcReflect
@@ -6,6 +8,8 @@
 > import System.Process
 
 Represents an HPC report.
+We're only interested in top level declarations (so every function is evaluated
+at least once) and alternatives (so we cover every branch).
 
 > data Report = Report { coveredTop :: Int
 >                      , totalTop :: Int
@@ -16,7 +20,7 @@ Represents an HPC report.
 > defaultReport :: Report
 > defaultReport = Report 0 1 0 1
 
-Generate an HPC report for a program.
+Generate an HPC report for the given module.
 
 > genReport :: String -> IO Report
 > genReport moduleName = do
@@ -34,7 +38,7 @@ Generate an HPC report for a program.
 >   return $ Report coveredTop totalTop coveredAlt totalAlt
 
 Checks if a report has full coverage.
-Might make sense to consider a certain percent coverage as being "covered" or to let a few unexplored branches to slide if it's taking too long.
+Might make sense to consider a certain percent coverage as being "covered" or to let a few unexplored branches slide if it's taking too long.
 
 > isCovered :: Report -> Bool
 > isCovered (Report ct tt ca ta) = ca == ta && ct == tt

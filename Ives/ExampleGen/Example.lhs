@@ -1,3 +1,6 @@
+This module does the actual example generation via arbitrary from QuickCheck.
+It also evaluates examples for functions to get new results.
+
 > {-# LANGUAGE ExistentialQuantification, TemplateHaskell #-}
 
 > module Ives.ExampleGen.Example (genExample, evalExample, Example (..), AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
@@ -43,7 +46,7 @@ evalEx evaluates the function a given a list of arguments wrapped in the AnyArbi
 Instances for all possible return types.
 If a function needs to return another type, it would need to define an Exampleable instance for it.
 
-Functions need to be evaluated one at a time to populate the arguments of the example.
+Functions need to be evaluated one argument at a time to populate the arguments of the example.
 
 > instance (Show a, Typeable a, Typeable b, Arbitrary a, Exampleable b) => Exampleable (a -> b) where
 >   genEx f rnd0 size =
@@ -105,12 +108,12 @@ Non-function types just return a new example with their value as the result. The
 >   genEx t _ _ = Example (MkAE t) []
 >   evalEx t _ = Just $ Example (MkAE t) []
 
-Show instance for typeable so examples can be printed.
+Show instance for functions so examples with functions can be printed.
 
 > instance (Typeable a, Typeable b) => Show (a -> b) where
 >   show f = show $ typeOf f
 
-Generate an example for a function a.
+Generate an example for a the function.
 The size argument is used by QuickCheck to determine the size of generated values.
 
 > genExample :: (Exampleable a) => a -> Int -> IO Example
@@ -118,7 +121,7 @@ The size argument is used by QuickCheck to determine the size of generated value
 >   rnd <- newQCGen
 >   return $ genEx a rnd size
 
-Evaluate function a given a list of arguments.
+Evaluate the function with the arguments given.
 Useful for recycling examples as a function changes.
 
 > evalExample :: (Exampleable a) => a -> [AnyArbitrary] -> Maybe Example

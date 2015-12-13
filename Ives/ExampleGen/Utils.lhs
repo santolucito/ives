@@ -1,3 +1,7 @@
+This module is used to create and remove temporary files needed during the
+example generation process. It also contains functions used by those temporary
+files so they don't have to be written out each time.
+
 > module Ives.ExampleGen.Utils (createModule, createProgram, checkType, cleanup, removeIfExists, action, actionFilter) where
 
 > import Language.Haskell.Exts
@@ -11,6 +15,12 @@
 > import System.FSNotify
 > import Control.Exception
 > import Control.Concurrent
+
+Creates the program that will actually watch a file for changes and generate
+sets of examples for the specified function as the file changes. This program
+needs to be generated because it needs to be able to import a dynamically
+generated module and use template haskell to make the functions in that
+module concrete.
 
 > createProgram :: FilePath -> String -> IO String
 > createProgram file func = do
@@ -50,6 +60,9 @@
 >   hClose h
 >   return $ takeBaseName temp
 
+Creates a copy of a module that exports the function of interest and then
+compiles it with hpc.
+
 > createModule :: FilePath -> String -> IO (String, Maybe String)
 > createModule file f = do
 >   dir <- getCurrentDirectory
@@ -70,7 +83,8 @@
 >         ExitFailure _ -> return (mod, Just err)
 >     ParseFailed srcLoc err -> return (mod, Just $ show srcLoc ++ ": " ++ err)
 
-Create a program that will print the type of the given function of the given module.
+Create a program that will print the type of the given function of the given
+module and then check that against the given type. Returns true if they match.
 
 > checkType :: String -> String -> String -> IO Bool
 > checkType moduleName func ty = do
@@ -101,13 +115,15 @@ Remove all temporary files that are created.
 >   removeIfExists $ addExtension mod "tix"
 >   removeIfExists $ joinPath [".hpc", addExtension mod "mix"]
 
+Remove a file if it exists.
+
 > removeIfExists :: FilePath -> IO ()
 > removeIfExists file = removeFile file `catch` handleExists
 >   where handleExists e
 >           | isDoesNotExistError e = return ()
 >           | otherwise = throwIO e
 
-Action filter and action for fsnotify.
+Action filter and action for fsnotify. Used by the generated program.
 
 > actionFilter :: FilePath -> Event -> Bool
 > actionFilter file (Modified path _) = takeFileName path == file

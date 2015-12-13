@@ -1,3 +1,5 @@
+This module generates full sets of representative examples for a given module by looking at hpc reports.
+
 > module Ives.ExampleGen.Gen (exGen, tryGetExamples) where
 
 > import Ives.Types
@@ -13,7 +15,10 @@ Placeholder
 > exGen :: ExGen
 > exGen = id
 
-Make sure the module compiles and the type signature hasn't changed.
+Given a source file, a function and its type within that file, and a set of
+prior examples, tryGetExamples will generate a new set of examples.
+It will recycle the examples given to it and keep them if they are still representative.
+It will only work if the file compiles and the type signature does not differ from the type specified.
 
 > tryGetExamples :: (Exampleable a) => FilePath -> String -> String -> [Example] -> IO (Maybe (a, [Example]))
 > tryGetExamples file func ty prevExamples = do
@@ -35,7 +40,7 @@ Make sure the module compiles and the type signature hasn't changed.
 >   cleanup moduleName
 >   return res
   
-First try old examples then generate new ones until coverage is complete.
+Generates the new set of examples once the module compiles and the function is of the right type.
 
 > getExamples :: (Exampleable a) => String -> String -> String -> [Example] -> IO (a, [Example])
 > getExamples moduleName func ty prev = do
@@ -45,6 +50,7 @@ First try old examples then generate new ones until coverage is complete.
 >   return (f, examples ++ newExamples)
 
 Tries given examples and returns the ones that improve coverage.
+Used to recycle prior examples (same arguments, but possibly new results).
 
 > tryExamples :: (Exampleable a) => a -> String -> Report -> [Example] -> [Example] -> IO (Report, [Example])
 > tryExamples f moduleName prevReport (example:examples) keptExamples = do
@@ -61,7 +67,8 @@ Tries given examples and returns the ones that improve coverage.
 >         Nothing -> tryExamples f moduleName prevReport examples keptExamples
 > tryExamples f moduleName prevReport [] keptExamples = return (prevReport, keptExamples)
 
-Keeps generating random examples and printing representative ones until the function is fully covered.
+Keeps generating random examples for the function until the module is fully covered according to hpc.
+It returns the examples that improve the coverage of the module.
 
 > findExamples :: (Exampleable a) => a -> String -> Report -> [Example] -> Int -> IO [Example]
 > findExamples f moduleName prevReport examples count

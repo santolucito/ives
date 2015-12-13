@@ -1,5 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
-
+-- The original hpc module would only evaluate modInfo once since it was done with unsafePerformIO.
+-- This version evaluates modInfo multiple times so it will report info about dynamically loaded modules.
 module Ives.ExampleGen.HpcReflect (examineTix) where
 
 import Trace.Hpc.Tix
