@@ -1,9 +1,9 @@
 This module does the actual example generation via arbitrary from QuickCheck.
 It also evaluates examples for functions to get new results.
 
-> {-# LANGUAGE ExistentialQuantification, FlexibleInstances,  UndecidableInstances, OverlappingInstances #-}
+> {-# LANGUAGE ExistentialQuantification, FlexibleInstances, UndecidableInstances #-}
 
-> module Ives.ExampleGen.Example (genExample, evalExample, Example, AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
+> module Ives.ExampleGen.Example (genExample, evalExample, Example, Exampleable, AnyArbitrary (MkAA), AnyExampleable (MkAE)) where
 
 > import Data.List
 > import Data.Typeable
@@ -48,7 +48,7 @@ If a function needs to return another type, it would need to define an Exampleab
 
 Functions need to be evaluated one argument at a time to populate the arguments of the example.
 
-> instance (Show a, Typeable a, Typeable b, Arbitrary a, Exampleable b) => Exampleable (a -> b) where
+> instance {-# OVERLAPPING #-} (Show a, Typeable a, Typeable b, Arbitrary a, Exampleable b) => Exampleable (a -> b) where
 >   genEx f rnd0 size =
 >     let
 >       (rnd1, rnd2) = split rnd0
@@ -64,7 +64,7 @@ Functions need to be evaluated one argument at a time to populate the arguments 
 
 Non-function types just return a new example with their value as the result. They mark the end of the example generation or evaluation process.
 
-> instance Show a => Exampleable a where
+> instance {-# OVERLAPPABLE #-} Show a => Exampleable a where
 >   genEx a _ _ = Example (MkAE a) []
 >   evalEx a _ = Just $ Example (MkAE a) []
 

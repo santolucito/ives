@@ -32,6 +32,7 @@ module concrete.
 >                 \import Ives.ExampleGen.Gen                                \n\
 >                 \import Ives.ExampleGen.Example                            \n\
 >                 \import Ives.ExampleGen.Utils                              \n\
+>                 \import Test.QuickCheck                                    \n\
 >                 \import System.FSNotify                                    \n\
 >                 \import System.IO                                          \n\
 >                 \import System.FilePath                                    \n\
@@ -93,6 +94,7 @@ module and then check that against the given type. Returns true if they match.
 >
 >   hPutStrLn h $ "{-# LANGUAGE TemplateHaskell #-}\n\
 >                 \import Ives.ExampleGen.Conc\n\
+>                 \import Test.QuickCheck\n\
 >                 \import Data.Typeable\n\
 >                 \import " ++ moduleName ++ "\n\
 >                 \main :: IO ()\n\

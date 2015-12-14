@@ -65,7 +65,7 @@ concrete type generator and a concrete type constructor generator.
 >   newTyVar <- conc getTy getTyCon tyVar
 >   return $ AppT newTyCon newTyVar
 > conc _ _ (ForallT _ cxt ty) = do
->   constraints <- processConstraints cxt Map.empty
+>   constraints <- processConstraints cxt ty
 >   -- curry getType with preferred types and constraints
 >   prefTys <- preferredTys
 >   prefTyCons <- preferredTyCons
@@ -79,21 +79,39 @@ It will return one of the preferred types if possible.
 
 > getType :: [Type] -> Map.Map Name (Set.Set Type) -> Name -> Type
 > getType [] m nm = case Map.lookup nm m of
->   Just instances -> Set.elemAt (Set.size instances - 1) instances
+>   Just instances -> Set.elemAt 0 instances
 >   Nothing -> ListT -- shouldn't ever happen
 > getType (ty:tys) m nm = case Map.lookup nm m of
 >   Just instances -> if Set.member ty instances then ty else getType tys m nm
 >   Nothing -> ty
 
-Processes the context of a type signature to create a map from a type variable
-name to the possible concrete types it could be.
+Adds constraints that all variables be of the type classes Arbitrary
+before getting the possible concrete types.
 
-> processConstraints :: Cxt -> Map.Map Name (Set.Set Type) -> Q (Map.Map Name (Set.Set Type))
-> processConstraints [] m = return m
-> processConstraints (AppT (ConT cls) (VarT var):xs) m = do
+> processConstraints :: Cxt -> Type -> Q (Map.Map Name (Set.Set Type))
+> processConstraints cxt ty = do
+>   Just arbitraryTy <- lookupTypeName "Arbitrary"
+>   let vars = Set.elems $ getAllVars ty Set.empty
+>   let arbitraryCxt = map (\var -> AppT (ConT arbitraryTy) (VarT var)) vars
+>   getPossibleTypes (cxt ++ arbitraryCxt) Map.empty
+
+Processes the context of a type signature to create a map from a type variable
+name to a set of possible concrete types.
+
+> getPossibleTypes :: Cxt -> Map.Map Name (Set.Set Type) -> Q (Map.Map Name (Set.Set Type))
+> getPossibleTypes [] m = return m
+> getPossibleTypes (AppT (ConT cls) (VarT var):xs) m = do
 >   tys <- getInstances cls
 >   let newM = Map.insertWith Set.intersection var (Set.fromList tys) m
->   processConstraints xs newM
+>   getPossibleTypes xs newM
+
+Gets all type and type constructor variables in the type.
+
+> getAllVars :: Type -> Set.Set Name -> Set.Set Name
+> getAllVars (VarT nm) nms = Set.insert nm nms
+> getAllVars (AppT ArrowT ty) nms = getAllVars ty nms
+> getAllVars (AppT tyCon tyVar) nms = getAllVars tyVar (getAllVars tyCon nms) 
+> getAllVars _ nms = nms
 
 Gets all instances of a given type class.
 
