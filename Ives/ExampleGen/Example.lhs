@@ -1,9 +1,9 @@
 This module does the actual example generation via arbitrary from QuickCheck.
 It also evaluates examples for functions to get new results.
 
-> {-# LANGUAGE ExistentialQuantification, TemplateHaskell #-}
+> {-# LANGUAGE ExistentialQuantification, FlexibleInstances,  UndecidableInstances, OverlappingInstances #-}
 
-> module Ives.ExampleGen.Example (genExample, evalExample, Example (..), AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
+> module Ives.ExampleGen.Example (genExample, evalExample, Example, AnyArbitrary (MkAA), AnyExampleable (MkAE), Exampleable) where
 
 > import Data.List
 > import Data.Typeable
@@ -25,7 +25,7 @@ Arguments need to be an instance of the Arbitrary typeclass so they can be gener
 Wrapper class for any result value.
 Results need to be an instance of the Exampleable typeclass so they can be generated during example generation.
 
-> data AnyExampleable = forall a. (Exampleable a, Typeable a) => MkAE a
+> data AnyExampleable = forall a. (Exampleable a) => MkAE a
 > instance Show AnyExampleable where
 >   show (MkAE a) = show a
 
@@ -64,49 +64,9 @@ Functions need to be evaluated one argument at a time to populate the arguments 
 
 Non-function types just return a new example with their value as the result. They mark the end of the example generation or evaluation process.
 
-> instance Exampleable Bool where
+> instance Show a => Exampleable a where
 >   genEx a _ _ = Example (MkAE a) []
 >   evalEx a _ = Just $ Example (MkAE a) []
-
-> instance Exampleable Char where
->   genEx a _ _ = Example (MkAE a) []
->   evalEx a _ = Just $ Example (MkAE a) []
-
-> instance Exampleable Int where
->   genEx a _ _ = Example (MkAE a) []
->   evalEx a _ = Just $ Example (MkAE a) []
-
-> instance Exampleable Integer where
->   genEx a _ _ = Example (MkAE a) []
->   evalEx a _ = Just $ Example (MkAE a) []
-
-> instance Exampleable Float where
->   genEx a _ _ = Example (MkAE a) []
->   evalEx a _ = Just $ Example (MkAE a) []
-
-> instance Exampleable Double where
->   genEx a _ _ = Example (MkAE a) []
->   evalEx a _ = Just $ Example (MkAE a) []
-
-> instance (Show a, Typeable a) => Exampleable [a] where
->   genEx l _ _ = Example (MkAE l) []
->   evalEx l _ = Just $ Example (MkAE l) []
-
-> instance Exampleable () where
->   genEx a _ _ = Example (MkAE a) []
->   evalEx a _ = Just $ Example (MkAE a) []
-
-> instance (Show a, Show b, Typeable a, Typeable b) => Exampleable (a, b) where
->   genEx t _ _ = Example (MkAE t) []
->   evalEx t _ = Just $ Example (MkAE t) []
-
-> instance (Show a, Show b, Show c, Typeable a, Typeable b, Typeable c) => Exampleable (a, b, c) where
->   genEx t _ _ = Example (MkAE t) []
->   evalEx t _ = Just $ Example (MkAE t) []
-
-> instance (Show a, Show b, Show c, Show d, Typeable a, Typeable b, Typeable c, Typeable d) => Exampleable (a, b, c, d) where
->   genEx t _ _ = Example (MkAE t) []
->   evalEx t _ = Just $ Example (MkAE t) []
 
 Show instance for functions so examples with functions can be printed.
 
@@ -124,6 +84,6 @@ The size argument is used by QuickCheck to determine the size of generated value
 Evaluate the function with the arguments given.
 Useful for recycling examples as a function changes.
 
-> evalExample :: (Exampleable a) => a -> [AnyArbitrary] -> Maybe Example
-> evalExample a args = evalEx a args
+> evalExample :: (Exampleable a) => a -> Example -> Maybe Example
+> evalExample a example = evalEx a (arguments example)
 

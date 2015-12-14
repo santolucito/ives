@@ -57,7 +57,7 @@ Used to recycle prior examples (same arguments, but possibly new results).
 >   if isCovered prevReport
 >     then return (prevReport, keptExamples)
 >     else
->       case evalExample f (arguments example) of
+>       case evalExample f example of
 >         Just newExample -> do
 >           print newExample -- force eval
 >           report <- genReport moduleName
