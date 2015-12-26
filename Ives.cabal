@@ -107,7 +107,7 @@ executable Exampler
   default-language:    Haskell2010
 
 Library
-  exposed-modules: Ives.ExampleGen.Gen, Ives.ExampleGen.Conc, Ives.SynthEngine.Extractor
+  exposed-modules: Ives.ExampleGen.Gen, Ives.ExampleGen.Conc, Ives.SynthEngine.Extractor, Ives.SynthEngine.Types
 
   -- Other library packages from which modules are imported.
   build-depends:   base >=4.8 && <5.0,
