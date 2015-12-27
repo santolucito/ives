@@ -23,6 +23,18 @@ constructor, as well as counting argument number through recursion depth.
 >               deriving Show
 
 
+In addition to symbolic expressions we care about the path constraint of an
+execution, which is represented in terms of symbolic expressions. The result
+of a symbolic execution should be a list of path constraints mapped to their
+respective outputs. We define a single path constraint as follows:
+
+> data PathCons = PathUnit SymExp
+>               | PathAnd PathCons PathCons
+>               | PathOr PathCons PathCons
+>               | PathNot PathCons
+>                 deriving Show
+
+
 The other thing we really care about in symbolic execution is symbolic state
 that maps variables to their respective symbolic values - in other words their
 respective symbolic expressions.
@@ -39,18 +51,6 @@ we don't have explicitly make them (but that would be nice ... and verbose).
 > makeSymState vars exps = Map.fromList $ zip vars exps 
 
 
-In addition to the symbolic state we care about the path constraint of an
-execution, which is represented in terms of symbolic expressions. The result
-of a symbolic execution should be a list of path constraints mapped to their
-respective outputs. We define a single path constraint as follows:
-
-> data PathCons = PathUnit SymExp
->               | PathAnd PathCons PathCons
->               | PathOr PathCons PathCons
->               | PathNot PathCons
->                 deriving Show
-
-
 The "base case" of a symbolic execution is going to be a single function, since
 we can extend this concept to multiple functions (functions calling each other)
 and eventually a program as a whole, which is roughly the main function calling
@@ -65,4 +65,7 @@ As such, one thing that we are intersted in is initializing a symbolic state
 for a particular function as represented by an AST made from haskell-src.
 
 > initFnSymState :: Exts.Decl -> SymState
-> initFnSymState (Exts.FunBind ((Exts.Match s n ps t r b):xs)) = undefined
+> initFnSymState (Exts.FunBind ((Exts.Match s n ps t r b):xs)) =
+>     let params = map (\(Exts.PVar (Exts.Ident name)) -> name) ps
+>     in makeSymState params (map (\name -> Symbol name) params)
+
