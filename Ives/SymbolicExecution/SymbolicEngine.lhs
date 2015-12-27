@@ -18,8 +18,8 @@ in terms of a function application of other symbolic values, we can pick apart
 the function identifier through recursively parsing the LHS of the SymFnApp
 constructor, as well as counting argument number through recursion depth.
 
-> data SymExp = Symbol String |
->               SymFnApp SymExp SymExp
+> data SymExp = Symbol String
+>             | SymFnApp SymExp SymExp
 >               deriving Show
 
 
@@ -33,8 +33,22 @@ The typical lookup and insert functions that we would need for this symbolic
 state (which is a map / table) are already provided by the Data.Map library, so
 we don't have explicitly make them (but that would be nice ... and verbose).
 
-> makeSymState :: [String] -> [SymExp] -> Map.Map String SymExp
+> type SymState = Map.Map String SymExp
+
+> makeSymState :: [String] -> [SymExp] -> SymState
 > makeSymState vars exps = Map.fromList $ zip vars exps 
+
+
+In addition to the symbolic state we care about the path constraint of an
+execution, which is represented in terms of symbolic expressions. The result
+of a symbolic execution should be a list of path constraints mapped to their
+respective outputs. We define a single path constraint as follows:
+
+> data PathCons = PathUnit SymExp
+>               | PathAnd PathCons PathCons
+>               | PathOr PathCons PathCons
+>               | PathNot PathCons
+>                 deriving Show
 
 
 The "base case" of a symbolic execution is going to be a single function, since
@@ -50,3 +64,5 @@ the only things that we can change each call are the arguments that we pass.
 As such, one thing that we are intersted in is initializing a symbolic state
 for a particular function as represented by an AST made from haskell-src.
 
+> initFnSymState :: Exts.Decl -> SymState
+> initFnSymState (Exts.FunBind ((Exts.Match s n ps t r b):xs)) = undefined
