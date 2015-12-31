@@ -20,6 +20,9 @@ constructor, as well as counting argument number through recursion depth.
 
 > data SymExp = Symbol String
 >             | SymFnApp SymExp SymExp
+>             | LitInt Integer
+>             | LitStr String
+>             | LitChar Char
 >               deriving Show
 
 
@@ -64,8 +67,29 @@ the only things that we can change each call are the arguments that we pass.
 As such, one thing that we are intersted in is initializing a symbolic state
 for a particular function as represented by an AST made from haskell-src.
 
-> initFnSymState :: Exts.Decl -> SymState
+> type Func = Exts.Decl
+
+> initFnSymState :: Func -> SymState
 > initFnSymState (Exts.FunBind ((Exts.Match s n ps t r b):xs)) =
 >     let params = map (\(Exts.PVar (Exts.Ident name)) -> name) ps
 >     in makeSymState params (map (\name -> Symbol name) params)
 
+
+The eval function would be using the symbolic state as the environment for
+expression evaluation. We need to handle each type of expression differently,
+meaning that each get their own different eval function that does not abide by
+Haskell naming conventions because it's easier to read this way huahahua.
+
+Some things of interest: https://hackage.haskell.org/package/haskell-src-exts-1.16.0.1/docs/Language-Haskell-Exts-Syntax.html#t:Exp
+
+> eval_Var :: Exts.Exp -> SymState -> SymExp
+> eval_Var (Exts.Var (Exts.UnQual (Exts.Ident n))) ss =
+>     let res = Map.lookup n ss
+>     in case res of
+>         Just s -> s
+>         Nothing -> Symbol n
+
+> eval_Lit :: Exts.Exp -> SymExp
+> eval_Lit (Exts.Lit (Exts.Char c)) = LitChar c
+> eval_Lit (Exts.Lit (Exts.String s)) = LitStr s
+> eval_Lit (Exts.Lit (Exts.Int i)) = LitInt i

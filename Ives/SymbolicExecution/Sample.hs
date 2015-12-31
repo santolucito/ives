@@ -3,3 +3,5 @@ hue a b c = if a + b < 10
     else if c > 9
         then "wow so big"
         else "oh that's okay"
+
+asdf = hue 1 2 3

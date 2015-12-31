@@ -4,5 +4,7 @@
 > main = do
 >     putStrLn $ "Stuff compiles :)"
 >     src <- readFile "Sample.hs"
->     let res = Engine.initFnSymState $ AST.lookupFn "hue" (AST.getAST src)
+>     let ast = AST.getAST src
+>     let res = Engine.initFnSymState $ AST.lookupFn "hue" ast
+>     putStrLn $ show ast
 >     putStrLn $ show res
