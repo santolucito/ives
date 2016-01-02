@@ -113,12 +113,18 @@ For other things:
 > eval_Lit (Exts.Lit (Exts.String s)) = LitStr s
 > eval_Lit (Exts.Lit (Exts.Int i)) = LitInt i
 
-> eval_InfixApp :: Exts.Exp -> Exts.QOp -> Exts.Exp -> SymState -> SymExp
-> eval_InfixApp expL (Exts.QVarOp (Exts.UnQual n)) expR ss =
+> eval_InfixApp :: Exts.Exp -> SymState -> SymExp
+> eval_InfixApp (Exts.InfixApp expL (Exts.QVarOp (Exts.UnQual n)) expR) ss =
 >     SymFnApp (SymFnApp (Symbol (getNameStr n)) (eval expL ss)) (eval expR ss)
 
-> eval_App :: Exts.Exp -> Exts.Exp -> SymState -> SymExp
-> eval_App expL expR ss = SymFnApp (eval expL ss) (eval expR ss)
+> eval_App :: Exts.Exp -> SymState -> SymExp
+> eval_App (Exts.App expL expR) ss = SymFnApp (eval expL ss) (eval expR ss)
+
+> eval_Lambda = undefined
+
+> eval_Let = undefined
+
+> eval_If = undefined
 
 > eval :: Exts.Exp -> SymState -> SymExp
 > eval = undefined
