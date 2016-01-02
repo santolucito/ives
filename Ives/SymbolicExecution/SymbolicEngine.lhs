@@ -82,14 +82,43 @@ Haskell naming conventions because it's easier to read this way huahahua.
 
 Some things of interest: https://hackage.haskell.org/package/haskell-src-exts-1.16.0.1/docs/Language-Haskell-Exts-Syntax.html#t:Exp
 
+Things that should get implemented for now:
+
+For Exts.Exp:
+  - Var
+  - Lit
+  - InfixApp
+  - App
+  - Lambda
+  - Let
+  - If
+
+For other things:
+  - Guarded Rhs
+  - Unguarded Rhs
+
+> getNameStr :: Exts.Name -> String
+> getNameStr (Exts.Ident n) = n
+> getNameStr (Exts.Symbol n) = n
+
 > eval_Var :: Exts.Exp -> SymState -> SymExp
-> eval_Var (Exts.Var (Exts.UnQual (Exts.Ident n))) ss =
->     let res = Map.lookup n ss
+> eval_Var (Exts.Var (Exts.UnQual n)) ss =
+>     let res = Map.lookup (getNameStr n) ss
 >     in case res of
 >         Just s -> s
->         Nothing -> Symbol n
+>         Nothing -> Symbol (getNameStr n)
 
 > eval_Lit :: Exts.Exp -> SymExp
 > eval_Lit (Exts.Lit (Exts.Char c)) = LitChar c
 > eval_Lit (Exts.Lit (Exts.String s)) = LitStr s
 > eval_Lit (Exts.Lit (Exts.Int i)) = LitInt i
+
+> eval_InfixApp :: Exts.Exp -> Exts.QOp -> Exts.Exp -> SymState -> SymExp
+> eval_InfixApp expL (Exts.QVarOp (Exts.UnQual n)) expR ss =
+>     SymFnApp (SymFnApp (Symbol (getNameStr n)) (eval expL ss)) (eval expR ss)
+
+> eval_App :: Exts.Exp -> Exts.Exp -> SymState -> SymExp
+> eval_App expL expR ss = SymFnApp (eval expL ss) (eval expR ss)
+
+> eval :: Exts.Exp -> SymState -> SymExp
+> eval = undefined
