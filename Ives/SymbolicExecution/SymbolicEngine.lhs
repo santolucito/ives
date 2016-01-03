@@ -82,24 +82,25 @@ Haskell naming conventions because it's easier to read this way huahahua.
 
 Some things of interest: https://hackage.haskell.org/package/haskell-src-exts-1.16.0.1/docs/Language-Haskell-Exts-Syntax.html#t:Exp
 
-Things that should get implemented for now:
-
-For Exts.Exp:
-  - Var
-  - Lit
-  - InfixApp
-  - App
-  - Lambda
-  - Let
-  - If
-
-For other things:
-  - Guarded Rhs
-  - Unguarded Rhs
+Because Exts.Name may either be a symbol or ident, but we don't really care, so
+having a universal extractor is useful so we don't have as much boilerplate.
 
 > getNameStr :: Exts.Name -> String
 > getNameStr (Exts.Ident n) = n
 > getNameStr (Exts.Symbol n) = n
+
+
+We also want to be able to extract the expression portion of a Rhs. For guarded
+Rhs there is a potential to be multiple ones since it is essentially kind of
+case / pattern matching, but for now let's only extract the first one.
+
+> getRhsExp :: Exts.Rhs -> Exts.Exp
+> getRhsExp (Exts.UnGuardedRhs exp) = exp
+> getRhsExp (Exts.GuardedRhss ((Exts.GuardedRhs _ _ exp):xs)) = exp
+
+
+Evaluate a variable expression. If it is within the symbolic state, retrieve it
+and otherwise make a new one (most likely it would be an existing function).
 
 > eval_Var :: Exts.Exp -> SymState -> SymExp
 > eval_Var (Exts.Var (Exts.UnQual n)) ss =
@@ -108,23 +109,75 @@ For other things:
 >         Just s -> s
 >         Nothing -> Symbol (getNameStr n)
 
+
+We want to wrap literals in the symbolic expressions.
+
 > eval_Lit :: Exts.Exp -> SymExp
 > eval_Lit (Exts.Lit (Exts.Char c)) = LitChar c
 > eval_Lit (Exts.Lit (Exts.String s)) = LitStr s
 > eval_Lit (Exts.Lit (Exts.Int i)) = LitInt i
 
+
+There are at least 2 types of function application (another one being some
+"negative" application). Infix and regular application are what we care about.
+However, because infix operators can be converted to prefix operators, we parse
+out both as a prefix operator, because it also fits the symbolic expression DSL
+better this way. By nature, infix apps are at least binary functions, so they
+get an additional layering.
+
 > eval_InfixApp :: Exts.Exp -> SymState -> SymExp
 > eval_InfixApp (Exts.InfixApp expL (Exts.QVarOp (Exts.UnQual n)) expR) ss =
 >     SymFnApp (SymFnApp (Symbol (getNameStr n)) (eval expL ss)) (eval expR ss)
 
+
+On the contrary, because we can apply currying, a regular function application
+can be thought of a single argument application (which then returns another
+function to which more arguments can be applied to).
+
 > eval_App :: Exts.Exp -> SymState -> SymExp
 > eval_App (Exts.App expL expR) ss = SymFnApp (eval expL ss) (eval expR ss)
 
-> eval_Lambda = undefined
 
-> eval_Let = undefined
+Lambda functions would be a nice feature. Might figure out some day.
 
-> eval_If = undefined
+> eval_Lambda (Exts.Lambda src params exp) ss = undefined
+
+
+Let expressions are a place where we update the symbolic state and use the
+updated one to evaluate the corresponding expression that comes with the let
+expression. We want to first parse out and evaluate the binding declarations,
+update the symbolic state with those, and then pass them again into eval.
+
+For now we assume there is only a single new binding in lets.
+
+> getLetName :: [Exts.Decl] -> String
+> getLetName ((Exts.PatBind _ (Exts.PVar name) _ _):xs) = getNameStr name
+
+> getLetSymExp :: [Exts.Decl] -> SymState -> SymExp
+> getLetSymExp ((Exts.PatBind _ _ rhs _):xs) ss =
+>     let exp = getRhsExp rhs
+>     in eval exp ss
+
+> eval_Let :: Exts.Exp -> SymState -> SymExp
+> eval_Let (Exts.Let (Exts.BDecls binds) exp) ss =
+>     let newState = Map.insert (getLetName binds) (getLetSymExp binds ss) ss
+>     in eval exp newState
+
+
+In if statements, we let the first return be the true path, and the second one
+be the false path. 
+
+> eval_If :: Exts.Exp -> PathCons -> SymState -> (PathCons, PathCons)
+> eval_If (Exts.If cExp tExp fExp) pc ss =
+>     let (cSym, tSym, fSym) = ((eval cExp ss), (eval tExp ss), (eval fExp ss))
+>     in ((PathAnd (PathUnit cSym) (PathUnit tSym)),
+>         (PathAnd (PathNot (PathUnit cSym)) (PathUnit fSym)))
 
 > eval :: Exts.Exp -> SymState -> SymExp
-> eval = undefined
+> eval exp ss = case exp of
+>     (Exts.Var _) -> eval_Var exp ss
+>     (Exts.Lit _) -> eval_Lit exp
+>     (Exts.InfixApp _ _ _) -> eval_InfixApp exp ss
+>     (Exts.App _ _) -> eval_App exp ss
+>     (Exts.Let _ _) -> eval_Let exp ss
+
