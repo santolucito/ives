@@ -26,15 +26,18 @@ constructor, as well as counting argument number through recursion depth.
 >               deriving Show
 
 
-In addition to symbolic expressions we care about the path constraint of an
-execution, which is represented in terms of symbolic expressions. The result
-of a symbolic execution should be a list of path constraints mapped to their
-respective outputs. We define a single path constraint as follows:
+We can think of the possible execution paths as a tree. The individual path
+constraints can be parsed out from the tree by taking the path from the root
+to the terminal, ANDing every logical split along the way. Each place where the
+path branches carries additional information about the boolean constraint logic
+at the split point. A binary tree representation is valid because for now, we
+assume the only splitting occurs at if statements, which have 2 possiblities.
+It should be noted that it is completely possible for the conditional statement
+to in itself have if statements, but we will deal with this more complicated
+type of branching later. For now we assume a simple conditional.
 
-> data PathCons = PathUnit SymExp
->               | PathAnd PathCons PathCons
->               | PathOr PathCons PathCons
->               | PathNot PathCons
+> data PathTree = PathTerm SymExp
+>               | PathSplit SymExp PathTree PathTree
 >                 deriving Show
 
 
@@ -76,108 +79,85 @@ for a particular function as represented by an AST made from haskell-src.
 
 
 The eval function would be using the symbolic state as the environment for
-expression evaluation. We need to handle each type of expression differently,
-meaning that each get their own different eval function that does not abide by
-Haskell naming conventions because it's easier to read this way huahahua.
+expression evaluation. We can attempt to create a tree that represents the
+execution paths, and then traverse it to parse out the path constraints (one 
+path constraint would simply be the distance from the root to a leaf - where we
+assume the execution stops).
+
+For now we don't perform function lookups for function applications, but that
+should be added later. For now it is basic program path exploration.
 
 Some things of interest: https://hackage.haskell.org/package/haskell-src-exts-1.16.0.1/docs/Language-Haskell-Exts-Syntax.html#t:Exp
 
-Because Exts.Name may either be a symbol or ident, but we don't really care, so
-having a universal extractor is useful so we don't have as much boilerplate.
+Because we are ultimately constructing a tree we need to think of base cases
+and recursive steps. Because we are not yet performing function identifier
+lookups in the environment, our base cases are thus variables, literals,
+function applications and let expressions. If statements would be where we need
+to consider branching.
 
-> getNameStr :: Exts.Name -> String
-> getNameStr (Exts.Ident n) = n
-> getNameStr (Exts.Symbol n) = n
-
-
-We also want to be able to extract the expression portion of a Rhs. For guarded
-Rhs there is a potential to be multiple ones since it is essentially kind of
-case / pattern matching, but for now let's only extract the first one.
+> getName :: Exts.Name -> String
+> getName (Exts.Ident n) = n
+> getName (Exts.Symbol n) = n
 
 > getRhsExp :: Exts.Rhs -> Exts.Exp
 > getRhsExp (Exts.UnGuardedRhs exp) = exp
 > getRhsExp (Exts.GuardedRhss ((Exts.GuardedRhs _ _ exp):xs)) = exp
 
-
-Evaluate a variable expression. If it is within the symbolic state, retrieve it
-and otherwise make a new one (most likely it would be an existing function).
-
-> eval_Var :: Exts.Exp -> SymState -> SymExp
-> eval_Var (Exts.Var (Exts.UnQual n)) ss =
->     let res = Map.lookup (getNameStr n) ss
+> evalVar :: Exts.Exp -> SymState -> SymExp
+> evalVar (Exts.Var (Exts.UnQual n)) ss =
+>     let res = Map.lookup (getName n) ss
 >     in case res of
 >         Just s -> s
->         Nothing -> Symbol (getNameStr n)
+>         Nothing -> Symbol (getName n)
+
+> evalLit :: Exts.Exp -> SymExp
+> evalLit (Exts.Lit (Exts.Char c)) = LitChar c
+> evalLit (Exts.Lit (Exts.String s)) = LitStr s
+> evalLit (Exts.Lit (Exts.Int i)) = LitInt i
+
+> evalInfixApp :: Exts.Exp -> SymState -> SymExp
+> evalInfixApp (Exts.InfixApp expL (Exts.QVarOp (Exts.UnQual n)) expR) ss =
+>     SymFnApp (SymFnApp (Symbol (getName n)) (eval expL ss)) (eval expR ss)
+
+> evalApp :: Exts.Exp -> SymState -> SymExp
+> evalApp (Exts.App expL expR) ss = SymFnApp (eval expL ss) (eval expR ss)
 
 
-We want to wrap literals in the symbolic expressions.
-
-> eval_Lit :: Exts.Exp -> SymExp
-> eval_Lit (Exts.Lit (Exts.Char c)) = LitChar c
-> eval_Lit (Exts.Lit (Exts.String s)) = LitStr s
-> eval_Lit (Exts.Lit (Exts.Int i)) = LitInt i
-
-
-There are at least 2 types of function application (another one being some
-"negative" application). Infix and regular application are what we care about.
-However, because infix operators can be converted to prefix operators, we parse
-out both as a prefix operator, because it also fits the symbolic expression DSL
-better this way. By nature, infix apps are at least binary functions, so they
-get an additional layering.
-
-> eval_InfixApp :: Exts.Exp -> SymState -> SymExp
-> eval_InfixApp (Exts.InfixApp expL (Exts.QVarOp (Exts.UnQual n)) expR) ss =
->     SymFnApp (SymFnApp (Symbol (getNameStr n)) (eval expL ss)) (eval expR ss)
-
-
-On the contrary, because we can apply currying, a regular function application
-can be thought of a single argument application (which then returns another
-function to which more arguments can be applied to).
-
-> eval_App :: Exts.Exp -> SymState -> SymExp
-> eval_App (Exts.App expL expR) ss = SymFnApp (eval expL ss) (eval expR ss)
-
-
-Lambda functions would be a nice feature. Might figure out some day.
-
-> eval_Lambda (Exts.Lambda src params exp) ss = undefined
-
-
-Let expressions are a place where we update the symbolic state and use the
-updated one to evaluate the corresponding expression that comes with the let
-expression. We want to first parse out and evaluate the binding declarations,
-update the symbolic state with those, and then pass them again into eval.
-
-For now we assume there is only a single new binding in lets.
+Let expressions are somewhat tricky since they are where we need to update the
+symbolic state first before using it to evaluate the body of the corresponding
+expression.
 
 > getLetName :: [Exts.Decl] -> String
-> getLetName ((Exts.PatBind _ (Exts.PVar name) _ _):xs) = getNameStr name
+> getLetName ((Exts.PatBind _ (Exts.PVar name) _ _):xs) = getName name
 
 > getLetSymExp :: [Exts.Decl] -> SymState -> SymExp
-> getLetSymExp ((Exts.PatBind _ _ rhs _):xs) ss =
->     let exp = getRhsExp rhs
->     in eval exp ss
+> getLetSymExp ((Exts.PatBind _ _ rhs _):xs) ss = eval (getRhsExp rhs) ss
 
-> eval_Let :: Exts.Exp -> SymState -> SymExp
-> eval_Let (Exts.Let (Exts.BDecls binds) exp) ss =
->     let newState = Map.insert (getLetName binds) (getLetSymExp binds ss) ss
->     in eval exp newState
+> evalLet :: Exts.Exp -> SymState -> SymExp
+> evalLet (Exts.Let (Exts.BDecls binds) exp) ss =
+>     eval exp (Map.insert (getLetName binds) (getLetSymExp binds ss) ss)
 
 
-In if statements, we let the first return be the true path, and the second one
-be the false path. 
+If statements are the branching recursive cases in our execution tree. With
+Haskell and pretty much every other programming language, if statements consist
+of 3 parts: the condition, the true branch, and the false branch. We need to
+use the condition statement as the branch marker from which we may construct a
+linear path constraint.
 
-> eval_If :: Exts.Exp -> PathCons -> SymState -> (PathCons, PathCons)
-> eval_If (Exts.If cExp tExp fExp) pc ss =
->     let (cSym, tSym, fSym) = ((eval cExp ss), (eval tExp ss), (eval fExp ss))
->     in ((PathAnd (PathUnit cSym) (PathUnit tSym)),
->         (PathAnd (PathNot (PathUnit cSym)) (PathUnit fSym)))
+> evalIf :: Exts.Exp -> SymState -> PathTree
+> evalIf (Exts.If expCond expTrue expFalse) ss =
+>     PathSplit (eval expCond ss) (consTree expTrue ss) (consTree expFalse ss)
 
 > eval :: Exts.Exp -> SymState -> SymExp
 > eval exp ss = case exp of
->     (Exts.Var _) -> eval_Var exp ss
->     (Exts.Lit _) -> eval_Lit exp
->     (Exts.InfixApp _ _ _) -> eval_InfixApp exp ss
->     (Exts.App _ _) -> eval_App exp ss
->     (Exts.Let _ _) -> eval_Let exp ss
+>     (Exts.Var _) -> evalVar exp ss
+>     (Exts.Lit _) -> evalLit exp
+>     (Exts.InfixApp _ _ _) -> evalInfixApp exp ss
+>     (Exts.App _ _) -> evalApp exp ss
+>     (Exts.Let _ _) -> evalLet exp ss
+
+> consTree :: Exts.Exp -> SymState -> PathTree
+> consTree exp ss = case exp of
+>     (Exts.If _ _ _) -> evalIf exp ss
+>     _ -> PathTerm (eval exp ss)
 
