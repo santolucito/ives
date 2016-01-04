@@ -161,3 +161,19 @@ linear path constraint.
 >     (Exts.If _ _ _) -> evalIf exp ss
 >     _ -> PathTerm (eval exp ss)
 
+
+Having an execution tree is great because we can now consturct the individual
+possible paths the program may take. This should be a basic tree traversal with
+a few added features.
+
+> data PathCons = PathUnit SymExp
+>               | PathAnd PathCons PathCons
+>               | PathNot PathCons
+>                 deriving Show
+
+> getPathCons :: PathTree -> [PathCons]
+> getPathCons (PathTerm exp) = [PathUnit exp]
+> getPathCons (PathSplit exp left right) =
+>     map (\p -> PathAnd (PathUnit exp) p) (getPathCons left) ++
+>     map (\p -> PathAnd (PathNot (PathUnit exp)) p) (getPathCons right)
+

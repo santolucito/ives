@@ -10,10 +10,12 @@
 >     let ast = AST.getAST src
 >     let funcHue = AST.lookupFn "hue" ast
 >     let initState = Engine.initFnSymState funcHue
->     -- putStrLn $ show ast
->     -- putStrLn ""
->     -- putStrLn $ show funcHue
->     -- putStrLn "" 
->     putStrLn $ show $ getExp funcHue
->     putStrLn ""
->     putStrLn $ show $ Engine.consTree (getExp funcHue) initState
+>     let exp = (getExp funcHue)
+>     let tree = Engine.consTree exp initState
+>     let paths = Engine.getPathCons tree
+>     putStrLn "Expression:" 
+>     putStrLn $ show $ exp
+>     putStrLn "\nSymbolic execution tree:"
+>     putStrLn $ show $ tree
+>     putStrLn "\nPath Constraints:"
+>     putStrLn $ show $ paths
