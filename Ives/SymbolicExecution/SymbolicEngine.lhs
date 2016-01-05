@@ -20,6 +20,7 @@ constructor, as well as counting argument number through recursion depth.
 
 > data SymExp = Symbol String
 >             | SymFnApp SymExp SymExp
+>             | Paren SymExp
 >             | LitInt Integer
 >             | LitStr String
 >             | LitChar Char
@@ -70,9 +71,7 @@ the only things that we can change each call are the arguments that we pass.
 As such, one thing that we are intersted in is initializing a symbolic state
 for a particular function as represented by an AST made from haskell-src.
 
-> type Func = Exts.Decl
-
-> initFnSymState :: Func -> SymState
+> initFnSymState :: Exts.Decl -> SymState
 > initFnSymState (Exts.FunBind ((Exts.Match s n ps t r b):xs)) =
 >     let params = map (\(Exts.PVar (Exts.Ident name)) -> name) ps
 >     in makeSymState params (map (\name -> Symbol name) params)
@@ -115,6 +114,12 @@ to consider branching.
 > evalLit (Exts.Lit (Exts.String s)) = LitStr s
 > evalLit (Exts.Lit (Exts.Int i)) = LitInt i
 
+> evalCon :: Exts.Exp -> SymExp
+> evalCon (Exts.Con (Exts.UnQual n)) = Symbol (getName n)
+
+> evalParen :: Exts.Exp -> SymState -> SymExp
+> evalParen (Exts.Paren exp) ss = Paren (eval exp ss)
+
 > evalInfixApp :: Exts.Exp -> SymState -> SymExp
 > evalInfixApp (Exts.InfixApp expL (Exts.QVarOp (Exts.UnQual n)) expR) ss =
 >     SymFnApp (SymFnApp (Symbol (getName n)) (eval expL ss)) (eval expR ss)
@@ -152,6 +157,8 @@ linear path constraint.
 > eval exp ss = case exp of
 >     (Exts.Var _) -> evalVar exp ss
 >     (Exts.Lit _) -> evalLit exp
+>     (Exts.Con _) -> evalCon exp
+>     (Exts.Paren _) -> evalParen exp ss
 >     (Exts.InfixApp _ _ _) -> evalInfixApp exp ss
 >     (Exts.App _ _) -> evalApp exp ss
 >     (Exts.Let _ _) -> evalLet exp ss

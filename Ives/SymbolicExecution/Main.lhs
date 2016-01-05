@@ -14,8 +14,8 @@
 >     let tree = Engine.consTree exp initState
 >     let paths = Engine.getPathCons tree
 >     putStrLn "Expression:" 
->     putStrLn $ show $ exp
+>     putStrLn $ show exp
 >     putStrLn "\nSymbolic execution tree:"
->     putStrLn $ show $ tree
+>     putStrLn $ show tree
 >     putStrLn "\nPath Constraints:"
->     putStrLn $ show $ paths
+>     putStrLn $ show paths
