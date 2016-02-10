@@ -97,7 +97,7 @@ Combined with a simple, type-directed first order synthesis procedure, we can ge
 We use a \textit{dismantling} technique to infer refinement types over candidate higher-order functions.
 Then, we infer a set of potential refinement types over the input-output examples.
 Merging these two sets gives a ranked list of suitable higher-order functions.
-This frees us from the need for restrictive templating, allowing us to use full libraries in our synthesis procedure.
+Using refinement types frees us from the need for restrictive templating, allowing us to use full libraries in our synthesis procedure.
 To complete the synthesis, we use a best-first enumerative search based on a weighted subtyping to remove the need for subexample generation, which would rely on further templating.
 
 We implement this approach in \ourTool against a large set of synthesis examples including lists, trees, maps, and specialized musical score data structures.
