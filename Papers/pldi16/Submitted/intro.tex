@@ -1,0 +1,59 @@
+\section{Introduction} 
+\label{intro}
+
+Program synthesis is an active research direction~\cite{DBLP:journals/toplas/MannaW80, DBLP:journals/cacm/GulwaniHS12,DBLP:conf/icfp/Bodik15, DBLP:conf/pldi/KuncakMPS10, DBLP:conf/aplas/Solar-Lezama09, DBLP:conf/pldi/SrivastavaGCF11}. that aims to automatically derive code from a given specification. This code is correct by construction and ideally would make a programmer more productive. Still, writing a complete specification of an entire program is often a more complex task than writing the corresponding code, even for very simple programs.
+
+Programming by example~\cite{cypher93,lieberman01,synasc12} is a promising research direction that enables easy manipulation of data even for non-programmers~\cite{GulwaniHS12}. Recent work in this area has focused on manipulating fundamental data types such as strings~\cite{flashFillPOPL,vldb12,icml13}, lists~\cite{FeserCD15,Osera:2015} and numbers~\cite{cav12}. The success and impact of this line of work can be estimated from the fact that some of this technology ships as part of the popular FlashFill feature in Excel 2013~\cite{flashFillPOPL}.
+ 
+Instead of writing code, the user provides a list of relevant input/output examples and the synthesis tool automatically generates a program that fits. In this way, the examples can be seen as an easily readable and understandable specification. In~\cite{Osera:2016}, the close connection between refinement types and examples is expounded through the lens of proof theory. Other works have explored further ramifications of the theory behind programming by example\cite{Osera:2015, GulwaniHS12, synasc12}. These theoretical foundations give us the power and direction to begin to make programming by example a mainstream feature of fully featured languages.
+
+In order for programming by example to be useful in the context of a real language, synthesis cannot act as a closed system. Just as with code a user writes, the ability to reuse and edit synthesized code is an integral part of the programming process. Program synthesis does not inherently address the problem of code readability, often resulting in tools that produce something closer to an executable than the simple and stylistic code a human might write. Thus, our goal is to synthesize snippets that can be naturally integrated into code written by a programmer. In this paper we introduce an approach called \textit{natural synthesis} that aspires to synthesize code that is not only correct, but that is natural and idiomatic to the language.
+
+Thought there is no formal definition of natural synthesis, we take it to mean the task of synthesizing programs from a specification, with the explicit purpose of finding programs that are both correct to the specification and comprehensible. The ideal natural synthesis procedure could pass something of a Turing test for writing code. A human inspecting the generated code should be able to understand it as easily as if it were written by a human.
+
+Take the simple task of synthesizing a list flattening function from examples.  Synthesis approaches that use only the primitive recursive operators~\cite{Osera:2015,FeserCD15}, would find a function similar to \codeinline{solution1} in Listing \ref{natSyn}. Our tool instead focuses on actually utilizing common library functions. The results of this approach can be seen just below in \codeinline{solution2}.
+
+\begin{figure}
+  \begin{lstlisting}[caption=Low-level synthesis vs. Natural synthesis,label=natSyn]
+    [[1,2],[3,4]] :-> [1,2,3,4]
+    
+    solution1 xs = 
+      (\c n -> foldr 
+          (\x b -> foldr c b (id x))
+          n xs) (:) []
+          
+    solution2 xs = concatMap id xs
+    \end{lstlisting}
+\end{figure}
+
+\noindent In fact, \codeinline{solution1} is an application of the GHC\cite{ghc} implementation of concatMap. To synthesize this solution using only the core higher order functions is certainly motivating, however a user would likely prefer to see a higher order-function \codeinline{concatMap}, which exists in a standard library, if using synthesis with the goal of writing their own code.
+
+A natural synthesis system makes use of user defined functions and simulates program structures that commonly occur in the language. We choose to focus on functional programming, where a core part of the experience is writing higher order functions.  
+
+Functional programming encourages specifying general behaviors in the form of abstract, higher-order functions, and then filling in details with first-order functions later. In fact, many users write higher order functions first, then combine them in interesting and useful ways~\cite{Lipovaca:2011}. Library authors often provide users with a number of higher order functions to enable programmers to more easily write their applications. Since users write higher order functions with a deep understanding of the domain, using them in synthesis produces code that is more idiomatic and easier to understand then using generic higher order functions.
+
+In order to facilitate synthesis over generic higher order functions, we run the synthesis algorithm in two stages. The first offline preprocessing stage infers rules about how the user's higher order functions behave over their input and output types. We encode these rules using refinement types in Haskell with the \lhask/ tool~\cite{DBLP:conf/haskell/VazouSJ14}. Refinement types allow us to specify a stronger type signature by adding predicates about various properties of the types. In this work we only utilize the ability of refinement types to make judgments on the sizes of the inputs and outputs, to be explained in more detail in Section \ref{HORtypeInf}. These refinement types can then be utilized during the online synthesis stage, along with various type matching, ranking, and unification algorithms to efficiently prune and navigate the search space of solution programs. We show in the evaluation section that only a small number of examples is needed to synthesize clear and concise solution programs.
+
+% fewer examples are needed when leveraging user functions
+Although programming by example is an easy entry point for novice
+users, one of the drawbacks can be the tedious nature of the
+specification. For a user, writing out a sufficient number of
+examples for the synthesis tool to find a solution may involve
+specifying seemingly obvious examples such as \codeinline{[]->[]} in order to cover base cases of recursion.  However, much of this domain specific knowledge is encoded by the user defined functions, data types and library imports. By focusing our synthesis procedures on this space, we can reduce the number of required edge case examples and allow users to focus on the more natural examples.
+
+In Listing \ref{natSyn}, we have already seen the potential to synthesize natural solutions to programming by example queries.
+However, a synthesis engine should also be able to synthesize novel (and sometimes unexpected) solutions to problems. 
+Since the stated goal is to find simple programs that a human might write, this raises the question if finding ``natural'' and and novel programs are at odds with each other.
+
+
+Our evaluation section showed that this is not the case.
+For example, natural synthesis of the Boolean ``or'' function finds two function, \codeinline{any (id)} and \codeinline{foldr1 (max)}. The \codeinline{any (id)} solution would expected by Haskell programmer, where \codeinline{any:: (a-> Bool) -> [a] -> Bool)} is a built-in function to Haskell that returns \codeinline{True} if any element of a list satisfies the predicate function.  The more novel solution returned by our natural synthesis is \codeinline{foldr1 (max)}, where \codeinline{max :: Ord a => a -> a -> a} will return the maximum element of the two inputs. By folding over the list, this solution program exploits the \codeinline{Enum} property of the Boolean type in Haskell in a way that provides insight into some core Haskell functions and types.
+
+In summary, we present the following contributions:
+
+\begin{enumerate}[topsep=0pt]
+\item A programming by example system for a real language (Haskell) that uses natural synthesis to generate simple, reusable code.
+\item Uniform handling of user-defined data types, first-order functions, and higher-order functions, as well as third-party libraries.
+\item A procedure to automatically find suitable refinement types for user-defined higher order functions to prune the search space for our synthesis procedure. Multiple passes of the type-match-ranking algorithm sort, shrink, and -- when needed -- expand the search space.
+\item An evaluation of the performance of \ourTool/, as well as  examples of the code that it can synthesize. The benchmarks presented show our tool can efficiently generate a wide variety of code that mixes functions from multiple sources.
+\end{enumerate}
