@@ -3,7 +3,7 @@
 %
 % Requires temporary version of sigplanconf style file provided on
 % PLDI'16 web site.
-% 
+%
 \documentclass[pldi]{sigplanconf-pldi16}
 % \documentclass[pldi-cameraready]{sigplanconf-pldi16}
 
@@ -64,8 +64,8 @@
   literate=*{->}{{\textcolor{blue}{$\to$}}}{1}
            {<-}{{\textcolor{blue}{$\leftarrow$}}}{1}
 }
-  
-  
+
+
 %\usepackage{minted}
 %\usepackage{tcolorbox}
 %\usepackage{etoolbox}
@@ -90,11 +90,19 @@
 \maketitle
 
 \begin{abstract}
-We present a new programming-by-example technique that efficiently synthesizes natural, readable fitting functions that combine user-defined higher-order functions with standard and third-party library code.
+We present a method for programming-by-example in a language that supports a full range of higher-order functions.
+Given a set of input-output examples, our method selects the most useful potential higher-order functions.
+Combined with a simple, type-directed first order synthesis procedure, we can generate full, easy to read, programs.
 
-The search works by \textit{dismantling} higher-order functions in order to deduce suitable refinement types. These refinement types are then used to prune the search space of possible higher-order functions for a given example set. Since refinement type under-approximate, we can apply Liquid Haskell to arbitrary syntax extensions while still preserving soundness.
+We use a \textit{dismantling} technique to infer refinement types over candidate higher-order functions.
+Then, we infer a set of potential refinement types over the input-output examples.
+Merging these two sets gives a ranked list of suitable higher-order functions.
+This frees us from the need for restrictive templating, allowing us to use full libraries in our synthesis procedure.
+To complete the synthesis, we use a best-first enumerative search based on a weighted subtyping to remove the need for subexample generation, which would rely on further templating.
 
-We evaluate an implementation of our tool against a large set of synthesis examples including lists, trees, maps, and specialized musical score data structures. This evaluation demonstrates the scalability and versatility of this approach.
+We implement this approach in \ourTool against a large set of synthesis examples including lists, trees, maps, and specialized musical score data structures.
+The synthesized programs operate over datastructures and draw functions from various real world Haskell packages.
+This evaluation demonstrates the scalability and versatility of this approach.
 \end{abstract}
 
 \input{intro}
