@@ -60,8 +60,8 @@ NB: a fair amount of time will be added for getting files from disk
 >   let typSigs = getTypesFromCode fc
 >
 >   let importSrcs = map showImport $ fromJust $ fromCode fc getImports
->   importSigs <- liftM concat $ mapM getTypesFromModule importSrcs 
-> 
+>   importSigs <- liftM concat $ mapM getTypesFromModule importSrcs
+>
 >   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >
 >   let f i tys = map (,Just i) $ filter (isHigherOrder.snd) tys
@@ -88,7 +88,7 @@ NB: a fair amount of time will be added for getting files from disk
    let weightedP = scoreTyps exsTyp pHOTyps
    let sortWeightedTyps = reverse. sortWith snd. filter (isJust.snd)
    let p' = (sortWeightedTyps weightedU ++ sortWeightedTyps weightedP)
-   putStrLn "-------EXAMPLE OUT TYPE-------"
+   putStrLn "-------EXAMPLE OUT TYPE-------""
    (\(l,r) -> f' l >> f' (sndTyp r)) exsTyp
    putStrLn "-------CANDIDATE FXNS-------"
    mapM_ (\(l,r) -> f' l >> f' (lastTyp r)) (uHOTyps ++ pHOTyps)
@@ -105,7 +105,7 @@ synth will need the code file with examples, and all the HOFxns with RTypes
 >   let exsTyp = fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps
 >   let exsTyMatch = isJust $ uncurry compareTypes $ getExType $ snd exsTyp
 > --  print exsTyMatch
->   exsRTyp  <- if exsTyMatch 
+>   exsRTyp  <- if exsTyMatch
 >               then rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
 >               else return [noRType]
 
@@ -156,7 +156,7 @@ when we finally have some functions and we want to check if the satisfy the exam
 >   in do
 >     results <- mapConcurrently run fns
 >     return $ map fst $ filter snd $ zip fns results
->      
+>
 
 once we know which hofxns we are interested in we need to generate the component function.
 this should be getting the typeSig of the higherorder functions too
@@ -178,16 +178,16 @@ we need to compose these functions and run them on the examples until we find on
 >     x
 
 > makeFxns :: Type -> [Sig] -> [Sig] -> [String]
-> makeFxns exTy hoFxnSig allTyps = 
+> makeFxns exTy hoFxnSig allTyps =
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
->   let 
+>   let
 >     sOn hTy n = tr2 specializeOn (exAsFunType exTy) hTy
 >     hoFxnSig' = map (\s -> (fst s, sOn (snd s) (fst s))) hoFxnSig
 >     codePieces = map (\x -> (x, genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
 >     hoWithComp = buildFxns codePieces :: [Sig]--with comp fxn applied
 >     needsInit t = (length $ tyFunToList t)>2
 >     finalTy t = TyFun (fst $lastTyps t) (snd$ lastTyps t)
->     hoWithInit = concatMap (\t -> if needsInit $ snd t  
+>     hoWithInit = concatMap (\t -> if needsInit $ snd t
 >                                   then coerceSig (finalTy$ snd t) t
 >                                   else [t]) hoWithComp
 >   in
@@ -197,19 +197,19 @@ we need to compose these functions and run them on the examples until we find on
 take a higher order function that still needs some initial values to be ready for application to examples
 
 > genInitValues :: Sig -> [Sig]
-> genInitValues ty = 
+> genInitValues ty =
 >   let
 >     (inTy,outTy) = lastTyps $ snd ty
 >     target = foldr1 TyFun [inTy,outTy]
->     funList = tail $ tyFunToList $ snd ty 
+>     funList = tail $ tyFunToList $ snd ty
 >     cur = (fst ty, if length funList ==0 then TyVar (Ident ":(") else foldr1 TyFun funList)
 >     newFxns' = trace (show target ++ "\n"++show cur) $ coerceSig target cur
 >     newFxns  = mapSnd (TyFun $ head $ rights $ [getComp (snd ty)]) newFxns'
->   in 
+>   in
 >     newFxns
 
 Given a higher order function, we want all compenent functions that fit that type sig
-The HO typ sig can generalize the example type, but so must the component sig 
+The HO typ sig can generalize the example type, but so must the component sig
 we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]->[Bool]
 
 > sigCurry :: Sig -> Type -> String -> Sig
@@ -235,7 +235,7 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >   where dfl cur fn = concatMap (coerceSig target . sigCurry cur fn)
 
 > genComponentFxn :: Type -> Sig -> [Sig] -> [Sig]
-> genComponentFxn exTy hofxnSig allTyps = 
+> genComponentFxn exTy hofxnSig allTyps =
 >  let
 >    componentSig = getComp $ snd hofxnSig :: Either String Type
 >    progs = case componentSig of
@@ -256,14 +256,14 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >         message = "(" ++ pp1 ++ ", " ++ pp2 ++ ") -> " ++ show result ++ "\n"
 
 > t2 f p1 p2 =
->   let 
+>   let
 >     s1 = prettyPrint p1
 >     s2 = (toString $ fst p2) ++ " :: " ++ (prettyPrint $ snd p2)
 >    in trace ("Testing with\n"++s1++",\n"++s2++" =\n"++
 >             (show $ f p1 p2)++"\n\n") (f p1 p2)
 
 > t3 f p1 p2 p3 =
->   let 
+>   let
 >     s1 = prettyPrint p1
 >     s2 = (toString $fst p2) ++ (prettyPrint $snd p2)
 >     s3 = ""
@@ -278,4 +278,3 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 > fstsnd (x,y,_) = (x,y)
 > mapSnd f = map (\(x,y) -> (x,f y))
 > mapFst f = map (\(x,y) -> (f x,y))
-
