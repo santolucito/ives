@@ -5,6 +5,7 @@ Program synthesis is an active research direction~\cite{DBLP:journals/toplas/Man
 This code is correct by construction and ideally would make a programmer more productive.
 Still, writing a complete specification of an entire program is often a more complex task than writing the corresponding code, even for very simple programs.
 
+
 Programming by example~\cite{cypher93,lieberman01,synasc12} is a promising research direction that enables easy manipulation of data even for non-programmers~\cite{GulwaniHS12}.
 Recent work in this area has focused on manipulating fundamental data types such as strings~\cite{flashFillPOPL,vldb12,icml13}, lists~\cite{FeserCD15,Osera:2015} and numbers~\cite{cav12}.
 The success and impact of this line of work can be estimated from the fact that some of this technology ships as part of the popular FlashFill feature in Excel 2013~\cite{flashFillPOPL}.
@@ -19,7 +20,19 @@ In order for programming by example to be useful in the context of a real langua
 Just as with code a user writes, the ability to reuse and edit synthesized code is an integral part of the programming process.
 Program synthesis does not inherently address the problem of code readability, often resulting in tools that produce something closer to an executable than the simple and stylistic code a human might write.
 Thus, our goal is to synthesize snippets that can be naturally integrated into code written by a programmer.
-%In this paper we introduce an approach called \textit{natural synthesis} that aspires to synthesize code that is not only correct, but that is natural and idiomatic to the language.
+In this paper we introduce an approach called \textit{natural synthesis} that aspires to synthesize code that is not only correct, but that is natural and idiomatic to the language.
+
+
+\ourTool/ synthesizes programs from very few, natural examples from the user.
+It can reuse user-defined and library function in the synthesis procedure, thereyby generating code that is both intuitive and easy to understand and edit.
+\ourTool/ can be used as a standalone tool as many previous works have functioned, but could also be integrated into an IDE.
+
+
+We use as a definition of the naturalitly of the code to be the number of nodes in a parsing into the absrtact syntax tree.
+The fewer nodes, the more natural the code.
+This is a very subjective meausre and impossible to argue without extensive user studies.
+Inuitively, it favors the use of predefined functions to hide complexity over the generation of lambda terms and low level function composition.
+We will simply remark that this is a seems to be roughly accurate, especially for novel programmers, a primary target for \ourTool/.
 
 %Though there is no formal definition of natural synthesis, we take it to mean the task of synthesizing programs from a specification, with the explicit purpose of finding programs that are both correct to the specification and comprehensible.
 %The ideal natural synthesis procedure could pass something of a Turing test for writing code.
@@ -28,6 +41,7 @@ Thus, our goal is to synthesize snippets that can be naturally integrated into c
 Take the simple task of synthesizing a list flattening function from examples.
 Synthesis approaches that use only the primitive recursive operators~\cite{Osera:2015,FeserCD15}, would find a function similar to \codeinline{solution1} in Listing \ref{natSyn}.
 Our tool instead focuses on actually utilizing common library functions.
+The natural score of solution1 is 8(TODO), while the natural score of solution2 is 3.
 The results of this approach can be seen just below in \codeinline{solution2}.
 
 \begin{figure}
@@ -43,7 +57,7 @@ The results of this approach can be seen just below in \codeinline{solution2}.
     \end{lstlisting}
 \end{figure}
 
-\noindent In fact, \codeinline{solution1} is an application of the GHC\cite{ghc} implementation of concatMap.
+\noindent In fact, \codeinline{solution1} is just an application of the GHC\cite{ghc} implementation of concatMap.
 To synthesize this solution using only the core higher order functions is certainly motivating, however a user would likely prefer to see a higher order-function \codeinline{concatMap}, which exists in a standard library, if using synthesis with the goal of writing their own code.
 
 A natural synthesis system makes use of user defined functions and simulates program structures that commonly occur in the language.
@@ -72,7 +86,6 @@ In Listing \ref{natSyn}, we have already seen the potential to synthesize natura
 However, a synthesis engine should also be able to synthesize novel (and sometimes unexpected) solutions to problems.
 Since the stated goal is to find simple programs that a human might write, this raises the question if finding ``natural'' and and novel programs are at odds with each other.
 
-
 Our evaluation section showed that this is not the case.
 For example, natural synthesis of the Boolean ``or'' function finds two function, \codeinline{any (id)} and \codeinline{foldr1 (max)}.
 The \codeinline{any (id)} solution would expected by Haskell programmer, where \codeinline{any:: (a-> Bool) -> [a] -> Bool)} is a built-in function to Haskell that returns \codeinline{True} if any element of a list satisfies the predicate function.
@@ -81,9 +94,9 @@ By folding over the list, this solution program exploits the \codeinline{Enum} p
 
 In summary, we present the following contributions:
 
-\begin{enumerate}[topsep=0pt]
+\begin{enumerate}
 \item Seperation of program synthesis by higher order and first order functions.
-\item Refinement type inference for flexible higher order synthesis that produces simple code.
+\item Refinement type inference for flexible higher order synthesis that produces natural code from few examples.
 \item A type-match ranking algorithm for first order synthesis.
 \item An implementation evaluation of the performance of \ourTool/ in Haskell running synthesis over some Haskell libraries. The benchmarks presented show our tool can efficiently generate a wide variety of code that mixes functions from multiple sources.
 \end{enumerate}
