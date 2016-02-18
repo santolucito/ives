@@ -35,8 +35,6 @@
 \input{defs}
 \usepackage{tikz}
 
-
-
 \newcommand{\cL}{{\cal L}}
 
 \begin{document}
@@ -69,22 +67,7 @@
 
 \maketitle
 
-\begin{abstract}
-  We present a method for programming-by-example in a language that supports a full range of higher-order functions.
-  This modular synthesis algorithm seperates higher order and first order function synthesis.
-  Given a set of input-output examples, our method first selects the best fitting, potential higher-order functions.
-  Combined with a simple, type-directed first order synthesis procedure, we can generate full, easy to read, programs.
-
-  We use a \textit{dismantling} technique to infer refinement types over candidate higher-order functions.
-  Then, we infer a set of potential refinement types over the input-output examples.
-  Merging these two sets gives a ranked list of suitable higher-order functions.
-  Using refinement types frees us from the need for restrictive templating, allowing us to use full libraries in our synthesis procedure.
-  To complete the synthesis, we use a best-first enumerative search based on a weighted subtyping to remove the need for subexample generation, which would rely on further templating.
-
-  We implement this approach in \ourTool/ against a set of synthesis examples including lists, trees, maps, and specialized musical score data structures.
-  The synthesized programs operate over datastructures and draw functions from various real world Haskell packages.
-  This evaluation demonstrates the scalability and versatility of this approach.
-\end{abstract}
+\input{abstract}
 
 \category{CR-number}{subcategory}{third-level}
 
@@ -99,25 +82,23 @@ keyword1, keyword2
 
 
 
-\input{intro}
+\input{secs/intro}
 
-\input{examples}
+\input{secs/examples}
 
-\input{problem}
+\input{secs/problem}
 
-\input{overview}
+\input{secs/overview}
 
-\input{offline}
+\input{secs/offline}
 
-\section{Online: Fitting Functions to Examples} \label{synth}
-\input{online0}
+\input{secs/online0}
 
-\section{Evaluation}\label{evaluation}
-\input{eval}
+\input{secs/eval}
 
-\input{related}
+\input{secs/related}
 
-\input{conclusion}
+\input{secs/conclusion}
 
 \bibliographystyle{abbrvnat}
 \bibliography{myBib}

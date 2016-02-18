@@ -1,3 +1,5 @@
+\section{Online: Fitting Functions to Examples} \label{synth}
+
 With the synthesis engine constructed, the system is ready to synthesize programs from examples.
 Multiple programming-by-example queries can then be answered using this engine.
 The synthesis engine only needs to be reconstructed when there are new library imports, or when there is a revision of the user-supplied code.
@@ -8,7 +10,7 @@ Once the candidate higher functions are identified, \ourTool/ will select and bu
 
 Each of these candidate programs is executed in best-first order against the set of inputs.
 Whenever a function produces the correct outputs for each input, it is said to fit, and is reported to the user.
-This search continues until the space is exhausted or it is manually interrupted. 
+This search continues until the space is exhausted or it is manually interrupted.
 The search will always terminate since we are working over a finite space of generated functions, are our type reductions are strictly decreasing, which we will explain in Section \ref{typeMatch}
 
 % getExampleType
@@ -18,4 +20,3 @@ The search will always terminate since we are working over a finite space of gen
 \input{online2_rankByTypeMatch}
 
 \input{online3_makeFxns}
-

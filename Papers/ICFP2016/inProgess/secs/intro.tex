@@ -5,28 +5,27 @@ Program synthesis is an active research direction~\cite{DBLP:journals/toplas/Man
 This code is correct by construction and ideally would make a programmer more productive.
 Still, writing a complete specification of an entire program is often a more complex task than writing the corresponding code, even for very simple programs.
 
-
 Programming by example~\cite{cypher93,lieberman01,synasc12} is a promising research direction that enables easy manipulation of data even for non-programmers~\cite{GulwaniHS12}.
 Recent work in this area has focused on manipulating fundamental data types such as strings~\cite{flashFillPOPL,vldb12,icml13}, lists~\cite{FeserCD15,Osera:2015} and numbers~\cite{cav12}.
 The success and impact of this line of work can be estimated from the fact that some of this technology ships as part of the popular FlashFill feature in Excel 2013~\cite{flashFillPOPL}.
 
 Instead of writing code, the user provides a list of relevant input/output examples and the synthesis tool automatically generates a program that fits.
 In this way, the examples can be seen as an easily readable and understandable specification.
-In~\cite{Osera:2016}, the close connection between refinement types and examples is expounded through the lens of proof theory.
-Other works have explored further ramifications of the theory behind programming by example\cite{Osera:2015, GulwaniHS12, synasc12}.
-These theoretical foundations give us the power and direction to begin to make programming by example a mainstream feature of fully featured languages.
+However, the code that is produced by these tools is rarely as simple as the specification.
+%In~\cite{Osera:2016}, the close connection between refinement types and examples is expounded through the lens of proof theory.
+%Other works have explored further ramifications of the theory behind programming by example\cite{Osera:2015, GulwaniHS12, synasc12}.
+%These theoretical foundations give us the power and direction to begin to make programming by example a mainstream feature of fully featured languages.
 
+Program synthesis does not inherently address the problem of code readability, often resulting in tools that produce something closer to an executable than the simple and stylistic code a human might write.
 In order for programming by example to be useful in the context of a real language, synthesis cannot act as a closed system.
 Just as with code a user writes, the ability to reuse and edit synthesized code is an integral part of the programming process.
-Program synthesis does not inherently address the problem of code readability, often resulting in tools that produce something closer to an executable than the simple and stylistic code a human might write.
 Thus, our goal is to synthesize snippets that can be naturally integrated into code written by a programmer.
-In this paper we introduce an approach called \textit{natural synthesis} that aspires to synthesize code that is not only correct, but that is natural and idiomatic to the language.
+%In this paper we introduce an approach called \textit{natural synthesis} that aspires to synthesize code that is not only correct, but that is natural and idiomatic to the language.
 
-
-\ourTool/ synthesizes programs from very few, natural examples from the user.
-It can reuse user-defined and library function in the synthesis procedure, thereyby generating code that is both intuitive and easy to understand and edit.
+\ourTool/ synthesizes programs from very few, natural examples from the user to make the specification as simple as possible.
+\ourTool/ places a high weight on simple code during the synthesis procedure.
+It can also reuse user-defined and library functions in the synthesis procedure, thereby generating code that is both natural to the specific domain.
 \ourTool/ can be used as a standalone tool as many previous works have functioned, but could also be integrated into an IDE.
-
 
 We use as a definition of the naturalitly of the code to be the number of nodes in a parsing into the absrtact syntax tree.
 The fewer nodes, the more natural the code.
