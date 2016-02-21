@@ -1,8 +1,20 @@
-\section{Problem Formulation} 
+\section{Problem Formulation}
 \label{problem}
 
+An enumerative search strategy in synthesis may also be framed as a type inhabitation problem\cite{DBLP:conf/pldi/GveroKKP13}.
+This framing will draw the type of the target expression directly from the examples.
+Given an input/output pair of examples $(i,o)$, if $i:\tau$ and , $o:\tau'$, then we are searching for an expression $e:\tau \to \tau'$.
+However, treating examples as a simple pair will lead us to miss important information.
+If we instead treat examples as their own specialized type, it becomes clear there is more information availble.
 
-Synthesizing correct programs is a well researched problem; however, if programming-by-example is to become a mainstream tool for programmers, the synthesized code must be easy for a human to read and modify. 
+Using a simple pair type, we infer types on the input and output, and construct the arrow type between the two for our target type.
+$(i:\tau, o:\tau') \vdash e : \tau to \tau'$
+If examples are their own type, which we denote with $:->$, we then need to infer a type on the example as a whole, rather than two seperate parts.
+$(i :\to o:\tau) \vdash e : \tau$.
+We can now infer a type that relates the input and output in a more meaningful way than the simple arrow type.
+In particular, we use refinement types to create such a type.
+
+Synthesizing correct programs is a well researched problem; however, if programming-by-example is to become a mainstream tool for programmers, the synthesized code must be easy for a human to read and modify.
 The aim of \ourTool/ is to synthesize programs from examples that utilize user defined code in a clear and concise.
 We focus particularly on data structure manipulation problems that can be solved with higher order functions.
 
@@ -42,7 +54,7 @@ types = * | * -> types
 
 Generally, the component function is applied across the \textsf{input} data structure, which the \textsf{solution} uses to construct an \textsf{output} data structure or reduction. As we will argue in Section \ref{evaluation} this set is expressive enough to support the classic \texttt{map}, \texttt{filter}, and \texttt{fold} functions, as well as higher order functions found in imported modules and user-supplied code.
 
-Our goal is to create a synthesis procedure that is easily portable across full implementations of functional languages (Haskell, OCaml, etc), so we prefer using a type directed approach to synthesis over explicit code analysis whenever possible. This increases the portability and longevity of our system. For this implementation we target Haskell, detailing the exact modifications needed to expand this to other languages in Section \ref{languageSupport}.  
+Our goal is to create a synthesis procedure that is easily portable across full implementations of functional languages (Haskell, OCaml, etc), so we prefer using a type directed approach to synthesis over explicit code analysis whenever possible. This increases the portability and longevity of our system. For this implementation we target Haskell, detailing the exact modifications needed to expand this to other languages in Section \ref{languageSupport}.
 
 %Our algorithm does not explicitly try to fit component functions to the examples. Instead, we leverage a promising body of existing work in synthesizing top-level, first-order functions \cite{potential, reviewers}. While it is out of scope to go in to detail, we will briefly discuss the integration of these synthesis procedures in Section \ref{conclusions}.
 

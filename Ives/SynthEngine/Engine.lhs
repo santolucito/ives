@@ -148,7 +148,7 @@ when we finally have some functions and we want to check if the satisfy the exam
 >       run fx = withTempFile "tmp/" "testCmptFxn.hs" $ \tmpName hnd -> do
 >           hPutStrLn hnd (prog fx)
 >           hFlush hnd
->           result <- S.shelly $ S.errExit False $ S.silently $ S.run "runhaskell" [T.pack tmpName]
+>           result <- S.shelly $ S.errExit False $ S.silently $ S.run "runhaskell" [T.pack tmpName] --TODO use unsafe eval to speed up
 >           let success = T.filter isAlpha result == "True"
 >           if success then getPOSIXTime >>= (\x-> print (fx ++" found in "++ (show (x - startTime)))) else return ()
 >           --putStrLn $ "[" ++ show success ++ "] " ++ fx
