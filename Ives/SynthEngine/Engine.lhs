@@ -61,7 +61,6 @@ NB: a fair amount of time will be added for getting files from disk
 >
 >   let importSrcs = map showImport $ fromJust $ fromCode fc getImports
 >   importSigs <- liftM concat $ mapM getTypesFromModule importSrcs
->
 >   preludeTypSigs <- getTypesFromModule "base:Prelude"
 >
 >   let f i tys = map (,Just i) $ filter (isHigherOrder.snd) tys

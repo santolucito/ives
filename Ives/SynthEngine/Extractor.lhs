@@ -28,6 +28,8 @@ There is no way to go from the value level (the String of types) the the type le
 Agda would support this, and it would be nice to have because then I could do more integrated type manipulation.
 The approach here is just fine since we put everything into the haskell-src-exts language.
 
+In order for browse to work on a module, that module must be part of Ives.cabal
+
 > -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
 > getTypesFromModule :: String -> IO([Sig])
 > getTypesFromModule m = do
