@@ -27,21 +27,16 @@ Thus, our goal is to synthesize snippets that can be naturally integrated into c
 It can also reuse user-defined and library functions in the synthesis procedure, thereby generating code that is both natural to the specific domain.
 \ourTool/ can be used as a standalone tool as many previous works have functioned, but could also be integrated into an IDE.
 
-We use as a definition of the naturalitly of the code to be the number of nodes in a parsing into the absrtact syntax tree.
+We use as a definition of the naturality of the code to be the number of nodes in a parsing into the absrtact syntax tree.
 The fewer nodes, the more natural the code.
-This is a very subjective meausre and impossible to argue without extensive user studies.
-Inuitively, it favors the use of predefined functions to hide complexity over the generation of lambda terms and low level function composition.
+This is a very subjective measure and impossible to argue without extensive user studies.
+Intuitively, it favors the use of predefined functions to hide complexity over the generation of lambda terms and low level function composition.
 We will simply remark that this is a seems to be roughly accurate, especially for novel programmers, a primary target for \ourTool/.
-
-%Though there is no formal definition of natural synthesis, we take it to mean the task of synthesizing programs from a specification, with the explicit purpose of finding programs that are both correct to the specification and comprehensible.
-%The ideal natural synthesis procedure could pass something of a Turing test for writing code.
-%A human inspecting the generated code should be able to understand it as easily as if it were written by a human.
 
 Take the simple task of synthesizing a list flattening function from examples.
 Synthesis approaches that use only the primitive recursive operators~\cite{Osera:2015,FeserCD15}, would find a function similar to \codeinline{solution1} in Listing \ref{natSyn}.
-Our tool instead focuses on actually utilizing common library functions.
-The natural score of solution1 is 8(TODO), while the natural score of solution2 is 3.
-The results of this approach can be seen just below in \codeinline{solution2}.
+Our tool instead focuses on actually utilizing common library functions, as seen in \codeinline{solution2}.
+The natural score of solution1 is 7, while the natural score of solution2 is 3.
 
 \begin{figure}
   \begin{lstlisting}[caption=Low-level synthesis vs. Natural synthesis,label=natSyn]
@@ -57,14 +52,13 @@ The results of this approach can be seen just below in \codeinline{solution2}.
 \end{figure}
 
 \noindent In fact, \codeinline{solution1} is just an application of the GHC\cite{ghc} implementation of concatMap.
-To synthesize this solution using only the core higher order functions is certainly motivating, however a user would likely prefer to see a higher order-function \codeinline{concatMap}, which exists in a standard library, if using synthesis with the goal of writing their own code.
+To synthesize this solution using only the core higher order functions is certainly motivating, however a user would likely prefer to see a higher order-function, like \codeinline{concatMap}, which exists in a standard library, when using synthesis with the goal of writing their own code.
 
-A natural synthesis system makes use of user defined functions and simulates program structures that commonly occur in the language.
 We choose to focus on functional programming, where a core part of the experience is writing higher order functions.
 
 Functional programming encourages specifying general behaviors in the form of abstract, higher-order functions, and then filling in details with first-order functions later.
 In fact, many users write higher order functions first, then combine them in interesting and useful ways~\cite{Lipovaca:2011}.
-Library authors often provide users with a number of higher order functions to enable programmers to more easily write their applications.
+Library authors often provide users with a number of domain specific higher order functions to enable programmers to more easily write their applications.
 Since users write higher order functions with a deep understanding of the domain, using them in synthesis produces code that is more idiomatic and easier to understand then using generic higher order functions.
 
 In order to facilitate synthesis over generic higher order functions, we run the synthesis algorithm in two stages.
