@@ -1,25 +1,41 @@
 \section{Problem Formulation}
 \label{problem}
 
-An enumerative search strategy in synthesis may also be framed as a type inhabitation problem\cite{DBLP:conf/pldi/GveroKKP13}.
-This framing will draw the type of the target expression directly from the examples.
-Given an input/output pair of examples $(i,o)$, if $i:\tau$ and , $o:\tau'$, then we are searching for an expression $e:\tau \to \tau'$.
+\subsection{Type Inhabitation}\label{sec:inhab}
+
+An \textit{example} is a pair of values with distinguished ``input'' and ``output'' elements, and an \textit{example set} is a set of examples all of whose inputs are of like type, and all of whose outputs are of like type.
+The output type does not necessarily match the input type.
+Synthesis engines may either require the user to provide these type explicitly\cite{Osera:2015} or to infer these types \cite{gulwani_popl15}.
+In either case, the example types are embedded into the arrow type to create the type of the function that must be found. 
+
 However, treating examples as a simple pair will lead us to miss important information.
-If we instead treat examples as their own specialized type, it becomes clear there is more information availble.
+If we instead treat examples as their own specialized type, it becomes clear there is more information available.
+By creating an example type, which we denote with $\mapsto$, it becomes clear that we need to infer a type on the example as a whole, rather than two separate parts.
 
-Using a simple pair type, we infer types on the input and output, and construct the arrow type between the two for our target type.
-$(i:\tau, o:\tau') \vdash e : \tau to \tau'$
-If examples are their own type, which we denote with $:->$, we then need to infer a type on the example as a whole, rather than two seperate parts.
-$(i :\to o:\tau) \vdash e : \tau$.
-We can now infer a type that relates the input and output in a more meaningful way than the simple arrow type.
-In particular, we use refinement types to create such a type.
 
+\begin{flalign}
+(i,o) : (\tau, \tau') \vdash& e : \tau \to \tau'\\
+i \mapsto o : \tau'' \vdash& e : \tau''. 
+\end{flalign}
+
+The synthesis problem is then to find an expression $e$ of the inferred type, with the additional constraint that $e$ satisfies the examples.
+The inferred type using a simple pair is shown in Equation 1, while using the specialized example type inference is shown in Equation 2.
+While these seem quite similar, Equation 2 allows for more specific inference that relates the values of input and output at the type level in a more meaningful way than the simple arrow type.
+Framing the synthesis problem as a type inhabitation problem where we enumerativly search for an expression of the correct type\cite{DBLP:conf/pldi/GveroKKP13}, the more specific type in Equation 2 can significantly reduce the search space.
+
+Any type system that allows for type-value level fluidity can be used to implement the inference of Equation 2.
+Both refinement types and dependent types could be used. 
+In our implementation, we use refinement types to create such a type for its ease of integration with existing Haskell code.
+
+
+%
+%This framing will draw the type of the target expression directly from the examples.
+
+\subsection{Solution Space}\label{solnSpace}
 Synthesizing correct programs is a well researched problem; however, if programming-by-example is to become a mainstream tool for programmers, the synthesized code must be easy for a human to read and modify.
 The aim of \ourTool/ is to synthesize programs from examples that utilize user defined code in a clear and concise.
 We focus particularly on data structure manipulation problems that can be solved with higher order functions.
 
-\subsection{Example Syntax}
-Formally speaking, an \textit{example} is a pair of values with distinguished ``input'' and ``output'' elements, and an \textit{example set} is a set of examples all of whose inputs are of like type, and all of whose outputs are of like type. The output type does not necessarily match the input type.
 
 A user supplies examples via a custom pair constructor \texttt{:->}. This operator is used to differentiate between generic pairs and examples, but does not confer any additional structure. We require all higher order functions to be of a unified signature \texttt{$\_ \to * \to *$}, where the final kind of the signature is a function mapping the input type to the output type. Here, a kind is understood to be the type of a type constructor, in this case \texttt{$\to$}, which constructs a function type from two other types.
 
@@ -33,7 +49,6 @@ zipWith' :: (a -> b -> c) -> ([a], [b]) -> [c]
 zipWith' f (xs,ys) = zipWith f xs ys
 \end{lstlisting}
 
-\subsection{Solution Space}\label{solnSpace}
 By formally defining the space of functions we are interested in synthesizing, we can this definition to prove some properties on the algorithm.
 In particular we show in Section \ref{sound} that \ourTool/ is complete for this subset of functions.
 
