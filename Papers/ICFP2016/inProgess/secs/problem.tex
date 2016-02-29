@@ -1,31 +1,125 @@
 \section{Problem Formulation}
 \label{problem}
 
-\subsection{Type Inhabitation}\label{sec:inhab}
+\subsection{Naturalness}
+
+The goal in natural synthesis is synthesize programs that meet a specification and maximizes naturalness.
+For programming by example, the specification is a set ($Ex$) of pairs of input and output $(i,o)$.
+
+We define \textit{naturalness} of a code section C to simply be the inverse of number of expressions in C.
+Expressions are variables, function applications, operators.
+Taking the code from Listing \ref{natSyn}, solution1 has a naturalness score of 1/8, while solution2 has a score of 1/3.
+The intention in this definition is to reduce the volume of generate code.
+This favors the use of predefined functions over the generation of lambda terms and low level function composition.
+This is a very subjective measure and impossible to argue without extensive user studies.
+We will simply remark that this seems to be roughly accurate, especially for novel programmers, a primary target for \ourTool/.
+
+The problem is then to find an expression e, such that $\forall (i,o) \in Ex, e (i) = o \land min(\mathcal{N}(e))$.
+
+
+\subsection{Enumeration}
+In order to solve the above problem, we will immediately restrict our search space to not include generated lambda terms, as such terms will generally induce a very low naturalness score and explode the search space.
+Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only uses a finite set of predefined values.
+
+Let $E$ be the finite set of expressions exposed to the top-level module from user code, imported libraries, and the core library.
+Our search space will be the set of permutations of well-typed applications of elements of $E$.
+
+To determine if an expression is well-typed, let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library.
+A type environment $\Gamma$, is the set $\{e1 : \tau_1,\ ...,\ en : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
+The set of well-typed expressions we consider, $\mathcal{G}$, is the set $\{e1 : \tau_1,\ ...,\ en : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$. 
+
+We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex, i:\tau_i \in T \land o:\tau_o \in T$.
+In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly \cite{Osera:2015} or to infer the types \cite{gulwani_popl15} based on regular expressions.
+
+
+
+\subsection{Lifting Example Types}
+An unstated assumption, but widely accepted approach, is to lift the example pair type into a function type in the trivial way.
+
+\begin{flalign*}
+lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o
+\end{flalign*}
+
+However, we can do much better than that by using refinement types to restrict the space.
+
+\begin{flalign*}
+lift\ (\tau_i, \tau_o) <:&\ \tau_i \to \tau_o\\
+lift\ (\tau_i, \tau_o) =&\ \{\tau_i \to \tau_o\ |\ p\}
+\end{flalign*}
+
+Our approach to natural synthesis is then: given a type environment $\Gamma$, an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}$, in order of naturalness, such that $e : lift(\tau_i,\tau_o)$.
+This list can then be checked to find  $e |\ \forall (i,o) \in Ex, e (i) = o$.
+
+
+
+
+
+\subsection{Crap beyond here}
+In enumerative, type directed program synthesis the goal is to find an expression e such that its type matches some $\tau$.
+In programming by example, that $\tau$ is a pair type, derived from the examples (which we express with $\leadsto$).
+Synthesis engines may either require the user to provide these type explicitly\cite{Osera:2015} or to infer these types \cite{gulwani_popl15}.
+
+
+\begin{flalign*}
+(i,o) \leadsto& (\tau_i, \tau_o)\\
+lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o\\
+\Gamma, i:\tau_i, o:\tau_o \vdash&\ e \colon liftFun\ (\tau_i, \tau_o)
+\end{flalign*}
+
+\subsection{The implicit assumption}\label{sec:inhab}
 
 An \textit{example} is a pair of values with distinguished ``input'' and ``output'' elements, and an \textit{example set} is a set of examples all of whose inputs are of like type, and all of whose outputs are of like type.
 The output type does not necessarily match the input type.
 Synthesis engines may either require the user to provide these type explicitly\cite{Osera:2015} or to infer these types \cite{gulwani_popl15}.
 In either case, the example types are embedded into the arrow type to create the type of the function that must be found. 
 
-However, treating examples as a simple pair will lead us to miss important information.
-If we instead treat examples as their own specialized type, it becomes clear there is more information available.
-By creating an example type, which we denote with $\mapsto$, it becomes clear that we need to infer a type on the example as a whole, rather than two separate parts.
+\begin{flalign*}
+(i,o) \leadsto& (\tau_i, \tau_o)\\
+lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o\\
+i:\tau_i, o:\tau_o \vdash& e \colon liftFun\ (\tau_i, \tau_o)
+\end{flalign*}
+
+We could create an type synonym for the pair with the operator $\mapsto$, to denote an example, and synthesis proceeds in the same way.
+
+\begin{flalign*}
+lift\ (\tau_i, \tau_o) <:&\ \tau_i \to \tau_o\\
+%i \mapsto o \leadsto& \tau_e\\
+%liftFun\ \tau_e <:&\ \tau_i \to \tau_o\\
+%i \mapsto o : \tau_e \vdash& e \colon f(\tau_e)
+\end{flalign*}
+
+Now, how do we actually create a type that is subtype of arrow.
+
+\begin{flalign*}
+\{\tau_i \to \tau_o\ |\ p\} <:&\ \tau_i \to \tau_o\\
+%i \mapsto o \leadsto& \tau_e\\
+%liftFun\ \tau_e <:&\ \tau_i \to \tau_o\\
+%i \mapsto o : \tau_e \vdash& e \colon f(\tau_e)
+\end{flalign*}
+
+It is now clear we have lost type information, specifically the relation between the input and output.
+Our inference for the target function type should instead use all the information available.
 
 
-\begin{flalign}
-(i,o) : (\tau, \tau') \vdash& e : \tau \to \tau'\\
-i \mapsto o : \tau'' \vdash& e : \tau''. 
-\end{flalign}
+The information encoded in the pair relate
+Any type system that allows for type-value level fluidity can be used to implement the inference of Equation 2.
+Both refinement types and dependent types could be used. 
+In our implementation, we use refinement types to create such a type for its ease of integration with existing Haskell code.
+
+\begin{table}
+    \begin{tabular}{l|l}
+        \hline
+        Type of Code & Weight \\ \hline
+        User Defined Value & 100 \\ 
+        Library Import &  50\\
+    \end{tabular}
+\end{table}
 
 The synthesis problem is then to find an expression $e$ of the inferred type, with the additional constraint that $e$ satisfies the examples.
 The inferred type using a simple pair is shown in Equation 1, while using the specialized example type inference is shown in Equation 2.
 While these seem quite similar, Equation 2 allows for more specific inference that relates the values of input and output at the type level in a more meaningful way than the simple arrow type.
-Framing the synthesis problem as a type inhabitation problem where we enumerativly search for an expression of the correct type\cite{DBLP:conf/pldi/GveroKKP13}, the more specific type in Equation 2 can significantly reduce the search space.
+Framing the synthesis problem as a type inhabitation problem where we enumeratively search for an expression of the correct type\cite{DBLP:conf/pldi/GveroKKP13}, the more specific type in Equation 2 can significantly reduce the search space.
 
-Any type system that allows for type-value level fluidity can be used to implement the inference of Equation 2.
-Both refinement types and dependent types could be used. 
-In our implementation, we use refinement types to create such a type for its ease of integration with existing Haskell code.
 
 
 %

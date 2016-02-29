@@ -22,21 +22,17 @@ Just as with code a user writes, the ability to reuse and edit synthesized code 
 Thus, our goal is to synthesize snippets that can be naturally integrated into code written by a programmer.
 %In this paper we introduce an approach called \textit{natural synthesis} that aspires to synthesize code that is not only correct, but that is natural and idiomatic to the language.
 
-\ourTool/ synthesizes programs from very few, natural examples from the user to make the specification as simple as possible.
+\ourTool/ synthesizes programs from very few examples from the user to make the specification as simple as possible.
 \ourTool/ places a high weight on simple code during the synthesis procedure.
 It can also reuse user-defined and library functions in the synthesis procedure, thereby generating code that is both natural to the specific domain.
 \ourTool/ can be used as a standalone tool as many previous works have functioned, but could also be integrated into an IDE.
 
-We use as a definition of the naturality of the code to be the number of nodes in a parsing into the absrtact syntax tree.
-The fewer nodes, the more natural the code.
-This is a very subjective measure and impossible to argue without extensive user studies.
-Intuitively, it favors the use of predefined functions to hide complexity over the generation of lambda terms and low level function composition.
-We will simply remark that this is a seems to be roughly accurate, especially for novel programmers, a primary target for \ourTool/.
-
 Take the simple task of synthesizing a list flattening function from examples.
 Synthesis approaches that use only the primitive recursive operators~\cite{Osera:2015,FeserCD15}, would find a function similar to \codeinline{solution1} in Listing \ref{natSyn}.
 Our tool instead focuses on actually utilizing common library functions, as seen in \codeinline{solution2}.
-The natural score of solution1 is 7, while the natural score of solution2 is 3.
+To quantify our goal of simplicity, we define a notion of \textit{naturalness} of code in Section \ref{sec:naturalness}.
+Intuitively, Solution2 should have a higher naturalness score than solution1.
+
 
 \begin{figure}
   \begin{lstlisting}[caption=Low-level synthesis vs. Natural synthesis,label=natSyn]
@@ -88,8 +84,9 @@ By folding over the list, this solution program exploits the \codeinline{Enum} p
 In summary, we present the following contributions:
 
 \begin{enumerate}
-\item Seperation of program synthesis by higher order and first order functions.
-\item Treating examples as a distinct type rather than a simple pair allows for refinement type inference for flexible higher order synthesis.
+\item Using a weighted-subtyping based, enumerative search to synthesize natural code from libraries.
+\item Separation of synthesis by higher order and first order functions.
+\item Exploiting an implicit assumption in existing programming by example work to shrink the search space.
 \item A weighted subtyping algorithm for first order synthesis.
 \item An implementation evaluation of the performance of \ourTool/ in Haskell running synthesis over some Haskell libraries. The benchmarks presented show our tool can efficiently generate a wide variety of code that mixes functions from multiple sources. that produces natural code from few examples.
 \end{enumerate}
