@@ -4,31 +4,32 @@
 \subsection{Naturalness}
 
 The goal in natural synthesis is synthesize programs that meet a specification and maximizes naturalness.
-For programming by example, the specification is a set ($Ex$) of pairs of input and output $(i,o)$.
+For programming by example, the specification is a set, $Ex$, of pairs of input and output $(i,o)$.
 
 We define \textit{naturalness} of a code section C to simply be the inverse of number of expressions in C.
-Expressions are variables, function applications, operators.
-Taking the code from Listing \ref{natSyn}, solution1 has a naturalness score of 1/8, while solution2 has a score of 1/3.
-The intention in this definition is to reduce the volume of generate code.
-This favors the use of predefined functions over the generation of lambda terms and low level function composition.
+Expressions are variables, function applications, and operators.
+Naturalness is then a function, $\mathcal{N}$, on some body of code.
+Taking the code from Listing \ref{natSyn}, $\mathcal{N}($solution1$)$ has a naturalness score of 1/8, while $\mathcal{N}($solution2$)$ has a score of 1/3.
+We choose this definition based on the assumption that shorter code is simpler.
 This is a very subjective measure and impossible to argue without extensive user studies.
 We will simply remark that this seems to be roughly accurate, especially for novel programmers, a primary target for \ourTool/.
+Consider that this definition will favor predefined functions over the generation of lambda terms and low level function composition.
 
-The problem is then to find an expression e, such that $\forall (i,o) \in Ex, e (i) = o \land min(\mathcal{N}(e))$.
+The problem is then to find an expression e, such that $\forall (i,o) \in Ex, e (i) = o \land max(\mathcal{N}(e))$.
 
 
 \subsection{Enumeration}
-In order to solve the above problem, we will immediately restrict our search space to not include generated lambda terms, as such terms will generally induce a very low naturalness score and explode the search space.
-Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only uses a finite set of predefined values.
+In order to solve the above problem, we will immediately restrict our search space to exclude generated lambda terms, as such terms will generally induce a very low naturalness score and explode the search space.
+Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only draws from a finite set of predefined expressions.
 
 Let $E$ be the finite set of expressions exposed to the top-level module from user code, imported libraries, and the core library.
 Our search space will be the set of permutations of well-typed applications of elements of $E$.
 
 To determine if an expression is well-typed, let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library.
-A type environment $\Gamma$, is the set $\{e1 : \tau_1,\ ...,\ en : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
-The set of well-typed expressions we consider, $\mathcal{G}$, is the set $\{e1 : \tau_1,\ ...,\ en : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$. 
+A type environment $\Gamma$, is the set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
+The set of well-typed expressions we consider, $\mathcal{G}$, is the infinite set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$. 
 
-We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex, i:\tau_i \in T \land o:\tau_o \in T$.
+We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex,\ i:(\tau_i \in T) \land o:(\tau_o \in T)$.
 In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly \cite{Osera:2015} or to infer the types \cite{gulwani_popl15} based on regular expressions.
 
 
@@ -37,18 +38,65 @@ In practice this a trivial constraint, achieved by requiring the user to provide
 An unstated assumption, but widely accepted approach, is to lift the example pair type into a function type in the trivial way.
 
 \begin{flalign*}
-lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o
+lift\ (\tau_i, \tau_o) =\ \tau_i \to \tau_o
 \end{flalign*}
 
-However, we can do much better than that by using refinement types to restrict the space.
+However, since we are using an type-directed enumerative search, more specific types could help prune the search space.
+A subtyping relation can create such specific types
+The subtyping relation $A<:B$ means that any time type B results in a well-typed program, so would type A in place of B.
+This results in the number of type i
 
 \begin{flalign*}
-lift\ (\tau_i, \tau_o) <:&\ \tau_i \to \tau_o\\
-lift\ (\tau_i, \tau_o) =&\ \{\tau_i \to \tau_o\ |\ p\}
+lift'\ (\tau_i, \tau_o) <:\ \tau_i \to \tau_o\\
 \end{flalign*}
 
-Our approach to natural synthesis is then: given a type environment $\Gamma$, an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}$, in order of naturalness, such that $e : lift(\tau_i,\tau_o)$.
-This list can then be checked to find  $e |\ \forall (i,o) \in Ex, e (i) = o$.
+In a typical function subtyping relation, we would have $\tau^{s}_{i} \to \tau^{s}_{o}$.
+This then implies that $\tau^{s}_{i}$ and $\tau^{s}_{o}$ must be contravariant or covariant, respectively.
+That is $\tau^{s}_{i} <: \tau_i$ and $(\tau_o <: \tau^{s}_{o})$.
+However, we do not wish to restrict the domain or range of the function, but only the size of function space.
+So we must have the following
+
+\begin{flalign*}
+lift'\ (\tau_i, \tau_o) = \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
+(\tau^{s}_{i} <: \tau_i) \lor (\tau_o <: \tau^{s}_{o})
+\end{flalign*}
+
+However, for this application of subtyping, we must be careful when choosing a subtyping relation to ensure it does not place restrictions on the domain or range of the target function type. 
+
+
+As an demonstration, following the syntax from previous code samples, say we wish to synthesis the function \codeinline{map (+1)}. We provide examples of type \codeinline{([Int],[Int])}.
+\begin{lstlisting}
+exs :: [ [Int] :-> [Int] ]
+exs = [
+  [1]   :-> [2],
+  [3,4] :-> [4,5] ]
+\end{lstlisting}
+
+Using the traditional approach, we would have the trivial lifting to the function type.
+
+$lift$ \codeinline{([Int],[Int]) = [Int] -> [Int]}.
+
+However, if we use $lift'$ instead, we would derive a more specific type. This is a refinement type, as expressed using the syntax of LiquidHaskell\cite{DBLP:conf/icfp/VazouSJVJ14}.
+
+\codeinline{\{x:[Int] -> y:[Int] | length x > length y\}}.
+
+Alternatively, we could also have derived the equally specific type using dependant types\cite{dependant_types}.
+In this case, we would need a definition of (\codeinline{Vec L a}) to describe the type of lists of length \codeinline{L} and elemental type \codeinline{a}.
+
+\codeinline{\{Vec L Int -> Vec L Int\}}
+
+Notice that in either case, the target function type is a subtype of the trivial lifting, but we have not changed either the types of either the domain or range of the target function.
+
+Our approach to natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}$ in order of naturalness, such that $e : lift'(\tau_i,\tau_o)$.
+This list can then be checked in order to find an $e$ such that $\forall (i,o) \in Ex, e (i) = o$.
+
+\subsection{function classification}
+we need to assign all functions in $\mathcal{G}$ a refinement type in order to use the above result.
+Hence we do offline analysis.
+
+
+
+
 
 
 
