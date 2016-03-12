@@ -106,90 +106,14 @@ Hence we do offline analysis.
 
 
 
-
-
-
-
-
-
-\subsection{Crap beyond here}
-In enumerative, type directed program synthesis the goal is to find an expression e such that its type matches some $\tau$.
-In programming by example, that $\tau$ is a pair type, derived from the examples (which we express with $\leadsto$).
-Synthesis engines may either require the user to provide these type explicitly\cite{Osera:2015} or to infer these types \cite{gulwani_popl15}.
-
-
-\begin{flalign*}
-(i,o) \leadsto& (\tau_i, \tau_o)\\
-lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o\\
-\Gamma, i:\tau_i, o:\tau_o \vdash&\ e \colon liftFun\ (\tau_i, \tau_o)
-\end{flalign*}
-
-\subsection{The implicit assumption}\label{sec:inhab}
-
-An \textit{example} is a pair of values with distinguished ``input'' and ``output'' elements, and an \textit{example set} is a set of examples all of whose inputs are of like type, and all of whose outputs are of like type.
-The output type does not necessarily match the input type.
-Synthesis engines may either require the user to provide these type explicitly\cite{Osera:2015} or to infer these types \cite{gulwani_popl15}.
-In either case, the example types are embedded into the arrow type to create the type of the function that must be found. 
-
-\begin{flalign*}
-(i,o) \leadsto& (\tau_i, \tau_o)\\
-lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o\\
-i:\tau_i, o:\tau_o \vdash& e \colon liftFun\ (\tau_i, \tau_o)
-\end{flalign*}
-
-We could create an type synonym for the pair with the operator $\mapsto$, to denote an example, and synthesis proceeds in the same way.
-
-\begin{flalign*}
-lift\ (\tau_i, \tau_o) <:&\ \tau_i \to \tau_o\\
-%i \mapsto o \leadsto& \tau_e\\
-%liftFun\ \tau_e <:&\ \tau_i \to \tau_o\\
-%i \mapsto o : \tau_e \vdash& e \colon f(\tau_e)
-\end{flalign*}
-
-Now, how do we actually create a type that is subtype of arrow.
-
-\begin{flalign*}
-\{\tau_i \to \tau_o\ |\ p\} <:&\ \tau_i \to \tau_o\\
-%i \mapsto o \leadsto& \tau_e\\
-%liftFun\ \tau_e <:&\ \tau_i \to \tau_o\\
-%i \mapsto o : \tau_e \vdash& e \colon f(\tau_e)
-\end{flalign*}
-
-It is now clear we have lost type information, specifically the relation between the input and output.
-Our inference for the target function type should instead use all the information available.
-
-
-The information encoded in the pair relate
-Any type system that allows for type-value level fluidity can be used to implement the inference of Equation 2.
-Both refinement types and dependent types could be used. 
-In our implementation, we use refinement types to create such a type for its ease of integration with existing Haskell code.
-
-\begin{table}
-    \begin{tabular}{l|l}
-        \hline
-        Type of Code & Weight \\ \hline
-        User Defined Value & 100 \\ 
-        Library Import &  50\\
-    \end{tabular}
-\end{table}
-
-The synthesis problem is then to find an expression $e$ of the inferred type, with the additional constraint that $e$ satisfies the examples.
-The inferred type using a simple pair is shown in Equation 1, while using the specialized example type inference is shown in Equation 2.
-While these seem quite similar, Equation 2 allows for more specific inference that relates the values of input and output at the type level in a more meaningful way than the simple arrow type.
-Framing the synthesis problem as a type inhabitation problem where we enumeratively search for an expression of the correct type\cite{DBLP:conf/pldi/GveroKKP13}, the more specific type in Equation 2 can significantly reduce the search space.
-
-
-
 %
 %This framing will draw the type of the target expression directly from the examples.
 
 \subsection{Solution Space}\label{solnSpace}
-Synthesizing correct programs is a well researched problem; however, if programming-by-example is to become a mainstream tool for programmers, the synthesized code must be easy for a human to read and modify.
-The aim of \ourTool/ is to synthesize programs from examples that utilize user defined code in a clear and concise.
-We focus particularly on data structure manipulation problems that can be solved with higher order functions.
+While this approach can work for first-order synthesis, we instead focus on data structure manipulation problems that can be solved with higher order functions.
 
-
-A user supplies examples via a custom pair constructor \texttt{:->}. This operator is used to differentiate between generic pairs and examples, but does not confer any additional structure. We require all higher order functions to be of a unified signature \texttt{$\_ \to * \to *$}, where the final kind of the signature is a function mapping the input type to the output type. Here, a kind is understood to be the type of a type constructor, in this case \texttt{$\to$}, which constructs a function type from two other types.
+We require all higher order functions to be of a unified signature \texttt{$\_ \to * \to *$}, where the final kind of the signature is a function mapping the input type to the output type. 
+Here, a kind is understood to be the type of a type constructor, in this case \texttt{$\to$}, which constructs a function type from two other types.
 
 The practical consequence of this format is that a user must partially uncurry (collapsing trailing function arguments into a single tuple argument) any higher-order function they are interested in using during synthesis.
 This also means that any type variable appearing in the higher-order function must be accounted for in the input and output types so that all type variables in its signature can be resolved.
