@@ -27,6 +27,9 @@ However, since we must test many higher-order functions on each these predicates
 Therefore, it is best to only select as many refinement types as are needed.
 We only use predicates of $\leq,=,\geq$ to specify size constraints on input and output.
 Notice that map will actually satisfy all three of these predicates, which in general, results in an over approximation of appropriate refinement types for higher order functions.
+
+\markk{TODO: subtyping here}
+
 We discuss potential optimizations for this in Section \ref{evaluation}.
 
 \begin{lstlisting}[caption=Adding refinement types to higher order functions,label=listing:addRType]
@@ -60,6 +63,8 @@ As an example, take the code from Section \ref{examples} for synthesizing a musi
 The user would have needed to provide a measure function for Music a.
 This measure will allow \lhask/ to draw conclusions about the size of examples of type \codeinline{[Music a :-> Music a]}, as well as conclusions about higher order functions over the Music data structure.
 In this context, one sensible measure function counts the number of notes (Prim) in the tree-like Music structure, as shown by the \codeinline{len} function in Listing \ref{lenFxn}.
+
+Any data structure that is an instance of Foldable, automatically has the measure \codeinline{\{-@ measure length @-\}}.
 
 \begin{lstlisting}[caption=a user defined measure over a datatype,label=lenFxn]
 import Euterpea

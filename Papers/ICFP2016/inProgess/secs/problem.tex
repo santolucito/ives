@@ -1,25 +1,193 @@
 \section{Problem Formulation}
 \label{problem}
 
-An enumerative search strategy in synthesis may also be framed as a type inhabitation problem\cite{DBLP:conf/pldi/GveroKKP13}.
-This framing will draw the type of the target expression directly from the examples.
-Given an input/output pair of examples $(i,o)$, if $i:\tau$ and , $o:\tau'$, then we are searching for an expression $e:\tau \to \tau'$.
-However, treating examples as a simple pair will lead us to miss important information.
-If we instead treat examples as their own specialized type, it becomes clear there is more information availble.
+\subsection{Naturalness}
 
-Using a simple pair type, we infer types on the input and output, and construct the arrow type between the two for our target type.
-$(i:\tau, o:\tau') \vdash e : \tau to \tau'$
-If examples are their own type, which we denote with $:->$, we then need to infer a type on the example as a whole, rather than two seperate parts.
-$(i :\to o:\tau) \vdash e : \tau$.
-We can now infer a type that relates the input and output in a more meaningful way than the simple arrow type.
-In particular, we use refinement types to create such a type.
+The goal in natural synthesis is synthesize programs that meet a specification with the simplest and most readable code.
+For programming by example, the specification is a set, $Ex$, of pairs of input and output $(i,o)$.
+As a formalization of simplicity and readability, we present a definition of naturalness.
 
+The standard of measuring complexity (the inverse of naturalness) is cyclomatic complexity\cite{cyclo}.
+Cyclomatic complexity is function, $\mathcal{CC}$on the control flow graph of a section of code, $C$.
+The function is $\mathcal{CC}(C) = E − N + 2(P)$, where $E$, $N$, and $P$ are the edges, nodes and connected components respectively.
+This function measures "the number of linearly independent paths" through a program, a crucial part of manipulating stateful variables.
+However a this is not well-suited for pure functional languages that use branching in a more functional way.
+For example, given two programs to compute absolute value, the "if" solution should be more natural, but using cycolmatic complexity verbatim means
+\codeinline{f x = if x>=0 then x else x*-1} is more complex
+\codeinline{f x = x * (fromEnum (x<0) * (-1) + fromEnum (x>0))}
+
+Instead, we define naturalness to be the number of nodes in the abstract syntax tree.
+This approach integrates cyclomatic complexity, because branching is still encoded as a measure of complexity.
+
+%Our definition of naturalness matches well many techniques valued in functional community.
+Currying fits under this definition of naturalness.
+\codeinline{f = (1+)} is more natural than \codeinline{f x= 1 + x}.
+This also favors predefined functions over generating new lambda terms.
+Taking the code from Listing \ref{natSyn}, $\mathcal{N}($solution1$)$ has a naturalness score of 1/8, while $\mathcal{N}($solution2$)$ has a score of 1/3.
+
+The problem is then to find an expression e, such that $\forall (i,o) \in Ex, e (i) = o \land max(\mathcal{N}(e))$.
+
+
+\subsection{Enumeration}
+In order to solve the above problem, we will immediately restrict our search space to exclude generated lambda terms, as such terms will generally induce a very low naturalness score and explode the search space.
+Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only draws from a finite set of predefined expressions.
+
+Let $E$ be the finite set of expressions exposed to the top-level module from user code, imported libraries, and the core library.
+Our search space will be the set of permutations of well-typed applications of elements of $E$.
+
+To determine if an expression is well-typed, let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library.
+A type environment $\Gamma$, is the set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
+The set of well-typed expressions we consider, $\mathcal{G}$, is the infinite set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$. 
+
+We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex,\ i:(\tau_i \in T) \land o:(\tau_o \in T)$.
+In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly \cite{Osera:2015} or to infer the types \cite{gulwani_popl15} based on regular expressions.
+
+
+
+\subsection{Lifting Example Types}
+An unstated assumption, but widely accepted approach, is to lift the example pair type into a function type in the trivial way.
+
+\begin{flalign*}
+lift\ (\tau_i, \tau_o) =\ \tau_i \to \tau_o
+\end{flalign*}
+
+However, since we are using an type-directed enumerative search, more specific types could help prune the search space.
+A subtyping relation can create such specific types
+The subtyping relation $A<:B$ means that any time type B results in a well-typed program, so would type A in place of B.
+This results in the number of type i
+
+\begin{flalign*}
+lift'\ (\tau_i, \tau_o) <:\ \tau_i \to \tau_o\\
+\end{flalign*}
+
+In a typical function subtyping relation, we would have $\tau^{s}_{i} \to \tau^{s}_{o}$.
+This then implies that $\tau^{s}_{i}$ and $\tau^{s}_{o}$ must be contravariant or covariant, respectively.
+That is $\tau^{s}_{i} <: \tau_i$ and $(\tau_o <: \tau^{s}_{o})$.
+However, we do not wish to restrict the domain or range of the function, but only the size of function space.
+So we must have the following
+
+\begin{flalign*}
+lift'\ (\tau_i, \tau_o) = \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
+(\tau^{s}_{i} <: \tau_i) \lor (\tau_o <: \tau^{s}_{o})
+\end{flalign*}
+
+However, for this application of subtyping, we must be careful when choosing a subtyping relation to ensure it does not place restrictions on the domain or range of the target function type. 
+
+
+As an demonstration, following the syntax from previous code samples, say we wish to synthesis the function \codeinline{map (+1)}. We provide examples of type \codeinline{([Int],[Int])}.
+\begin{lstlisting}
+exs :: [ [Int] :-> [Int] ]
+exs = [
+  [1]   :-> [2],
+  [3,4] :-> [4,5] ]
+\end{lstlisting}
+
+Using the traditional approach, we would have the trivial lifting to the function type.
+
+$lift$ \codeinline{([Int],[Int]) = [Int] -> [Int]}.
+
+However, if we use $lift'$ instead, we would derive a more specific type. This is a refinement type, as expressed using the syntax of LiquidHaskell\cite{DBLP:conf/icfp/VazouSJVJ14}.
+
+\codeinline{\{x:[Int] -> y:[Int] | length x > length y\}}.
+
+Alternatively, we could also have derived the equally specific type using dependant types\cite{dependant_types}.
+In this case, we would need a definition of (\codeinline{Vec L a}) to describe the type of lists of length \codeinline{L} and elemental type \codeinline{a}.
+
+\codeinline{\{Vec L Int -> Vec L Int\}}
+
+Notice that in either case, the target function type is a subtype of the trivial lifting, but we have not changed either the types of either the domain or range of the target function.
+
+Our approach to natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}$ in order of naturalness, such that $e : lift'(\tau_i,\tau_o)$.
+This list can then be checked in order to find an $e$ such that $\forall (i,o) \in Ex, e (i) = o$.
+
+\subsection{function classification}
+we need to assign all functions in $\mathcal{G}$ a refinement type in order to use the above result.
+Hence we do offline analysis.
+
+
+
+
+
+
+
+
+
+\subsection{Crap beyond here}
+In enumerative, type directed program synthesis the goal is to find an expression e such that its type matches some $\tau$.
+In programming by example, that $\tau$ is a pair type, derived from the examples (which we express with $\leadsto$).
+Synthesis engines may either require the user to provide these type explicitly\cite{Osera:2015} or to infer these types \cite{gulwani_popl15}.
+
+
+\begin{flalign*}
+(i,o) \leadsto& (\tau_i, \tau_o)\\
+lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o\\
+\Gamma, i:\tau_i, o:\tau_o \vdash&\ e \colon liftFun\ (\tau_i, \tau_o)
+\end{flalign*}
+
+\subsection{The implicit assumption}\label{sec:inhab}
+
+An \textit{example} is a pair of values with distinguished ``input'' and ``output'' elements, and an \textit{example set} is a set of examples all of whose inputs are of like type, and all of whose outputs are of like type.
+The output type does not necessarily match the input type.
+Synthesis engines may either require the user to provide these type explicitly\cite{Osera:2015} or to infer these types \cite{gulwani_popl15}.
+In either case, the example types are embedded into the arrow type to create the type of the function that must be found. 
+
+\begin{flalign*}
+(i,o) \leadsto& (\tau_i, \tau_o)\\
+lift\ (\tau_i, \tau_o) =&\ \tau_i \to \tau_o\\
+i:\tau_i, o:\tau_o \vdash& e \colon liftFun\ (\tau_i, \tau_o)
+\end{flalign*}
+
+We could create an type synonym for the pair with the operator $\mapsto$, to denote an example, and synthesis proceeds in the same way.
+
+\begin{flalign*}
+lift\ (\tau_i, \tau_o) <:&\ \tau_i \to \tau_o\\
+%i \mapsto o \leadsto& \tau_e\\
+%liftFun\ \tau_e <:&\ \tau_i \to \tau_o\\
+%i \mapsto o : \tau_e \vdash& e \colon f(\tau_e)
+\end{flalign*}
+
+Now, how do we actually create a type that is subtype of arrow.
+
+\begin{flalign*}
+\{\tau_i \to \tau_o\ |\ p\} <:&\ \tau_i \to \tau_o\\
+%i \mapsto o \leadsto& \tau_e\\
+%liftFun\ \tau_e <:&\ \tau_i \to \tau_o\\
+%i \mapsto o : \tau_e \vdash& e \colon f(\tau_e)
+\end{flalign*}
+
+It is now clear we have lost type information, specifically the relation between the input and output.
+Our inference for the target function type should instead use all the information available.
+
+
+The information encoded in the pair relate
+Any type system that allows for type-value level fluidity can be used to implement the inference of Equation 2.
+Both refinement types and dependent types could be used. 
+In our implementation, we use refinement types to create such a type for its ease of integration with existing Haskell code.
+
+\begin{table}
+    \begin{tabular}{l|l}
+        \hline
+        Type of Code & Weight \\ \hline
+        User Defined Value & 100 \\ 
+        Library Import &  50\\
+    \end{tabular}
+\end{table}
+
+The synthesis problem is then to find an expression $e$ of the inferred type, with the additional constraint that $e$ satisfies the examples.
+The inferred type using a simple pair is shown in Equation 1, while using the specialized example type inference is shown in Equation 2.
+While these seem quite similar, Equation 2 allows for more specific inference that relates the values of input and output at the type level in a more meaningful way than the simple arrow type.
+Framing the synthesis problem as a type inhabitation problem where we enumeratively search for an expression of the correct type\cite{DBLP:conf/pldi/GveroKKP13}, the more specific type in Equation 2 can significantly reduce the search space.
+
+
+
+%
+%This framing will draw the type of the target expression directly from the examples.
+
+\subsection{Solution Space}\label{solnSpace}
 Synthesizing correct programs is a well researched problem; however, if programming-by-example is to become a mainstream tool for programmers, the synthesized code must be easy for a human to read and modify.
 The aim of \ourTool/ is to synthesize programs from examples that utilize user defined code in a clear and concise.
 We focus particularly on data structure manipulation problems that can be solved with higher order functions.
 
-\subsection{Example Syntax}
-Formally speaking, an \textit{example} is a pair of values with distinguished ``input'' and ``output'' elements, and an \textit{example set} is a set of examples all of whose inputs are of like type, and all of whose outputs are of like type. The output type does not necessarily match the input type.
 
 A user supplies examples via a custom pair constructor \texttt{:->}. This operator is used to differentiate between generic pairs and examples, but does not confer any additional structure. We require all higher order functions to be of a unified signature \texttt{$\_ \to * \to *$}, where the final kind of the signature is a function mapping the input type to the output type. Here, a kind is understood to be the type of a type constructor, in this case \texttt{$\to$}, which constructs a function type from two other types.
 
@@ -33,7 +201,6 @@ zipWith' :: (a -> b -> c) -> ([a], [b]) -> [c]
 zipWith' f (xs,ys) = zipWith f xs ys
 \end{lstlisting}
 
-\subsection{Solution Space}\label{solnSpace}
 By formally defining the space of functions we are interested in synthesizing, we can this definition to prove some properties on the algorithm.
 In particular we show in Section \ref{sound} that \ourTool/ is complete for this subset of functions.
 
