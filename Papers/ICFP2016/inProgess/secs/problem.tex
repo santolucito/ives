@@ -87,14 +87,20 @@ However, if we use $lift'$ instead, we would derive a more specific type.
 This more specific type could be a refinement type, expressed here using the syntax of LiquidHaskell\cite{DBLP:conf/icfp/VazouSJVJ14}.
  
 \begin{lstlisting}
-([Int],[Int]) = [Int] -> [Int]}\\
-\{x:[Int] -> y:[Int] | length x > length y\}}
+exs :: [Int],[Int]
+lift(exs) :: [Int] -> [Int] 
+lift'(exs) ::
+  {x:[Int] -> y:[Int] | length x > length y}
 \end{lstlisting}
 
 Alternatively, we could also have derived the equally specific type using dependant types\cite{dependant_types}.
 In this case, we would need a definition of (\codeinline{Vec L a}) to describe the type of lists of length \codeinline{L} and elemental type \codeinline{a}.
 
-\codeinline{\{Vec L Int -> Vec L Int\}}
+\begin{lstlisting}
+lift'(exs) ::
+  {Vec L Int -> Vec L Int}
+\end{lstlisting}
+
 
 Notice that in either case, the target function type is a subtype of the trivial lifting, but we have not changed either the types of either the domain or range of the target function.
 
