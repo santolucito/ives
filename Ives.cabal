@@ -84,13 +84,17 @@ executable Ives
                        haskell-src-exts >=1.16,
                        containers >= 0.5.5.1,
                        Euterpea,
-                       async >= 2.0
+                       async >= 2.0,
+                       stream-fusion
   
   -- Directories containing source files.
   -- hs-source-dirs:      
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
+  ghc-options:
+    -O2
+    -threaded
   
 executable Exampler
   -- .hs or .lhs file containing the Main module.
