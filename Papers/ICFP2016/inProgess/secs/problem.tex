@@ -45,36 +45,36 @@ In practice this a trivial constraint, achieved by requiring the user to provide
 
 
 \subsection{Lifting Example Types}
-An unstated assumption, but widely accepted approach, is to lift the example pair type into a function type in the trivial way.
+While conceptually simple, enumerating all well-typed functions is wasteful - if possible we need to prune the search space.
+To do this, we can exploit an unstated assumption, but widely accepted approach, in existing programming-by-example work.
+Usually, the example pair type is lifted into a function type in the trivial way.
 
 \begin{flalign*}
 lift\ (\tau_i, \tau_o) =\ \tau_i \to \tau_o
 \end{flalign*}
 
-However, since we are using an type-directed enumerative search, more specific types could help prune the search space.
-A subtyping relation can create such specific types
-The subtyping relation $A<:B$ means that any time type B results in a well-typed program, so would type A in place of B.
-This results in the number of type i
+However, a subtyping relation can create more specific types that will better prune the space.
+The subtyping relation $A<:B$ means that any time type $B$ results in a well-typed program, so would type $A$ in place of $B$.
+A subtyping relation induces a subset relation of terms of type $A$ in relation to the terms of type $B$.
+Given $\mathcal{A} = \{ x | x::A\}$ and $\mathcal{B} = \{ x | x::B\}$, we have $\mathcal{A}\subseteq\mathcal{B}$.
+Lifting the examples to a subtype of the trivial lifting can then yield a smaller search space.
 
 \begin{flalign*}
 lift'\ (\tau_i, \tau_o) <:\ \tau_i \to \tau_o\\
 \end{flalign*}
 
-In a typical function subtyping relation, we would have $\tau^{s}_{i} \to \tau^{s}_{o}$.
-This then implies that $\tau^{s}_{i}$ and $\tau^{s}_{o}$ must be contravariant or covariant, respectively.
-That is $\tau^{s}_{i} <: \tau_i$ and $(\tau_o <: \tau^{s}_{o})$.
+Notice that we did not write out a full function for the subtype.
+This would have implied a subtyping on the component types, specifically the inputs and outputs would be contravariant or covariant, respectively.
 However, we do not wish to restrict the domain or range of the function, but only the size of function space.
 So we must have the following
 
 \begin{flalign*}
-lift'\ (\tau_i, \tau_o) = \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
-(\tau^{s}_{i} <: \tau_i) \lor (\tau_o <: \tau^{s}_{o})
+lift'\ (\tau_i, \tau_o) =&\ \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
+(\tau^{s}_{i} <: \tau_i)\ \lor&\ (\tau_o <: \tau^{s}_{o})
 \end{flalign*}
 
-However, for this application of subtyping, we must be careful when choosing a subtyping relation to ensure it does not place restrictions on the domain or range of the target function type. 
 
-
-As an demonstration, following the syntax from previous code samples, say we wish to synthesis the function \codeinline{map (+1)}. We provide examples of type \codeinline{([Int],[Int])}.
+As an demonstration of this approach, following the syntax from previous code samples, we demonstrate below the synthesis of \codeinline{map (+1)}. We provide examples of type \codeinline{([Int],[Int])}.
 \begin{lstlisting}
 exs :: [ [Int] :-> [Int] ]
 exs = [
@@ -83,12 +83,13 @@ exs = [
 \end{lstlisting}
 
 Using the traditional approach, we would have the trivial lifting to the function type.
-
-$lift$ \codeinline{([Int],[Int]) = [Int] -> [Int]}.
-
-However, if we use $lift'$ instead, we would derive a more specific type. This is a refinement type, as expressed using the syntax of LiquidHaskell\cite{DBLP:conf/icfp/VazouSJVJ14}.
-
-\codeinline{\{x:[Int] -> y:[Int] | length x > length y\}}.
+However, if we use $lift'$ instead, we would derive a more specific type.
+This more specific type could be a refinement type, expressed here using the syntax of LiquidHaskell\cite{DBLP:conf/icfp/VazouSJVJ14}.
+ 
+\begin{lstlisting}
+([Int],[Int]) = [Int] -> [Int]}\\
+\{x:[Int] -> y:[Int] | length x > length y\}}
+\end{lstlisting}
 
 Alternatively, we could also have derived the equally specific type using dependant types\cite{dependant_types}.
 In this case, we would need a definition of (\codeinline{Vec L a}) to describe the type of lists of length \codeinline{L} and elemental type \codeinline{a}.
