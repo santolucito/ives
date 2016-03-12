@@ -8,11 +8,14 @@
 > import Language.Haskell.Exts.Pretty
 > import qualified Data.Text as T
 > import Data.List
+> --import Prelude hiding (map,(++),filter,concatMap,head,concat,foldr1,length,tail,zip,zipWith)
 > import Data.Char
 > import Data.Maybe
 > import Data.Either
 > import Data.Function
 > import Data.Either.Combinators
+
+> -- import Data.List.Stream
 
 > import Control.Monad
 > import Control.Applicative
@@ -121,7 +124,7 @@ then with the ranks, begin searching for a program
 >   --mapM print hoFxns
 >   let candidateFxns = makeFxns (snd exsTyp) (map fst hoFxns) allTyps
 > --  mapM print (map fstsnd hoTyps')
-> --  print candidateFxns
+>   print candidateFxns
 >   validProgs <- applyAll startTime c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
 >   mapM_ (putStrLn.("* "++)) validProgs
@@ -238,11 +241,32 @@ we cant have map :: (a->b)->[a]->[b] with exs::[Int]->[Int] and expect f::[Bool]
 >  let
 >    componentSig = getComp $ snd hofxnSig :: Either String Type
 >    progs = case componentSig of
->              Left e -> trace ("genComponentFxn: " ++ e ++ "\n") []
+>              Left e -> trace ("genComponentFxn Error: " ++ e ++ "\n") []
+>              --Right cs -> concatMap (\t -> coerceSig cs t) (trace (show allTyps) allTyps)
 >              Right cs -> concatMap (\t -> coerceSig cs t) allTyps
 >  in
->    progs
+>    progs -- ++ (genFirstOrders (exAsFunType exTy) allTyps)
 
+Where do we use genFirstOrders ?
+
+> genFirstOrders :: Type -> [Sig] -> [Sig]
+> genFirstOrders targetTy allTyps =
+>   let
+>     fTy = firstTyp (trace (show targetTy) targetTy)
+>     lTy = lastTyp targetTy
+>     insideFuns = filter (\t -> lastTyp (snd t) == lTy) allTyps    
+>     makeFunMatch inFun = filter (\t -> firstTyp (snd t) == fTy && firstTyp (snd inFun) == lastTyp (snd t)) allTyps
+>     matchedFunPairs = map makeFunMatch insideFuns
+>     composedFuns = zipWith funApplication insideFuns matchedFunPairs
+>   in
+>     concat composedFuns
+
+> funApplication :: Sig -> [Sig] -> [Sig]
+> funApplication f gs =
+>   map (\g -> (Ident (fName f ++ "$" ++ fName g), (TyFun (firstTyp (snd f)) (lastTyp (snd g))))) gs
+
+> fName :: Sig -> String
+> fName (n,t) = toString n
 > --f' :: Pretty a => a -> IO()
 > -- f' = putStrLn . prettyPrint
 

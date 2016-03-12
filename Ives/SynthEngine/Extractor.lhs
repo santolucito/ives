@@ -203,12 +203,30 @@ the type signature datas that are curretnly unsupported
 > lastTyp (TyFun t1 t2) = lastTyp t2
 > lastTyp t = t
 
+> firstTyp :: Type -> Type
+> firstTyp (TyFun t1 t2) = t1
+> firstTyp t = t
+
  order matters here! this needs formlization, draw a graph
    will return ranking, on how close the match is for weighting
    would be better to have somekind of haskell poset library
    higher match is better
    would be nice to use https://hackage.haskell.org/package/hoogle-4.2.42/src/src/Hoogle/Score/Type.hs
    instead of this crappy implementation
+
+
+TODO this is not finished
+Num a => (a-> a) -> a won't work
+
+> isInstanceOf :: Context -> Type -> Bool
+> isInstanceOf c t =
+>   let 
+>     buildContext s = ClassA (UnQual (Ident s)) [TyVar (Ident "a")]
+>     numberContexts = map buildContext ["Num","Integral","Real","RealFrac","RealFloat","Fractional","Floating"]
+>     isNumCon = any (\c' -> elem c' c) numberContexts
+>     t1 = (TyFun (TyCon (UnQual (Ident "Bool"))) (TyCon (UnQual (Ident "Bool"))))
+>   in
+>     if isNumCon && t==t1 then False else True
 
 > compareTypes :: Type -> Type -> Maybe Int
 > isConcreteTypeOf = compareTypes
@@ -218,12 +236,18 @@ the type signature datas that are curretnly unsupported
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyParen t1) (t2) = 
 >   fmap (1+) $ compareTypes t1 t2
-> compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = 
+> compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = --TODO this allows Num a => a->a to match Ord a => a -> a
 >   fmap (1+) $ compareTypes t1 t2
-> compareTypes (TyForall _ _ t1) t2 = 
->   fmap (1+) $ compareTypes t1 t2
-> compareTypes t1 (TyForall _ _ t2) = 
->   fmap (1+) $ compareTypes t1 t2
+> compareTypes (TyForall _ c t1) t2 =
+>   if isInstanceOf c t2 
+>     then fmap (1+) $ compareTypes t1 t2
+>     else Nothing
+
+> compareTypes t1 (TyForall _ c t2) =
+>   if isInstanceOf c t1 
+>     then fmap (1+) $ compareTypes t1 t2
+>     else Nothing
+
 > compareTypes (TyList t1) (TyList t2) = 
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyParArray t1) (TyParArray t2) =
