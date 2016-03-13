@@ -3,35 +3,55 @@
 
 \subsection{Synthesis with the standard library}
 
-As an introduction to \ourTool/, imagine that a user wants to synthesis the simple \codeinline{stutter} \cite{Osera:2015} function which duplicates each element of a list. While in MYTH~\cite{Osera:2015} the focus was on lists as inductively defined data types, we are focusing on using the built in representation of a list in Haskell.
-
-Haskell provides two relevant functions for this task in the standard library; \codeinline{concatMap :: (a -> [b]) -> [a] -> [b]} which applies a function over a list and concatenates the result, and \codeinline{replicate n :: Int -> a -> [a]} which will replicate an item n times into a list. When working over the inductively defined list data type, MYTH requires three examples to find an appropriate function. Using \ourTool/, the user only needs to provides a single example to synthesize the program \codeinline{concatMap (replicate 2)} that fits that example on Haskell's builtin list type.
+%introduction to us using stutter- from the ground up
+As an introduction to \ourTool/, imagine that a user wants to synthesis a \codeinline{stutter} program that duplicates each element of a list. 
+The user will begin by providing a list of examples as a list of input/output pairs to the special variable \codeinline{exs}.
+This tool is embedded in Haskell, so examples use regular Haskell syntax along with a type annotation.
 
 \begin{lstlisting}
-exs :: [[Int] :-> [Int]]
-exs = [[1, 2, 3] :-> [1, 1, 2, 2, 3, 3]]
+exs :: [([Int], [Int])]
+exs = [([1, 2, 3], [1, 1, 2, 2, 3, 3])]
 \end{lstlisting}
 
-If, in addition, the user develops a function \codeinline{dupl} which duplicates an element (see below), then \ourTool/ will provide the solution \codeinline{concatMap dupl}, as well as the solution listed above. \ourTool/ will rank solution programs that contains user defined functions above others, so this one will be reported earlier. Ranks are calculated throughout the algorithm, continually being updated as we derive new information.
+Calling \ourTool/ on this file will then begin returning satisfying programs.
+Haskell provides two relevant functions for this task in the standard library; \codeinline{concatMap :: (a -> [b]) -> [a] -> [b]} which applies a function over a list and concatenates the result, and \codeinline{replicate n :: Int -> a -> [a]} which will replicate an item n times into a list.
+In this case, \ourTool/ only requires a single example to synthesize the program \codeinline{concatMap (replicate 2)}.
+
+If, in addition to the above example, the user provides a function \codeinline{dupl} which duplicates an element, there is now a second possible solution to the synthesis.
+Rather waiting to find all these solutions, \ourTool/ returns solutions to the user as they are found, then proceeds with rest of the search.
+For this example, \ourTool/ will return the solution \codeinline{concatMap dupl} after X seconds, continue searching and return \codeinline{concatMap (replicate 2)} after X+Y seconds.
 
 \begin{lstlisting}
 dupl :: a -> [a]
 dupl x = [x,x]
 \end{lstlisting}
 
-In the next example the user would like to synthesize a function that takes numbers from a list as long as the numbers are odd.
-Again, only a single example is needed for \ourTool/ to unambiguously find  simple solution program, \codeinline{takeWhile odd}, using functions the from the standard library; \codeinline{takeWhile :: (a -> Bool) -> [a] -> [a]} to recurse over a list and take items until the predicate is false and \codeinline{odd :: Int -> Bool}. 
+In order to return better solutions in the beginning of the search, we use a ranking system based on the complexity of the generated programs.
+We introduce a new complexity measure called \textit{naturalness} to help guide our search.
+Naturalness will also help us avoid the difficult to read solutions as those often seen in other programming-by-example systems.
 
-\begin{lstlisting}
-exs :: [[Int] :-> [Int]]
-exs = [[1, 2, 3] :-> [1]]
-\end{lstlisting}
+If programming-by-example is to be integrated into mainstream programming environments, the generated code must be readable and editable.
+The code should also support a real language and use native datatypes to the language.
+While in MYTH~\cite{Osera:2015} the focus was on lists as inductively defined data types, we are focusing on using the built in representation of a list in Haskell.
 
-Another correct solution for this example might be \codeinline{head} to take the first element. Searching for first order functions is an active research direction \cite{DBLP:conf/aaip/Katayama09, flashFillPOPL}, but in this work we are focused only on higher order functions. This is part because the goal of natural synthesis is to provide useful, nontrivial functions to users. A discussion of integrating our tool with first order searching techniques in provided in Section \ref{evaluation}.
+
+%In the next example the user would like to synthesize a function that takes numbers from a list as long as the numbers are odd.
+%Again, only a single example is needed for \ourTool/ to unambiguously find  simple solution program, \codeinline{takeWhile odd}, using functions the from the standard library; \codeinline{takeWhile :: (a -> Bool) -> [a] -> [a]} to recurse over a list and take items until the predicate is false and \codeinline{odd :: Int -> Bool}. 
+
+%\begin{lstlisting}
+%exs :: [([Int], [Int])]
+%exs = [([1, 2], [1])]
+%\end{lstlisting}
+
+%Another correct solution for this example might be \codeinline{head} to take the first element. Searching for first order functions is an active research direction \cite{DBLP:conf/aaip/Katayama09, flashFillPOPL}, but in this work we are focused only on higher order functions.
+%This is part because the goal of natural synthesis is to provide useful, nontrivial functions to users.
+%A discussion of integrating our tool with first order searching techniques in provided in Section \ref{evaluation}.
 
 \subsection{Synthesis with user defined values}
 
-Working on a set of user defined code is also a critical task \ourTool/ supports. In the next example the user has provided a binary tree data structure and a higher order function to map over it. We show the synthesis of the exceedingly (for the sake of brevity) simple program \codeinline{mapBTree not}. Doing such synthesis requires automatic reasoning about not only the user defined polymorphic data type, but also the higher order function they have defined over it.
+Working on a set of user defined code is also a critical task \ourTool/ supports. 
+In the next example the user has provided a binary tree data structure and a higher order function to map over it. We show the synthesis of the exceedingly (for the sake of brevity) simple program \codeinline{mapBTree not}.
+Doing such synthesis requires automatic reasoning about not only the user defined polymorphic data type, but also the higher order function they have defined over it.
 
 \begin{lstlisting}
 data BTree a = Nil |
@@ -42,9 +62,9 @@ mapBTree f Nil = Nil
 mapBTree f (Branch b1 v b2) = 
   Branch (mapBTree f b1) (f v) (mapBTree f b2)
 
-exs :: [BTree Bool :-> BTree Bool]
-exs = [Branch Nil True Nil :->
-       Branch Nil False Nil]
+exs :: [(BTree Bool, Tree Bool)]
+exs = [(Branch Nil True Nil,
+       Branch Nil False Nil)]
 \end{lstlisting}
 
 It may seem that if a user can write a higher order functions over custom data structures, they would not have a need to synthesize such functions.
@@ -66,10 +86,10 @@ Because we have synthesized a natural looking program, the user does not need to
 \begin{lstlisting}
 import Euterpea
 
-exs :: [Music Pitch :-> Music Pitch]
+exs :: [(Music Pitch, Music Pitch)]
 exs = [
-  (Prim (Note qn (C,4)):+:Prim (Note qn (D,4)) :->
-  (Prim (Note qn (D,4)):+:Prim (Note qn (E,4)) ]
+  (Prim (Note qn (C,4)):+:Prim (Note qn (D,4)),
+   Prim (Note qn (D,4)):+:Prim (Note qn (E,4))) ]
         
 solution = mMap (trans 2)
 \end{lstlisting}

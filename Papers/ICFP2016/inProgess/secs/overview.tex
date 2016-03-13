@@ -33,6 +33,8 @@
   \label{fig:high_level_overview}
 \end{figure}
 
+
+\markk{TODO: WHY NOT AGDA, AND HOW NOT USING AGDA MEANS THAT WE CANT FAITHFULLY FOLLOW Section 3}
 Figure~\ref{fig:high_level_overview} gives a high-level description of ways in which the components of our algorithm interact. Broadly speaking, there are two main stages in the algorithm. The offline (preprocessing) phase gathers the higher order declarations visible in the APIs and user-provided code, and assigns refinement types to them to build a custom synthesis \textit{engine}. This engine is then used during the online phase of the algorithm to search for functions that fit a set of supplied examples.
 
 \ourTool/ uses an enumeration bsed approach, using refinement types to prune the space of higher order functions.

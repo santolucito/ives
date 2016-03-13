@@ -3,12 +3,12 @@
 
 \subsection{Naturalness}
 
-The goal in natural synthesis is synthesize programs that meet a specification with the simplest and most readable code.
+\markk{HOW TO YOU USE THE TOOL. REHASH A DEFINITION PBE (LANGUAGE OF THE EXAMLPLES IS JUST NORMAL HASKELL)}. The goal in natural synthesis is synthesize programs that meet a specification with the simplest and most readable code.
 For programming by example, the specification is a set, $Ex$, of pairs of input and output $(i,o)$.
 As a formalization of simplicity and readability, we present a definition of naturalness.
 
 The standard of measuring complexity (the inverse of naturalness) is cyclomatic complexity\cite{cyclo}.
-Cyclomatic complexity is function, $\mathcal{CC}$on the control flow graph of a section of code, $C$.
+Cyclomatic complexity is function, $\mathcal{CC}$ on the control flow graph of a section of code, $C$.
 The function is $\mathcal{CC}(C) = E − N + 2(P)$, where $E$, $N$, and $P$ are the edges, nodes and connected components respectively.
 This function measures "the number of linearly independent paths" through a program, a crucial part of manipulating stateful variables.
 However a this is not well-suited for pure functional languages that use branching in a more functional way.
@@ -21,7 +21,7 @@ This approach integrates cyclomatic complexity, because branching is still encod
 
 %Our definition of naturalness matches well many techniques valued in functional community.
 Currying fits under this definition of naturalness.
-\codeinline{f = (1+)} is more natural than \codeinline{f x= 1 + x}.
+\markk{TODO - more} \codeinline{f = (1+)} is more natural than \codeinline{f x= 1 + x}.
 This also favors predefined functions over generating new lambda terms.
 Taking the code from Listing \ref{natSyn}, $\mathcal{N}($solution1$)$ has a naturalness score of 1/8, while $\mathcal{N}($solution2$)$ has a score of 1/3.
 
@@ -40,7 +40,7 @@ A type environment $\Gamma$, is the set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, 
 The set of well-typed expressions we consider, $\mathcal{G}$, is the infinite set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$. 
 
 We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex,\ i:(\tau_i \in T) \land o:(\tau_o \in T)$.
-In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly \cite{Osera:2015} or to infer the types \cite{gulwani_popl15} based on regular expressions.
+In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), using the compiler to infer types\cite{ghc}, or by inferring the types \cite{gulwani_popl15} based on regular expressions.
 
 
 
