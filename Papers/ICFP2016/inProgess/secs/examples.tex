@@ -1,9 +1,14 @@
 \section{Motivating Examples} 
 \label{examples}
 
+With next few illustrative examples we show functionality of \ourTool/.
+
 \subsection{Synthesis with the standard library}
 
 %introduction to us using stutter- from the ground up
+We start with a \codeinline{stutter} program, which is one of canonical 
+programs used in 
+
 As an introduction to \ourTool/, imagine that a user wants to synthesis a \codeinline{stutter} program that duplicates each element of a list. 
 The user will begin by providing a list of examples as a list of input/output pairs to the special variable \codeinline{exs}.
 This tool is embedded in Haskell, so examples use regular Haskell syntax along with a type annotation.
@@ -59,7 +64,7 @@ exs = [([1, 2, 3], [1,3])]
 
 Rather then beginning a search over all functions of type \codeinline{[Int] -> [Int]}, we can first infer a refinement type.
 This refinement type will specify that the input must be at longer than the output.
-\ourTool then searches for a higher order function consistent with this refinement type.
+\ourTool/ then searches for a higher order function consistent with this refinement type.
 For simplicity, imagine we only have the higher order functions \codeinline{map} and \codeinline{filter} available.
 \codeinline{map} will be assigned a refinement type that specifies the input and output lengths are equal - however is pruned from the search since this observation is not consistent with the example's refinement type.
 \codeinline{filter} will be assigned a refinement type that specifies the input length is greater than or equal to the output length.

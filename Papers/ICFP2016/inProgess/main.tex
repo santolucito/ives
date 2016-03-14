@@ -19,7 +19,7 @@
 %
 %-----------------------------------------------------------------------------
 
-
+%\documentclass{sigplanconf}
 \documentclass[preprint]{sigplanconf}
 
 % The following \documentclass options may be useful:
@@ -29,11 +29,13 @@
 % 11pt          To set in 11-point type instead of 9-point.
 % numbers       To obtain numeric citation style instead of author/year.
 
+%\usepackage[round]{natbib}
 \usepackage{amsmath}
 \usepackage{amssymb} 
 \usepackage{listings}
 \usepackage{xspace}
 \usepackage{array,multirow,graphicx}
+\usepackage{url}
 \input{defs}
 
 \usepackage{tikz}
@@ -83,27 +85,28 @@
 \setlength{\pdfpageheight}{\paperheight}
 \setlength{\pdfpagewidth}{\paperwidth}
 
+\iffalse
+
 \conferenceinfo{CONF 'yy}{Month d--d, 20yy, City, ST, Country}
 \copyrightyear{20yy}
 \copyrightdata{978-1-nnnn-nnnn-n/yy/mm}
 \copyrightdoi{nnnnnnn.nnnnnnn}
+
+\fi
 
 % Uncomment the publication rights you want to use.
 %\publicationrights{transferred}
 %\publicationrights{licensed}     % this is the default
 %\publicationrights{author-pays}
 
-\titlebanner{banner above paper title}        % These are ignored unless
-\preprintfooter{short description of paper}   % 'preprint' option specified.
+% \titlebanner{banner above paper title}        % These are ignored unless
+% \preprintfooter{short description of paper}   % 'preprint' option specified.
 
-\title{Natural Program Synthesis from Examples in Haskell}
+\title{Natural Program Synthesis in Haskell}
 
-\authorinfo{Name1}
-           {Affiliation1}
-           {Email1}
-\authorinfo{Name2\and Name3}
-           {Affiliation2/3}
-           {Email2/3}
+\authorinfo{No Author given}
+           { }
+           
 
 \maketitle
 
@@ -120,7 +123,6 @@ term1, term2
 keyword1, keyword2
 
 
-hi
 
 \input{secs/intro}
 
@@ -140,7 +142,7 @@ hi
 
 \input{secs/conclusion}
 
-\bibliographystyle{abbrvnat}
+\bibliographystyle{abbrv}
 \bibliography{myBib}
 
 
