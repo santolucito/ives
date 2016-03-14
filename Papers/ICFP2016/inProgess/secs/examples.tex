@@ -2,26 +2,31 @@
 \label{examples}
 
 With next few illustrative examples we show functionality of \ourTool/.
+It takes as input a list of examples and automatically generates code
+corresponding to these examples. The tool is embedded in Haskell, so examples use regular Haskell syntax along with a type annotation.
+
+
 
 \subsection{Synthesis with the standard library}
 
 %introduction to us using stutter- from the ground up
-We start with a \codeinline{stutter} program, which is one of canonical 
-programs used in 
-
-As an introduction to \ourTool/, imagine that a user wants to synthesis a \codeinline{stutter} program that duplicates each element of a list. 
-The user will begin by providing a list of examples as a list of input/output pairs to the special variable \codeinline{exs}.
-This tool is embedded in Haskell, so examples use regular Haskell syntax along with a type annotation.
+We start with a \codeinline{stutter} program. It is one of canonical 
+examples used by similar tools \cite{Osera:2016}. The \codeinline{stutter} program takes as input a list of elements and duplicates each element 
+of the list.
+ 
+Following the programming by example principles, the user 
+provide a list of examples as a list of input/output pairs to the special variable \codeinline{exs}.
 
 \begin{lstlisting}
 exs :: [([Int], [Int])]
 exs = [([1, 2, 3], [1, 1, 2, 2, 3, 3])]
 \end{lstlisting}
 
-Calling \ourTool/ on this file will then begin returning satisfying programs.
-Using a type-directed enumeration, we look for programs fitting the example type.
-First we look for first order functions of type \codeinline{[Int]->[Int]}.
-We can also look for generalizations of that type, such as \codeinline{[a]->[a]}, or \codeinline{Num a => [a]->[a]}.
+Invoking \ourTool/ on this example starts to construct programs  satisfying that when they are applied to the list $[1, 2, 3]$ the result 
+is $[1, 1, 2, 2, 3, 3]$.
+Using a type-directed enumeration, we look for programs fitting the given example type.
+We first search for first order functions of type \codeinline{[Int]->[Int]}.
+In addition we look for generalizations of the given type, such as \codeinline{[a]->[a]}, or \codeinline{Num a => [a]->[a]}.
 Some functions like this will be \codeinline{cycle} or \codeinline{tail} - which will not satisfy these examples.
 Once we have exhausted this class of functions, we begin searching for chains of application.
 In particular, we focus on higher order functions because they result in more interesting programs and are more challenging.
