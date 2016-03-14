@@ -14,11 +14,22 @@ exs = [([1, 2, 3], [1, 1, 2, 2, 3, 3])]
 \end{lstlisting}
 
 Calling \ourTool/ on this file will then begin returning satisfying programs.
-Haskell provides two relevant functions for this task in the standard library; \codeinline{concatMap :: (a -> [b]) -> [a] -> [b]} which applies a function over a list and concatenates the result, and \codeinline{replicate n :: Int -> a -> [a]} which will replicate an item n times into a list.
-In this case, \ourTool/ only requires a single example to synthesize the program \codeinline{concatMap (replicate 2)}.
+Using a type-directed enumeration, we look for programs fitting the example type.
+First we look for first order functions of type \codeinline{[Int]->[Int]}.
+We can also look for generalizations of that type, such as \codeinline{[a]->[a]}, or \codeinline{Num a => [a]->[a]}.
+Some functions like this will be \codeinline{cycle} or \codeinline{tail} - which will not satisfy these examples.
+Once we have exhausted this class of functions, we begin searching for chains of application.
+In particular, we focus on higher order functions because they result in more interesting programs and are more challenging.
 
-If, in addition to the above example, the user provides a function \codeinline{dupl} which duplicates an element, there is now a second possible solution to the synthesis.
-Rather waiting to find all these solutions, \ourTool/ returns solutions to the user as they are found, then proceeds with rest of the search.
+One higher order function of interest is in the Haskell the standard library; \codeinline{concatMap :: (a -> [b]) -> [a] -> [b]} which applies a function over a list and concatenates the result.
+With \codeinline{concatMap} as a candidate higher order function, we can now search for a component first order function of type \codeinline{a -> [b]}.
+We will not find a useful function of such a type, and need to continue searching for generalizations of that type.
+We will find the function \codeinline{replicate n :: Int -> a -> [a]} in the standard library, which will replicate an item n times into a list.
+This function only needs to be specialized to our examples by applying an initial value.
+
+In the end, \ourTool/ only requires a single example to synthesize the program \codeinline{concatMap (replicate 2)}.
+If however, in addition to the above example, the user provided a function \codeinline{dupl} which duplicates an element, there is now a second possible solution to the synthesis.
+Rather waiting to find all solutions, \ourTool/ returns solutions to the user as they are found, then proceeds with rest of the search.
 For this example, \ourTool/ will return the solution \codeinline{concatMap dupl} after X seconds, continue searching and return \codeinline{concatMap (replicate 2)} after X+Y seconds.
 
 \begin{lstlisting}
@@ -34,18 +45,24 @@ If programming-by-example is to be integrated into mainstream programming enviro
 The code should also support a real language and use native datatypes to the language.
 While in MYTH~\cite{Osera:2015} the focus was on lists as inductively defined data types, we are focusing on using the built in representation of a list in Haskell.
 
+\subsection{Optimizing with types}
 
-%In the next example the user would like to synthesize a function that takes numbers from a list as long as the numbers are odd.
-%Again, only a single example is needed for \ourTool/ to unambiguously find  simple solution program, \codeinline{takeWhile odd}, using functions the from the standard library; \codeinline{takeWhile :: (a -> Bool) -> [a] -> [a]} to recurse over a list and take items until the predicate is false and \codeinline{odd :: Int -> Bool}. 
+If in our search, we look for every function of the correct type, we quickly explore the search space.
+By using information embedded in the examples, we can infer refinement types to help prune the space.
+Take the example of synthesizing a function that takes the odd numbers from a list.
+Again, only a single example is needed for \ourTool/ to find a simple solution program.
 
-%\begin{lstlisting}
-%exs :: [([Int], [Int])]
-%exs = [([1, 2], [1])]
-%\end{lstlisting}
+\begin{lstlisting}
+exs :: [([Int], [Int])]
+exs = [([1, 2, 3], [1,3])]
+\end{lstlisting}
 
-%Another correct solution for this example might be \codeinline{head} to take the first element. Searching for first order functions is an active research direction \cite{DBLP:conf/aaip/Katayama09, flashFillPOPL}, but in this work we are focused only on higher order functions.
-%This is part because the goal of natural synthesis is to provide useful, nontrivial functions to users.
-%A discussion of integrating our tool with first order searching techniques in provided in Section \ref{evaluation}.
+Rather then beginning a search over all functions of type \codeinline{[Int] -> [Int]}, we can first infer a refinement type.
+This refinement type will specify that the input must be at longer than the output.
+\ourTool then searches for a higher order function consistent with this refinement type.
+For simplicity, imagine we only have the higher order functions \codeinline{map, filter, and fold} available.
+\codeinline{map} will be assigned a refinement type that specifies the input and output lengths are equal.
+
 
 \subsection{Synthesis with user defined values}
 
