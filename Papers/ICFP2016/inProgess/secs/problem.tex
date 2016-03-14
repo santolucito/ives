@@ -56,6 +56,7 @@ lift\ (\tau_i, \tau_o) =\ \tau_i \to \tau_o
 However, a subtyping relation can create more specific types that will better prune the space.
 The subtyping relation $A<:B$ means that any time type $B$ results in a well-typed program, so would type $A$ in place of $B$.
 A subtyping relation induces a subset relation of terms of type $A$ in relation to the terms of type $B$.
+For the purposes of this paper, we use $<:$ to mean only nontrivial subtyping rules - that is we do \textit{not} have $A<:A$.
 Given $\mathcal{A} = \{ x | x::A\}$ and $\mathcal{B} = \{ x | x::B\}$, we have $\mathcal{A}\subseteq\mathcal{B}$.
 Lifting the examples to a subtype of the trivial lifting can then yield a smaller search space.
 
@@ -139,6 +140,8 @@ the solutions \ourTool/ supports synthesizing are higher-order data structure ma
 The higher-order functions take a component function that is a first-order function, for example \codeinline{(+)}.
 The solution programs can be expressed as:
 % up to reordering of terms (we dont actually support this, should we really include this)
+
+\markk{TODO we need this restriction because we are not using adga. we are building terms using haskell-src and re-engineering haskell syntax rules, which is a pain. Using agda could significantly reduce this burden by allowing us to program directly with types. However, we dont get all the libraries from haskell if we do that. }
 
 \begin{lstlisting}
 solution ::
