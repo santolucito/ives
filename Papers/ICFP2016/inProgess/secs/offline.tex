@@ -28,9 +28,10 @@ Therefore, it is best to only select as many refinement types as are needed.
 We only use predicates of $\leq,=,\geq$ to specify size constraints on input and output.
 Notice that map will actually satisfy all three of these predicates, which in general, results in an over approximation of appropriate refinement types for higher order functions.
 
-\markk{TODO: subtyping here}
+While one could imagine deriving more specific formulas for the refinement types, this would then require a more advanced unification procedure between the examples' refinement types and the higher order functions' refinement types.
+Currently the unification procedure is a simple equality check.
+A small step in this direction might be to have a subtyping relation between $\leq$ and $<$, but our evaluation has not shown this to currently be the highest priority optimization.
 
-We discuss potential optimizations for this in Section \ref{evaluation}.
 
 \begin{lstlisting}[caption=Adding refinement types to higher order functions,label=listing:addRType]
 assignRTypes ::Sig -> IO(Sig, [RType])
