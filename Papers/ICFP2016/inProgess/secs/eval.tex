@@ -2,6 +2,13 @@
 
 \subsection{Soundness and Completeness}\label{sound}
 
+
+Since we perform enumerative search over $\mathcal{G}_I$, which is a subset of the finite set $\Gamma^2$, our approach is complete in the trivial sense. 
+Clearly, it is not at all complete in general.
+If the search space was the full $\mathcal{G}$, we would have completeness (every permutation of every identifier in scope is equivalent to the full language).
+This is not at all a useful completeness, since the generated programs would be unreadable.
+For example, if the constant 10 is not in $\mathcal{G}$, we can only reproduce it with some combination of operations on the hardcoded initial values, e.g. (1+...(1+ (1))).
+
 \markk{TODO THIS SUBSECTION IS ALL JUNK NOW WITH NEW FORMALISM}
 It is clear that no function will be returned by the algorithm that does not fit the examples given, since functions are validated before being reported.
 Therefore, it is trivial to conclude that \ourTool/ is sound over the given examples.
@@ -73,27 +80,26 @@ In Section \ref{HORtypeInf} we discuss how type matching and the \codeinline{noR
 
 \subsection{Example Generation}\label{languageSupport}
 
-We have tried to avoid code analysis at every stage of this paper.
-However there are two points where this has fallen short.
-First, we must parse a file to extract the name and type information of every top level identifier.
-Second, using \lhask/ as a blackbox means that we are limited by \lhask/'s ability to deduce refinement types over functions.
-Our eventual goal is to create a system that can be easily ported across functional languages.
-Luckily, the first code dependency is small enough to handle with ease in most typed languages (the grammar of a type signature is relatively small). However \lhask/ is a powerful tool that would be difficult to recreate in another language.
 
-To this end, we can extend the refinement type system by allowing refinement type inference on representative examples of a higher order function.
+Our goal is to create a synthesis procedure that is easily portable across full implementations of functional languages (Haskell, OCaml, etc), so we prefer using a type directed approach to synthesis over explicit code analysis whenever possible.
+This increases the portability and longevity of our system.
+To this end, we have tried to avoid code analysis at every stage of this paper.
+However there are two points where this has fallen short.
+
+First, we must parse a file to extract the name and type information of every top level identifier.
+Second, using \lhask/ as a blackbox means that we rely on \lhask/'s mechanisms to check refinement types over functions.
+Our eventual goal is to create a system that can be easily ported across functional languages.
+Luckily, the dependency on extracting type information is small enough to handle with ease in most typed languages (the grammar of a type signature is relatively small).
+However \lhask/ is a powerful tool that would be difficult to recreate in another language.
+
+One approach to solve this is to extend the refinement type system by allowing refinement type inference on representative examples of a higher order function.
 We do not need to identify a particular component function since we are only interested in size based refinement types.
 We then apply a similar refinement type inference strategy as in Listing \ref{exRTypeGen} to these examples.
 
-Our current example generation tool uses QuickCheck to generate and apply many examples for higher order function Haskell~\cite{quickcheck}.
-Of course, since \lhask/ supports so much of Haskell, this is not practically useful for us, but provides a prototype as a proof of concept.
-Imagining that we could not find a refinement type directly on map, we might use examples to infer a refinement type. Take the following code:
+Our current example generation tool uses QuickCheck to generate and apply many examples for higher order functions in Haskell~\cite{quickcheck}.
+Since \lhask/ supports so much of Haskell, this was not a necessary extension for \ourTool/, but provides a prototype as a proof of concept.
+Imagining that we could not find a refinement type directly on \codeinline{filter}, we might instead generate examples on and use them to infer a refinement type - just as we infer a refinement type on the user-provided examples.
 
-\begin{lstlisting}[numbers=none]
-map :: (a -> b) -> [a] -> [b]
-map f [] = []
-map f x:xs = f x : map f xs
-
-mapExs = [[1,2,3] :-> [4,2,8]]
-\end{lstlisting}
-
-There are however repercussions to this approach. We are not guaranteed to generate a correct refinement type because we might not generate a fully representative examples. It then seems it is possible prune away many high order functions that are actually useful, but the full repercussions of this is outside the scope of this paper.
+However, we are not guaranteed to generate a correct refinement type because we might not generate fully representative examples.
+If the tool may not generate examples where the predicate on the filter is used, creating a situation equivalent to \codeinline{map id}.
+In this case we would incorrectly infer the refinement type \codeinline{filter :: _ -> i::[a] -> {o::[b] | (len i) = (len o)}}

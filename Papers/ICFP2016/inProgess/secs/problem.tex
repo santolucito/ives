@@ -3,8 +3,6 @@
 
 \subsection{Naturalness}
 
-\markk{HOW TO YOU USE THE TOOL}.
-
 Program synthesis automatically builds a program from a specification.
 For \ourTool/, the specification is a set, $Ex$, of pairs of input and output $(i,o)$.
 We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex,\ i:(\tau_i \in T) \land o:(\tau_o \in T)$.
@@ -18,24 +16,33 @@ Cyclomatic complexity is function, $\mathcal{CC}$ on the control flow graph of a
 The function is $\mathcal{CC}(C) = E − N + 2(P)$, where $E$, $N$, and $P$ are the edges, nodes and connected components respectively.
 This function measures "the number of linearly independent paths" through a program, a crucial part of manipulating stateful variables.
 However a this is not well-suited for pure functional languages that use branching in a more functional way.
-For example, given two programs to compute absolute value, the "if" solution should be more natural, but using cycolmatic complexity verbatim means
-\codeinline{f x = if x>=0 then x else x*-1} is more complex
-\codeinline{f x = x * (fromEnum (x<0) * (-1) + fromEnum (x>0))}
+For example, given two programs to compute absolute value \codeinline{f} and \codeinline{g}, one would expect \codeinline{f} with the "if" solution to be more natural.
+However, using cycolmatic complexity verbatim means \codeinline{f} is more complex than \codeinline{g}.
 
-Instead, we define naturalness to be the number of nodes in the abstract syntax tree.
+\begin{lstlisting}
+f x =
+  if x>=0 then x else x * (-1)
+g x = 
+  x * (fromEnum (x>0) + fromEnum (x<0) * (-1))
+\end{lstlisting}
+
+Instead, we define naturalness as a function $\mathcal{N}$, that returns the number of nodes in the abstract syntax tree.
 This approach integrates cyclomatic complexity, because branching is still encoded as a measure of complexity.
 
 %Our definition of naturalness matches well many techniques valued in functional community.
-Currying fits under this definition of naturalness.
-\markk{TODO - more} \codeinline{f = (1+)} is more natural than \codeinline{f x= 1 + x}.
-This also favors predefined functions over generating new lambda terms.
-Taking the code from Listing \ref{natSyn}, $\mathcal{N}($solution1$)$ has a naturalness score of 1/8, while $\mathcal{N}($solution2$)$ has a score of 1/3.
+Currying fits well under this definition of naturalness.
+In keeping with good functional programming style, $\mathcal{N}$(\codeinline{f = (1+)})=1/2 is considered more natural than $\mathcal{N}$(\codeinline{f x = 1 + x})=1/3.
+This also favors predefined functions over generating new lambda terms (anonymous functions).
+Taking the code from Listing \ref{natSyn}, $\mathcal{N}$(\codeinline{solution1}) has a naturalness score of 1/8, while $\mathcal{N}$(\codeinline{solution2}) has a score of 1/3.
 
-The problem is then to find an expression e, such that $\forall (i,o) \in Ex, e (i) = o \land max(\mathcal{N}(e))$.
+The problem of natural synthesis is then to find an expression e, such that $\forall (i,o) \in Ex, e (i) = o \land max(\mathcal{N}(e))$.
 
 
 \subsection{Enumeration}
 In order to enumerate programs in order of naturalness, we will use a type directed enumeration.
+This type directed enumeration will also need to order the terms by their likelihood to satisfy the examples.
+Here we describe the space of expressions over which we enumerate, and how this pertains to naturalness.
+We describe how the enumeration technique tries to order terms by likelihood to succed in Sections \ref{synth} and \ref{offline}.
 We can immediately restrict our search space to exclude generated lambda terms (anonymous functions), as such terms will generally induce a very low naturalness score and explode the search space.
 Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only draws from a finite set of predefined expressions.
 
@@ -43,10 +50,10 @@ Let $E$ be the finite set of expressions exposed to the top-level module from us
 Our search space will be the set of permutations of well-typed applications of elements of $E$.
 
 To determine if an expression is well-typed, let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library.
-A type environment $\Gamma$, is the set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
+A type environment $\Gamma$, is the set $\{e_1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
 $\tau_i$ may be a type variable, a concrete type
-The set of well-typed expressions we consider, $\mathcal{G}$, is the set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$.
-Notice that a cycle in types of $\Gamma$ will create an infinite set $\mathcal{G}$.
+The set of well-typed expressions we consider, $\mathcal{G}$, is the set $\{e_1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$.
+Notice that a cycle in types of $\Gamma$ will cause $\mathcal{G}$ to be an infinite set.
 
 As an example, consider the following
 
@@ -104,8 +111,8 @@ This more specific type could be a refinement type, expressed here using the syn
 \begin{lstlisting}
 exs        :: ([Int],[Int])
 lift(exs)  :: [Int] -> [Int] 
-lift'(exs) ::
-  {x:[Int] -> y:[Int] | length x = length y}
+lift'(exs) :: x:[Int] -> {y:[Int] |
+              length x = length y}
 \end{lstlisting}
 
 Alternatively, we could also have derived the equally specific type using dependant types\cite{dependant_types}.
@@ -118,38 +125,43 @@ lift'(exs) ::
 
 Notice that in either case, the target function type is a subtype of the trivial lifting, but we have not changed the number of inhabitants of the types of either the domain or range of the target function.
 
-The approach presented here to efficiently solve natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}$ in order of naturalness, such that $e : lift'(\tau_i,\tau_o)$.
-This list can then be checked in order to find an $e$ such that $\forall (i,o) \in Ex, e (i) = o$.
-
-\subsection{function classification}
-we need to assign all functions in $\mathcal{G}$ a refinement type in order to use the above result.
-Hence we do offline analysis.
-
-
-%This framing will draw the type of the target expression directly from the examples.
-
 \subsection{Implementation Solution Space}\label{solnSpace}\
 
 Our implementation restricts the search to the first level of application chains.
-We are no longer using $\mathcal{G}$, but the more restricted space of $\mathcal{G}_I = \Gamma^2$.
-In the context of the previous example, we now have 
+We are no longer using $\mathcal{G}$ as defined previously, but the more restricted space of $\Gamma^2$.
+In the context of the previous example, we stop generating at $\Gamma^2$ and use this as our search space.
 
 \begin{gather*}
 \Gamma = \{f:a\to b, g:b\to c, x:a\} \Rightarrow \\
-\Gamma^2 = \mathcal{G}_I = \{f:a\to b, g:b\to c, x:a, f(x):b\}
+\Gamma^2 = \mathcal{G}' = \{f:a\to b, g:b\to c, x:a, f(x):b\}\\
 \end{gather*}
 
-we need this restriction because we are not using adga. we are building terms using haskell-src and re-engineering haskell syntax rules, which is a pain. Using agda could significantly reduce this burden by allowing us to program directly with types. However, we dont get all the libraries from haskell if we do that.
+In fact, in implementation we do not need to fully generate $\Gamma^2$.
+Since we will not be generating $\Gamma^n, n>2$, we only need to consider functions within $\Gamma^2$, where the input and output types match the examples.
+
+\begin{gather*}
+\mathcal{G}_I = \Gamma^2 \cap \{f | f : \tau_i \to \tau_o\}
+\end{gather*}
+
+We need this restriction because we are building terms using haskell-src and re-engineering Haskell syntax and application rules, which a very labor intensive approach.
+Building longer application chains proved to be out of reach from an engineering perspective.
+Luckily, $\Gamma^2$ is able to cover synthesis of a large enough set of programs to be interesting.
+However, in order to generate novel and complex programs, we eventually will need to support the proper $\mathcal{G}$ set.
+One approach to this would be to use a dependently typed language like Agda~\cite{}.
+Rather than reconstructing datatype to manipulate types as value, Agda would allow us to program directly with types.
+
+However, one key component of our approach is the ability to easily support third-party libraries and other user-defined values.
+Haskell provides us with a rich set of libraries that allows us to explore this feature of \ourTool/.
 
 While this approach can work for first-order synthesis, we instead focus on data structure manipulation problems that can be solved with higher order functions.
 
-We require all higher order functions to be of a unified type signature $ \star \to \tau_i \to \tau_o$, so that the signature of the solution program is a function mapping the input type to the output type. 
+We require all higher order functions to be of a unified type signature $(\star \to \tau_i \to \tau_o)$, so that the signature of the solution program is a function mapping the input type to the output type. 
 The type $\star$ is a type wildcard (from the partial type signatures of GHC~\cite{ghc}) that could be filled by a first-order function or a first-order function along with an initial value.
 In the case of \codeinline{map :: (a -> b) -> [a] -> [b]}, the $\star$ matches \codeinline{(a -> b)}.
 In the case of \codeinline{foldr :: (a -> b -> b) -> b -> [a] -> b)}, the $\star$ matches \codeinline{(a -> b -> b) -> b}.
 
 This is generally a weak constraint, as good functional programming style dictates any higher order function that manipulates a data structure should have such a type signature.
-This constraint is used to eliminate higher order functions such as \codeinline{flip:: (a ->b -> c) -> b -> a -> c}.
+This constraint is used to eliminate higher order functions such as \codeinline{flip:: (a -> b -> c) -> b -> a -> c}.
 This function would complicate analysis and management of the search space, and in practice in not often necessary.
 
 %\markk{the paragraph below makes no sense to me at all. better leave it out}
@@ -164,18 +176,8 @@ This function would complicate analysis and management of the search space, and 
 %zipWith' f (xs,ys) = zipWith f xs ys
 %\end{lstlisting}
 
-
-The solutions \ourTool/ supports synthesizing are higher-order data structure manipulation programs.
-The higher-order functions take a component function that is a first-order function, for example \codeinline{(+)}.
-
-
 Generally, the component function is applied across the \textsf{input} data structure, which the \textsf{solution} uses to construct an \textsf{output} data structure or reduction.
 As we will demonstrate in Section \ref{evaluation} this set is expressive enough to support the classic \texttt{map}, \texttt{filter}, and \texttt{fold} functions, as well as higher order functions found in imported modules and user-supplied code.
 
-Our goal is to create a synthesis procedure that is easily portable across full implementations of functional languages (Haskell, OCaml, etc), so we prefer using a type directed approach to synthesis over explicit code analysis whenever possible.
-This increases the portability and longevity of our system.
-For this implementation we target Haskell, detailing the exact modifications needed to expand this to other languages in Section \ref{languageSupport}.
-
-%Our algorithm does not explicitly try to fit component functions to the examples. Instead, we leverage a promising body of existing work in synthesizing top-level, first-order functions \cite{potential, reviewers}. While it is out of scope to go in to detail, we will briefly discuss the integration of these synthesis procedures in Section \ref{conclusions}.
-
-%The liquidHaskell predicate applied to this signature will be of the effect of \texttt{len([a],[b]) = len([c])}.
+The approach presented here to efficiently solve natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}_I$ to efficiently approximate naturalness.
+This list can then be checked in order to find an $e$ such that $\forall (i,o) \in Ex, e (i) = o$.

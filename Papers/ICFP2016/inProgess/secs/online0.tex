@@ -1,6 +1,7 @@
 \section{Online: Fitting Functions to Examples} \label{synth}
 
 With the synthesis engine constructed, the system is ready to synthesize programs from examples.
+That is, we are ready to construct the set of expressions $\mathcal{G}_I$.
 Multiple programming-by-example queries can then be answered using this engine.
 The synthesis engine only needs to be reconstructed when there are new library imports, or when there is a revision of the user-supplied code.
 
@@ -9,6 +10,8 @@ Then, \ourTool/ filters and ranks the higher order functions based on the refine
 Once the candidate higher functions are identified, \ourTool/ will select and build first order functions that match the type of the higher order function's component signature to build a final set of candidate programs.
 
 Each of these candidate programs is executed in best-first order against the set of inputs.
+The ordering here based on the choices we made during construction of this list - in particular the type match ranking.
+This is both an approximation ordering of naturalness and an ordering on likelihood of fitting the examples.
 Whenever a function produces the correct outputs for each input, it is said to fit, and is reported to the user.
 This search continues until the space is exhausted or it is manually interrupted.
 The search will always terminate since we are working over a finite space of generated functions, are our type reductions are strictly decreasing, which we will explain in Section \ref{typeMatch}

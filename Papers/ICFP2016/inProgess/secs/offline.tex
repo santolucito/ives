@@ -1,28 +1,39 @@
-\section{Offline: Synthesis Engine Construction}
+\section{Offline: Synthesis Engine Construction} \label{offline}
+
 
 
 \subsection{Refinement types for higher order functions}\label{HORtypeInf}
 
 % collectTypesAndWeights
-The first step of our algorithm (line 7 of Listing \ref{listing:Algo}) is to collect all of the type signatures from our sources (user code, imports, and standard library). In order to rank the higher-order functions, we assign weights based on their source location. User-defined functions are given the highest priority, while direct imports are given less, and the standard libraries are given the least. These rankings will contribute to the final ranking of candidate functions in the synthesis stage when we match the component function signatures on the examples.
+The first step of our algorithm (line 7 of Listing \ref{listing:Algo}) is to collect all of the type signatures from our sources (user code, imports, and standard library).
+In order to rank the higher-order functions, we assign weights based on their source location. User-defined functions are given the highest priority, while direct imports are given less, and the standard libraries are given the least. 
+These rankings will contribute to the final ranking of candidate functions in the synthesis stage when we match the component function signatures on the examples.
 
 % filter isHigherOrder
-We filter through these to select only the higher order functions. Because in Haskell the function type constructor ($\to$) is right binding, any higher order functions must have parenthesis in the type signature, which provides a convenient filtering predicate. The is over approximating filter, since the type signature might contain extraneous parentheses, for example surrounding the entire signature. In practice, it is rarely the case that a programmer will add extraneous parentheses to type signatures and this does not significantly impact performance.
+We filter through these to select only the higher order functions. 
+Because in Haskell the function type constructor ($\to$) is right binding, any higher order function must have parenthesis in the type signature, which provides a convenient filtering predicate. 
+This is an over approximating filter, since the type signature might contain extraneous parentheses, for example surrounding the entire signature. 
+In practice, it is rarely the case that a programmer will add extraneous parentheses to type signatures, though this since this stage is offline and only happens once per a library, this over approximation does not significantly impact performance.
 
 % assignRTypes
 In line 9 of Listing \ref{listing:Algo} we call the \codeinline{assignRTypes} function (shown in Listing \ref{listing:addRType}) to automatically generate refinement types that relate input and output sizes for our higher order functions.
 These refinement will be used to prune the search space in synthesis, as explained in detail in Section \ref{synth}.
 In brief, the size relation that applies to the higher order functions must also apply to the examples in order to consider that function as a candidate.
 When writing the refinement types, we can be sure, by our specification in Section \ref{problem}, that the last two types are always the input and output.
-We can then make use of type holes, in order to account for the diversity of component functions and initial values that might be required for any given higher order function.
+With this unified signature for all considered higher order functions, we can use a template to assign a refinement types.
+This template uses GHC's partial type signatures and type wildcards, in order to account for the diversity of component functions and initial values that might be required for any given higher order function.
 
 \begin{lstlisting}[numbers=none]
-map :: _ $\to$ i:[a] $\to$ {o:[b] | (len i) = (len o)}
+template :: _ -> i:[a] -> {o:[b] |
+           (len i) `op' (len o)}
+        
+map :: _ -> i:[a] -> {o:[b] |
+        (len i) = (len o)}
 \end{lstlisting}
 
 %> map rTypeTemplate ["=","<=",">="]
 
-For every predicate we test against, we are able to more accurately prune the search space of higher-order functions.
+For every predicate \codeinline{`op'} we test against, we are able to more accurately prune the search space of higher-order functions.
 However, since we must test many higher-order functions on each these predicates, the cost to add a predicate is high.
 Therefore, it is best to only select as many refinement types as are needed.
 We only use predicates of $\leq,=,\geq$ to specify size constraints on input and output.
