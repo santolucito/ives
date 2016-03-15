@@ -3,8 +3,14 @@
 
 \subsection{Naturalness}
 
-\markk{HOW TO YOU USE THE TOOL. REHASH A DEFINITION PBE (LANGUAGE OF THE EXAMLPLES IS JUST NORMAL HASKELL)}. The goal in natural synthesis is synthesize programs that meet a specification with the simplest and most readable code.
-For programming by example, the specification is a set, $Ex$, of pairs of input and output $(i,o)$.
+\markk{HOW TO YOU USE THE TOOL}.
+
+Program synthesis automatically builds a program from a specification.
+For \ourTool/, the specification is a set, $Ex$, of pairs of input and output $(i,o)$.
+We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex,\ i:(\tau_i \in T) \land o:(\tau_o \in T)$.
+In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), using the compiler to infer types\cite{ghc}, or by inferring the types \cite{gulwani_popl15} based on regular expressions.
+
+The goal in \textit{natural} program synthesis is synthesize programs that meet a specification with the simplest and most readable code.
 As a formalization of simplicity and readability, we present a definition of naturalness.
 
 The standard of measuring complexity (the inverse of naturalness) is cyclomatic complexity\cite{cyclo}.
@@ -29,7 +35,8 @@ The problem is then to find an expression e, such that $\forall (i,o) \in Ex, e 
 
 
 \subsection{Enumeration}
-In order to solve the above problem, we will immediately restrict our search space to exclude generated lambda terms, as such terms will generally induce a very low naturalness score and explode the search space.
+In order to enumerate programs in order of naturalness, we will use a type directed enumeration.
+We can immediately restrict our search space to exclude generated lambda terms (anonymous functions), as such terms will generally induce a very low naturalness score and explode the search space.
 Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only draws from a finite set of predefined expressions.
 
 Let $E$ be the finite set of expressions exposed to the top-level module from user code, imported libraries, and the core library.
@@ -37,15 +44,22 @@ Our search space will be the set of permutations of well-typed applications of e
 
 To determine if an expression is well-typed, let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library.
 A type environment $\Gamma$, is the set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
-The set of well-typed expressions we consider, $\mathcal{G}$, is the infinite set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$. 
+$\tau_i$ may be a type variable, a concrete type
+The set of well-typed expressions we consider, $\mathcal{G}$, is the set $\{e1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$.
+Notice that a cycle in types of $\Gamma$ will create an infinite set $\mathcal{G}$.
 
-We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex,\ i:(\tau_i \in T) \land o:(\tau_o \in T)$.
-In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), using the compiler to infer types\cite{ghc}, or by inferring the types \cite{gulwani_popl15} based on regular expressions.
+As an example, consider the following
 
+\begin{gather*}
+\Gamma = \{f:a\to b, g:b\to c, x:a\} \Rightarrow \\
+\Gamma^2 = \{f:a\to b, g:b\to c, x:a, f(x):b\} \Rightarrow \\
+\Gamma^3 = \mathcal{G} = \{f:a\to b, g:b\to c, x:a, f(x):b, g(f(x)):c\}
+\end{gather*}
 
 
 \subsection{Lifting Example Types}
-While conceptually simple, enumerating all well-typed functions is wasteful - if possible we need to prune the search space.
+While conceptually simple, enumerating all well-typed functions is wasteful.
+As an example - if possible we need to prune the search space.
 To do this, we can exploit an unstated assumption, but widely accepted approach, in existing programming-by-example work.
 Usually, the example pair type is lifted into a function type in the trivial way.
 
@@ -57,7 +71,7 @@ However, a subtyping relation can create more specific types that will better pr
 The subtyping relation $A<:B$ means that any time type $B$ results in a well-typed program, so would type $A$ in place of $B$.
 A subtyping relation induces a subset relation of terms of type $A$ in relation to the terms of type $B$.
 For the purposes of this paper, we use $<:$ to mean only nontrivial subtyping rules - that is we do \textit{not} have $A<:A$.
-Given $\mathcal{A} = \{ x | x::A\}$ and $\mathcal{B} = \{ x | x::B\}$, we have $\mathcal{A}\subseteq\mathcal{B}$.
+Given $\mathcal{A} = \{ x | x:A\}$ and $\mathcal{B} = \{ x | x:B\}$, we have $\mathcal{A}\subseteq\mathcal{B}$.
 Lifting the examples to a subtype of the trivial lifting can then yield a smaller search space.
 
 \begin{flalign*}
@@ -71,7 +85,7 @@ So we must have the following
 
 \begin{flalign*}
 lift'\ (\tau_i, \tau_o) =&\ \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
-(\tau^{s}_{i} <: \tau_i)\ \lor&\ (\tau_o <: \tau^{s}_{o})
+(\tau^{s}_{i} <: \tau_i)\ \lor&\ (\tau_o <: \tau^{s}_{o})\\
 \end{flalign*}
 
 
@@ -88,24 +102,23 @@ However, if we use $lift'$ instead, we would derive a more specific type.
 This more specific type could be a refinement type, expressed here using the syntax of LiquidHaskell\cite{DBLP:conf/icfp/VazouSJVJ14}.
  
 \begin{lstlisting}
-exs :: [Int],[Int]
-lift(exs) :: [Int] -> [Int] 
+exs        :: ([Int],[Int])
+lift(exs)  :: [Int] -> [Int] 
 lift'(exs) ::
-  {x:[Int] -> y:[Int] | length x > length y}
+  {x:[Int] -> y:[Int] | length x = length y}
 \end{lstlisting}
 
 Alternatively, we could also have derived the equally specific type using dependant types\cite{dependant_types}.
-In this case, we would need a definition of (\codeinline{Vec L a}) to describe the type of lists of length \codeinline{L} and elemental type \codeinline{a}.
+In this case, using the Agda language, we would need a definition of (\codeinline{Vec L a}) to describe the type of lists of length \codeinline{L} and elemental type \codeinline{a}.
 
 \begin{lstlisting}
 lift'(exs) ::
   {Vec L Int -> Vec L Int}
 \end{lstlisting}
 
+Notice that in either case, the target function type is a subtype of the trivial lifting, but we have not changed the number of inhabitants of the types of either the domain or range of the target function.
 
-Notice that in either case, the target function type is a subtype of the trivial lifting, but we have not changed either the types of either the domain or range of the target function.
-
-Our approach to natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}$ in order of naturalness, such that $e : lift'(\tau_i,\tau_o)$.
+The approach presented here to efficiently solve natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}$ in order of naturalness, such that $e : lift'(\tau_i,\tau_o)$.
 This list can then be checked in order to find an $e$ such that $\forall (i,o) \in Ex, e (i) = o$.
 
 \subsection{function classification}
@@ -113,49 +126,55 @@ we need to assign all functions in $\mathcal{G}$ a refinement type in order to u
 Hence we do offline analysis.
 
 
-
-%
 %This framing will draw the type of the target expression directly from the examples.
 
-\subsection{Solution Space}\label{solnSpace}
+\subsection{Implementation Solution Space}\label{solnSpace}\
+
+Our implementation restricts the search to the first level of application chains.
+We are no longer using $\mathcal{G}$, but the more restricted space of $\mathcal{G}_I = \Gamma^2$.
+In the context of the previous example, we now have 
+
+\begin{gather*}
+\Gamma = \{f:a\to b, g:b\to c, x:a\} \Rightarrow \\
+\Gamma^2 = \mathcal{G}_I = \{f:a\to b, g:b\to c, x:a, f(x):b\}
+\end{gather*}
+
+we need this restriction because we are not using adga. we are building terms using haskell-src and re-engineering haskell syntax rules, which is a pain. Using agda could significantly reduce this burden by allowing us to program directly with types. However, we dont get all the libraries from haskell if we do that.
+
 While this approach can work for first-order synthesis, we instead focus on data structure manipulation problems that can be solved with higher order functions.
 
-We require all higher order functions to be of a unified signature \texttt{$\_ \to * \to *$}, where the final kind of the signature is a function mapping the input type to the output type. 
-Here, a kind is understood to be the type of a type constructor, in this case \texttt{$\to$}, which constructs a function type from two other types.
+We require all higher order functions to be of a unified type signature $ \star \to \tau_i \to \tau_o$, so that the signature of the solution program is a function mapping the input type to the output type. 
+The type $\star$ is a type wildcard (from the partial type signatures of GHC~\cite{ghc}) that could be filled by a first-order function or a first-order function along with an initial value.
+In the case of \codeinline{map :: (a -> b) -> [a] -> [b]}, the $\star$ matches \codeinline{(a -> b)}.
+In the case of \codeinline{foldr :: (a -> b -> b) -> b -> [a] -> b)}, the $\star$ matches \codeinline{(a -> b -> b) -> b}.
 
-The practical consequence of this format is that a user must partially uncurry (collapsing trailing function arguments into a single tuple argument) any higher-order function they are interested in using during synthesis.
-This also means that any type variable appearing in the higher-order function must be accounted for in the input and output types so that all type variables in its signature can be resolved.
-This allows us to conclude that any types that are between the input and first order function will be static initial values, which can be assigned using the process described in Section \ref{makeFxns}.
-This is a simple procedure that makes use of the user's domain knowledge of which parameters to the function will be given by the examples; consider:
+This is generally a weak constraint, as good functional programming style dictates any higher order function that manipulates a data structure should have such a type signature.
+This constraint is used to eliminate higher order functions such as \codeinline{flip:: (a ->b -> c) -> b -> a -> c}.
+This function would complicate analysis and management of the search space, and in practice in not often necessary.
 
-\begin{lstlisting}
-zipWith' :: (a -> b -> c) -> ([a], [b]) -> [c]
-zipWith' f (xs,ys) = zipWith f xs ys
-\end{lstlisting}
+%\markk{the paragraph below makes no sense to me at all. better leave it out}
 
-By formally defining the space of functions we are interested in synthesizing, we can this definition to prove some properties on the algorithm.
-In particular we show in Section \ref{sound} that \ourTool/ is complete for this subset of functions.
+%The user must partially uncurry (collapsing trailing function arguments into a single tuple argument) any higher-order function they are interested in using during synthesis.
+%This also means that any type variable appearing in the higher-order function must be accounted for in the input and output types so that all type variables in its signature can be resolved.
+%This allows us to conclude that any types that are between the input and first order function will be static initial values, which can be assigned using the process described in Section \ref{makeFxns}.
+%This is a simple procedure that makes use of the user's domain knowledge of which parameters to the function will be given by the examples; consider:
 
-the solutions \ourTool/ supports synthesizing are higher-order data structure manipulation programs.
+%\begin{lstlisting}
+%zipWith' :: (a -> b -> c) -> ([a], [b]) -> [c]
+%zipWith' f (xs,ys) = zipWith f xs ys
+%\end{lstlisting}
+
+
+The solutions \ourTool/ supports synthesizing are higher-order data structure manipulation programs.
 The higher-order functions take a component function that is a first-order function, for example \codeinline{(+)}.
-The solution programs can be expressed as:
-% up to reordering of terms (we dont actually support this, should we really include this)
 
-\markk{TODO we need this restriction because we are not using adga. we are building terms using haskell-src and re-engineering haskell syntax rules, which is a pain. Using agda could significantly reduce this burden by allowing us to program directly with types. However, we dont get all the libraries from haskell if we do that. }
 
-\begin{lstlisting}
-solution ::
-           (* -> types)  -- Component Function
-        ->  types        -- Initial Values
-        ->  *            -- Input
-        ->  *            -- Output
-types = * | * -> types
--- * matches on type variables and constructors.
-\end{lstlisting}
+Generally, the component function is applied across the \textsf{input} data structure, which the \textsf{solution} uses to construct an \textsf{output} data structure or reduction.
+As we will demonstrate in Section \ref{evaluation} this set is expressive enough to support the classic \texttt{map}, \texttt{filter}, and \texttt{fold} functions, as well as higher order functions found in imported modules and user-supplied code.
 
-Generally, the component function is applied across the \textsf{input} data structure, which the \textsf{solution} uses to construct an \textsf{output} data structure or reduction. As we will argue in Section \ref{evaluation} this set is expressive enough to support the classic \texttt{map}, \texttt{filter}, and \texttt{fold} functions, as well as higher order functions found in imported modules and user-supplied code.
-
-Our goal is to create a synthesis procedure that is easily portable across full implementations of functional languages (Haskell, OCaml, etc), so we prefer using a type directed approach to synthesis over explicit code analysis whenever possible. This increases the portability and longevity of our system. For this implementation we target Haskell, detailing the exact modifications needed to expand this to other languages in Section \ref{languageSupport}.
+Our goal is to create a synthesis procedure that is easily portable across full implementations of functional languages (Haskell, OCaml, etc), so we prefer using a type directed approach to synthesis over explicit code analysis whenever possible.
+This increases the portability and longevity of our system.
+For this implementation we target Haskell, detailing the exact modifications needed to expand this to other languages in Section \ref{languageSupport}.
 
 %Our algorithm does not explicitly try to fit component functions to the examples. Instead, we leverage a promising body of existing work in synthesizing top-level, first-order functions \cite{potential, reviewers}. While it is out of scope to go in to detail, we will briefly discuss the integration of these synthesis procedures in Section \ref{conclusions}.
 
