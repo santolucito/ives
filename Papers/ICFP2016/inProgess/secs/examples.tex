@@ -11,11 +11,12 @@ corresponding to these examples. The tool is embedded in Haskell, so examples us
 
 %introduction to us using stutter- from the ground up
 We start with a \codeinline{stutter} program. It is one of canonical 
-examples used by similar tools \cite{Osera:2016}. The \codeinline{stutter} program takes as input a list of elements and duplicates each element 
+examples used by similar tools~\cite{Osera:2016}. The \codeinline{stutter} program takes as input a list of elements and duplicates each element 
 of the list.
  
-Following the programming by example principles, the user 
-provide a list of examples as a list of input/output pairs to the special variable \codeinline{exs}.
+Following the programming-by-example principles, the user 
+provide a list of examples as a list of input/output pairs to the special variable \codeinline{exs}. These examples should be
+illustrative enough to convey her intentions:
 
 \begin{lstlisting}
 exs :: [([Int], [Int])]
@@ -24,36 +25,46 @@ exs = [([1, 2, 3], [1, 1, 2, 2, 3, 3])]
 
 Invoking \ourTool/ on this example starts to construct programs  satisfying that when they are applied to the list $[1, 2, 3]$ the result 
 is $[1, 1, 2, 2, 3, 3]$.
-Using a type-directed enumeration, we look for programs fitting the given example type.
+Using a type-directed enumeration, we look for programs fitting the given example type, in this case \codeinline{[Int]->[Int]}.
 We first search for first order functions of type \codeinline{[Int]->[Int]}.
 In addition we look for generalizations of the given type, such as \codeinline{[a]->[a]}, or \codeinline{Num a => [a]->[a]}.
-Some functions like this will be \codeinline{cycle} or \codeinline{tail} - which will not satisfy these examples.
+There are various functions of this type, such as \codeinline{cycle} or \codeinline{tail}, but they do not satisfy the given example.
 Once we have exhausted this class of functions, we begin searching for chains of application.
-In particular, we focus on higher order functions because they result in more interesting programs and are more challenging.
+In particular, we focus on higher order functions because they are widely use in Haskell programs. Additionally, their use in program synthesis 
+in general has not been studied extensively as for first-order functions.
 
-One higher order function of interest is in the Haskell the standard library; \codeinline{concatMap :: (a -> [b]) -> [a] -> [b]} which applies a function over a list and concatenates the result.
-With \codeinline{concatMap} as a candidate higher order function, we can now search for a component first order function of type \codeinline{a -> [b]}.
-We will not find a useful function of such a type, and need to continue searching for generalizations of that type.
-We will find the function \codeinline{replicate n :: Int -> a -> [a]} in the standard library, which will replicate an item n times into a list.
+For the given example a higher order function of interest is present in the Haskell the standard library; \codeinline{concatMap :: (a -> [b]) -> [a] -> [b]} which applies a function over a list and concatenates the result.
+With \codeinline{concatMap} as a candidate higher order function, we focus
+ our search for its first argument, which is a first order function of type \codeinline{a -> [b]}.
+Since our algorithm does not find a useful function of such a type, we continue searching for generalizations of that type.
+This way we find the function \codeinline{replicate n :: Int -> a -> [a]} in the standard library, which will replicate an item n times into a list.
 This function only needs to be specialized to our examples by applying an initial value.
 
-In the end, \ourTool/ only requires a single example to synthesize the program \codeinline{concatMap (replicate 2)}.
-If however, in addition to the above example, the user provided a function \codeinline{dupl} which duplicates an element, there is now a second possible solution to the synthesis.
-Rather waiting to find all solutions, \ourTool/ returns solutions to the user as they are found, then proceeds with rest of the search.
-For this example, \ourTool/ will return the solution \codeinline{concatMap dupl} after X seconds, continue searching and return \codeinline{concatMap (replicate 2)} after X+Y seconds.
+In the end, \ourTool/ returns the program \codeinline{concatMap (replicate 2)}. It only required a single example to synthesize this code.
 
+However, in the above example we considered only functions from the standard Haskell library. Let us now extend the program with a user defined function \codeinline{dupl} which duplicates an element:
 \begin{lstlisting}
 dupl :: a -> [a]
 dupl x = [x,x]
 \end{lstlisting}
 
-In order to return better solutions in the beginning of the search, we use a ranking system based on the complexity of the generated programs.
-We introduce a new complexity measure called \textit{naturalness} to help guide our search.
+Clearly, there is now a second possible solution to the synthesis problem.
+Rather than waiting to find all solutions, \ourTool/ returns solutions to the user as they are found, and then further proceeds with rest of the search.
+In this example, \ourTool/ returns the solution \codeinline{concatMap dupl} after X seconds, continue searching and return \codeinline{concatMap (replicate 2)} after X+Y seconds.
+
+This program was also synthesized in MYTH~\cite{Osera:2015}. However, their focus was on lists as inductively defined data types. Instead we 
+are focusing on using the built in representation of a list in Haskell.
+
+\ourTool/ returns several solutions satisfying the given examples. In
+ order to return better solutions in the beginning of the search, we use a ranking system. By ``better'' solution we mean solutions that are more intuitive, simpler, and more relevant to the user. Formally, we introduce a new complexity measure called \textit{naturalness} (defined in 
+Sec.~\ref{sec:naturalness} and our goal is to find the most natural solution. We use a ranking system based on the complexity of the 
+generated programs. The ranking system also helps to guide our search.
 Naturalness will also help us avoid the difficult to read solutions as those often seen in other programming-by-example systems.
 
-If programming-by-example is to be integrated into mainstream programming environments, the generated code must be readable and editable.
+Our ultimate goal is to integrate the programming-by-example paradigm 
+into mainstream programming environments, thus the generated code must be readable and editable.
 The code should also support a real language and use native datatypes to the language.
-While in MYTH~\cite{Osera:2015} the focus was on lists as inductively defined data types, we are focusing on using the built in representation of a list in Haskell.
+
 
 \subsection{Optimizing with types}
 
