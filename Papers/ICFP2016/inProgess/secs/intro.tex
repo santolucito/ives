@@ -75,7 +75,7 @@ In Listing \ref{natSyn}, we have already seen the potential to synthesize natura
 However, a synthesis engine should also be able to synthesize novel (and sometimes unexpected) solutions to problems.
 Since the stated goal is to find simple programs that a human might write, this raises the question if finding ``natural'' and and novel programs are at odds with each other.
 
-Our evaluation section showed that this is not the case.
+Our evaluation section shows that this is not the case.
 For example, natural synthesis of the Boolean ``or'' function finds two function, \codeinline{any (id)} and \codeinline{foldr1 (max)}.
 The \codeinline{any (id)} solution would expected by Haskell programmer, where \codeinline{any:: (a-> Bool) -> [a] -> Bool)} is a built-in function to Haskell that returns \codeinline{True} if any element of a list satisfies the predicate function.
 The more novel solution returned by our natural synthesis is \codeinline{foldr1 (max)}, where \codeinline{max :: Ord a => a -> a -> a} will return the maximum element of the two inputs.
@@ -84,8 +84,8 @@ By folding over the list, this solution program exploits the \codeinline{Enum} p
 In summary, we present the following contributions:
 
 \begin{enumerate}
-\item Using a weighted-subtyping based, enumerative search to synthesize natural code from libraries.
-\item Separation of synthesis by higher order and first order functions.
+\item A definition of naturalness to describe the complexity of functional code, and a definition of the problem of natural program synthesis.
+\item A weighted, type directed, enumeration strategy that generates programs of a high naturalness score for programs that also satisfy user provided examples. synthesize natural code from libraries.
 \item Exploiting an implicit assumption in existing programming by example work to shrink the search space.
 \item A weighted subtyping algorithm for first order synthesis.
 \item An implementation evaluation of the performance of \ourTool/ in Haskell running synthesis over some Haskell libraries. The benchmarks presented show our tool can efficiently generate a wide variety of code that mixes functions from multiple sources. that produces natural code from few examples.
