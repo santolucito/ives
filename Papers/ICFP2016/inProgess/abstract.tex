@@ -1,16 +1,9 @@
 \begin{abstract}
-  We present a method of programming-by-example synthesis the utilizes user defined definitions to generate natural code.
-  This modular synthesis algorithm seperates higher-order and first-order function synthesis into two stages.
-  Given a set of input-output examples, our method first selects the best fitting, potential higher-order functions.
-  Combined with a simple, type-directed first order synthesis procedure, we can generate full, easy to read, programs.
+ 
+Programming by example is a popular paradigm used in software synthesis. The user provides a set of input-output examples that should illustrate her intentions, and a synthesis engine should automatically generate a program that satisfies these examples. However, often it is the case that the return code is very complex and unreadable, although it is correct. We propose a
+synthesis approach that generates  full, easy to read Haskell programs. Our tool finds best fitting, potentially higher order functions. The returned program utilizes Haskell libraries as well as user defined functions. Our algorithm incrementally aims to construct values that are considered "most natural" first.  We use refinement types to help us prune the search space of all programs.   Something else here???
 
-  We use a \textit{dismantling} technique to infer refinement types over candidate higher-order functions.
-  Then, we infer a set of potential refinement types over the input-output examples.
-  Merging these two sets gives a ranked list of suitable higher-order functions.
-  Using refinement types frees us from the need for restrictive templating, allowing us to use full libraries in our synthesis procedure.
-  To complete the synthesis, we use a best-first enumerative search based on a weighted subtyping to remove the need for subexample generation, which would rely on further templating.
 
-  We implement this approach in \ourTool/ against a set of synthesis examples including lists, trees, maps, and specialized musical score data structures.
-  The synthesized programs operate over datastructures and draw functions from various real world Haskell packages.
-  This evaluation demonstrates the scalability and versatility of this approach.
+We implement this approach in \ourTool/ and we evaluate it on  set of synthesis examples including lists, trees, maps, and specialized musical score data structures. The synthesized programs operate over data structures and draw functions from various real world Haskell packages. The evaluation demonstrates the scalability and versatility of this approach. 
+ 
 \end{abstract}
