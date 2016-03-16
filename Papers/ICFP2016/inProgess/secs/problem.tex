@@ -23,7 +23,16 @@ We place a constraint on the given example set that $\forall j. 0 \le j \le n. i
 Let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library. Additionally, we require that the given specification also satisfies $\tau_{in} \in T \land
 \tau_{out} \in T$.
 
+The goal is to find a Haskell expression $e$ such that it holds $\forall j. 0 \le j \le n.\  e (i_j) = o_j$.
 
+This problem is in general undecidable. Finding a function of a type 
+$\tau_{in} \rightarrow \tau_{out}$ (or even some of its generalization) is studied in the literature as a type inhabitation problem which is known to be undecidable 
+for Haskell. The problem is decidable for 
+ the simply typed lambda calculus but is PSPACE-complete~\cite{DBLP:conf/tlca/Urzyczyn97}. 
+ As soon as we add polymorphism to the language the type inhabitation problem becomes undecidable~\cite{DBLP:conf/lics/Wells94}. We have additional restriction that even if we find an inhabitatant, it also has to satisfy the given examples.
+ 
+Therefore, the focus of our 
+ 
 
 \subsection{Naturalness}
 \label{sec:naturalness}
