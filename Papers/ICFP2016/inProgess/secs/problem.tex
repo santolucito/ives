@@ -73,14 +73,17 @@ to find an expression $e$, such that it holds
 \forall j. 0 \le j \le n.\  e (i_j) = o_j \land \\
  \forall e'. (\forall j. 0 \le j \le n.\  e' (i_j) = o_j) \Rightarrow \mathcal{N}(e) \le \mathcal{N}(e')
 \end{multline*}
-.
-
 
 
 
 \subsection{Enumeration}
 \label{sec:enumeration}
-In order to enumerate programs in order of naturalness, we will use a type directed enumeration.
+
+We use an iterative algorithm that enumerates all the programs 
+programs in order of naturalness. To do that we use a type directed enumeration. As we find a program that satisfies provided examples, \ourTool/ outputs the program to the user. In the first round of the algorithm we try to find a program $C$, such that $\mathcal{N}(C) = 1$.
+If exist, such program is a first-order function. In the next round we search for the 
+programs such that $\mathcal{N}(C) = 2$, and we pro
+
 This type directed enumeration will also need to order the terms by their likelihood to satisfy the examples.
 Here we describe the space of expressions over which we enumerate, and how this pertains to naturalness.
 We describe how the enumeration technique tries to order terms by likelihood to succeed in Sections \ref{synth} and \ref{offline}.
