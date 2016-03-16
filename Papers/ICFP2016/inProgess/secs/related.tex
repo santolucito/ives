@@ -42,32 +42,8 @@ However, since the ability of $\Lambda^2$ to generate subexamples relied on hard
 While inferring the hypotheses might be possible by inspecting the code, we have maintained a dedication to minimize our reliance on code analysis techniques for portability and longevity of the system.
 The best way to automatically create subexample generation functions solely based on type information remains a difficult problem.
 
-\markk{ALL CRAP}
-Another feature these works support is the synthesis of first order function.
-According to our problem specification in Section \ref{problem}, we are only focused on synthesizing higher order functions.
-One common synthesis problem these works present is to append an item to a list.
-If we were to extend our strategy to first order functions, \ourTool/ would just search through the libraries to find the \codeinline{append} function, as the most natural solution.
-With the eventual goal of building a complete program synthesis engine, we will need to integrate with more advanced first order function synthesis systems.
-While this problem has been investigated in isolation, it is not clear how to efficiently determine if a set of examples more naturally calls for a higher order function or a first order function.
 
 
-\markk{ALL CRAP}
-One direction to explore for first order synthesis is the type reduction algorithm in Section \ref{initVals}.
-In providing initial values for component functions, we current are strictly reducing the number of kinds in a type signature.
-While this gives us a termination of search guarantee and completeness over the search space, that is not particularly useful guarantee in this case.
-Imagining \ourTool/ integrated with an IDE, it would be better to keep the tool running constantly to infinitely search for new suggestions to the code.
-To this end we could also enable non-reducing types reducing applications, which would create an infinite recursion, but allow us to find many more functions.
-Rather than supplying values to functions, we could supply more functions.
-
-\begin{lstlisting}[numbers=none]
--- given a component function
-f :: Int -> Int
-f = (+1)
--- `apply' a function rather than a value
-f' :: Int -> Int
-f' = f . (+2)
-
-\end{lstlisting}
 
 
 
