@@ -50,7 +50,7 @@ Since users write higher order functions with a deep understanding of the domain
 In order to facilitate synthesis over user defined higher order functions, we run the synthesis algorithm in two stages.
 The first offline preprocessing stage infers rules about how user defined, or imported higher order functions behave over their input and output types.
 We encode these rules using refinement types in Haskell with the \lhask/ tool~\cite{DBLP:conf/haskell/VazouSJ14}.
-By using all teh information avaible from the examples, we also inferr refinement types on the example set. 
+By using all the information available from the examples, we also infer refinement types on the example set. 
 This is used during the online synthesis stage, along with a type match ranking algorithm to efficiently prune and navigate the search space of solution programs.
 
 
