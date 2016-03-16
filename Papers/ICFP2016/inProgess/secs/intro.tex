@@ -28,15 +28,15 @@ It can also reuse user-defined and library functions in the synthesis procedure,
 \ourTool/ can be used as a standalone tool as many previous works have functioned, but could also be integrated into an IDE.
 
 Take the simple task of synthesizing a list flattening function from examples.
-Synthesis approaches that use only the primitive recursive operators~\cite{Osera:2015,FeserCD15}, would find a function similar to \codeinline{solution1} in Listing \ref{natSyn}.
-Our tool instead focuses on actually utilizing common library functions, as seen in \codeinline{solution2}.
+Synthesis approaches that use only the primitive recursive operators~\cite{Osera:2015,FeserCD15}, would find a function similar to \codeinline{solution1} in Listing \ref{natSyn} (modulo language syntax).
+Our tool instead focuses on utilizing common library functions, as seen in \codeinline{solution2}.
 To quantify our goal of simplicity, we define a notion of \textit{naturalness} of code in Section \ref{sec:naturalness}.
-Intuitively, Solution2 should have a higher naturalness score than solution1.
+Intuitively, \codeinline{solution2} should have a higher naturalness score than \codeinline{solution1}.
 
 
 \begin{figure}
   \begin{lstlisting}[caption=Low-level synthesis vs. Natural synthesis,label=natSyn]
-    [[1,2],[3,4]] :-> [1,2,3,4]
+    exs = ([[1,2],[3,4]], [1,2,3,4])
 
     solution1 xs =
       (\c n -> foldr
@@ -48,10 +48,9 @@ Intuitively, Solution2 should have a higher naturalness score than solution1.
 \end{figure}
 
 \noindent In fact, \codeinline{solution1} is just an application of the GHC\cite{ghc} implementation of concatMap.
-To synthesize this solution using only the core higher order functions is certainly motivating, however a user would likely prefer to see a higher order-function, like \codeinline{concatMap}, which exists in a standard library, when using synthesis with the goal of writing their own code.
+To synthesize this solution using only the core higher order functions is certainly motivating, however a user would likely prefer to see a single function, like \codeinline{concatMap}, which exists in a standard library, when using synthesis with the goal of writing their own code.
 
 We choose to focus on functional programming, where a core part of the experience is writing higher order functions.
-
 Functional programming encourages specifying general behaviors in the form of abstract, higher-order functions, and then filling in details with first-order functions later.
 In fact, many users write higher order functions first, then combine them in interesting and useful ways~\cite{Lipovaca:2011}.
 Library authors often provide users with a number of domain specific higher order functions to enable programmers to more easily write their applications.
@@ -85,8 +84,7 @@ In summary, we present the following contributions:
 
 \begin{enumerate}
 \item A definition of naturalness to describe the complexity of functional code, and a definition of the problem of natural program synthesis.
-\item A weighted, type directed, enumeration strategy that generates programs of a high naturalness score for programs that also satisfy user provided examples. synthesize natural code from libraries.
-\item Exploiting an implicit assumption in existing programming by example work to shrink the search space.
-\item A weighted subtyping algorithm for first order synthesis.
-\item An implementation evaluation of the performance of \ourTool/ in Haskell running synthesis over some Haskell libraries. The benchmarks presented show our tool can efficiently generate a wide variety of code that mixes functions from multiple sources. that produces natural code from few examples.
+\item A weighted, type directed, enumeration strategy that generates programs of a high naturalness score for programs that also satisfy user provided examples. 
+\item An exploitation of an implicit assumption in existing programming by example work to shrink the search space using refinement types.
+\item An evaluation of the performance of our implementation, \ourTool/, in Haskell to synthesize programs that utilize Haskell libraries. The benchmarks show our tool can efficiently generate a wide variety of code that mixes functions from multiple sources.
 \end{enumerate}

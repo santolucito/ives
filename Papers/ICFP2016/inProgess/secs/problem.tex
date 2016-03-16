@@ -118,7 +118,7 @@ To do this, we can exploit an unstated assumption, but widely accepted approach,
 Usually, the example pair type is lifted into a function type in the trivial way.
 
 \begin{flalign*}
-\lift \ (\tau_i, \tau_o) =\ \tau_i \to \tau_o
+\lift \ (\tau_{in}, \tau_{out}) =\ \tau_{in} \to \tau_{out}
 \end{flalign*}
 
 However, a subtyping relation can create more specific types that will better prune the space.
@@ -129,7 +129,7 @@ Given $\mathcal{A} = \{ x | x:A\}$ and $\mathcal{B} = \{ x | x:B\}$, we have $\m
 Lifting the examples to a subtype of the trivial lifting can then yield a smaller search space.
 
 \begin{flalign*}
-\lift'\ (\tau_i, \tau_o) <:\ \tau_i \to \tau_o\\
+\lift'\ (\tau_{in}, \tau_{out}) <:\ \tau_{in} \to \tau_{out}\\
 \end{flalign*}
 
 Notice that we did not write out a full function for the subtype.
@@ -138,8 +138,8 @@ However, we do not wish to restrict the domain or range of the function, but onl
 So we must have the following
 
 \begin{flalign*}
-\lift'\ (\tau_i, \tau_o) =&\ \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
-(\tau^{s}_{i} <: \tau_i)\ \lor&\ (\tau_o <: \tau^{s}_{o})\\
+\lift'\ (\tau_{in}, \tau_{out}) =&\ \tau^{s}_{in} \to \tau^{s}_{out} \nRightarrow\\
+(\tau^{s}_{in} <: \tau_{in})\ \lor&\ (\tau_{out} <: \tau^{s}_{o})\\
 \end{flalign*}
 
 
@@ -187,7 +187,7 @@ In fact, in implementation we do not need to fully generate $\Gamma^2$.
 Since we will not be generating $\Gamma^n, n>2$, we only need to consider functions within $\Gamma^2$, where the input and output types match the examples.
 
 \begin{gather*}
-\mathcal{G}_I = \Gamma^2 \cap \{f | f : \tau_i \to \tau_o\}
+\mathcal{G}_I = \Gamma^2 \cap \{f | f : \tau_{in} \to \tau_{out}\}
 \end{gather*}
 
 We need this restriction because we are building terms using haskell-src and re-engineering Haskell syntax and application rules, which a very labor intensive approach.
@@ -202,7 +202,7 @@ Haskell provides us with a rich set of libraries that allows us to explore this 
 
 While this approach can work for first-order synthesis, we instead focus on data structure manipulation problems that can be solved with higher order functions.
 
-We require all higher order functions to be of a unified type signature $(\star \to \tau_i \to \tau_o)$, so that the signature of the solution program is a function mapping the input type to the output type. 
+We require all higher order functions to be of a unified type signature $(\star \to \tau_{in} \to \tau_{out})$, so that the signature of the solution program is a function mapping the input type to the output type. 
 The type $\star$ is a type wild-card (from the partial type signatures of GHC~\cite{ghc}) that could be filled by a first-order function or a first-order function along with an initial value.
 In the case of \codeinline{map :: (a -> b) -> [a] -> [b]}, the $\star$ matches \codeinline{(a -> b)}.
 In the case of \codeinline{foldr :: (a -> b -> b) -> b -> [a] -> b)}, the $\star$ matches \codeinline{(a -> b -> b) -> b}.
@@ -226,5 +226,5 @@ This function would complicate analysis and management of the search space, and 
 Generally, the component function is applied across the \textsf{input} data structure, which the \textsf{solution} uses to construct an \textsf{output} data structure or reduction.
 As we will demonstrate in Section \ref{evaluation} this set is expressive enough to support the classic \texttt{map}, \texttt{filter}, and \texttt{fold} functions, as well as higher order functions found in imported modules and user-supplied code.
 
-The approach presented here to efficiently solve natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_i,\tau_o)\}$, enumerate $\mathcal{G}_I$ to efficiently approximate naturalness.
+The approach presented here to efficiently solve natural synthesis is then: given a type environment $\Gamma$ and an example set $Ex:\{(\tau_{in},\tau_{out})\}$, enumerate $\mathcal{G}_I$ to efficiently approximate naturalness.
 This list can then be checked in order to find an $e$ such that $\forall (i,o) \in Ex, e (i) = o$.
