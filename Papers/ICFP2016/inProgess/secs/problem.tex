@@ -78,8 +78,7 @@ Our synthesis approach will then only be able to solve synthesis problems when a
 Let $E$ be the finite set of expressions exposed to the top-level module from user code, imported libraries, and the core library.
 Our search space will be the set of permutations of well-typed applications of elements of $E$.
 
-To determine if an expression is well-typed, 
-
+%To determine if an expression is well-typed, 
 
 A type environment $\Gamma$, is the set $\{e_1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
 $\tau_i$ may be a type variable, a concrete type
@@ -94,6 +93,10 @@ As an example, consider the following
 \Gamma^3 = \mathcal{G} = \{f:a\to b, g:b\to c, x:a, f(x):b, g(f(x)):c\}
 \end{gather*}
 
+With our definition of $\mathcal{G}$, we now have a decidable space that will allow us to approach the natural synthesis problem.
+In fact, we will rely on the definition of this space to ensure we are searching in the neighborhood of high naturalness measure programs.
+As our implementation will only be a subset of the space, we do not need to directly encode a measure of naturalness into the algorithm.
+Our main task is then to find a efficient solution to the now decidable problem.
 
 \subsection{Lifting Example Types}
 While conceptually simple, enumerating all well-typed functions is wasteful.

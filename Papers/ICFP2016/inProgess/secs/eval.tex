@@ -31,7 +31,7 @@ For example, if the constant 10 is not in $\mathcal{G}$, we can only reproduce i
   \def\arraystretch{1.1}
   \begin{tabular}{|c|l|c|l|l|l|l|}
     \hline
-    & Name & Time (s) & Imports & \# Ex & Representative Example & Generated Function \\
+    & Name & Time (s) & Imports & \# Ex & Representative Example & $1^{st}$ Generated Function \\
     \hline
     \parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{Bool}}}
     & and & 2.02 & None & 3 & [True, False] $:\to$ False & all id \\
@@ -70,7 +70,7 @@ For example, if the constant 10 is not in $\mathcal{G}$, we can only reproduce i
   \label{tab:benchmarks}
 \end{table*}
 
-In Table \ref{tab:benchmarks} we show detailed information about \ourTool/ over a set of benchmarks. These benchmarks were chosen to show the versatility of \ourTool/ over many different applications and libraries. The benchmarks over booleans, trees, and lists are common to many other programming-by-example tools. The examples that utilize the \codeinline{Data.List} and \codeinline{Euterpea} libraries to show \ourTool/'s ability to work with large, highly specialized, 3rd-party libraries. Due to the algorithm's focus on generating natural code, the synthesized functions are concise enough to be listed within the table itself. The representative examples show that few, simple hints to the synthesizer are able to produce good results. In many cases, the representative examples are actually the \textit{only} examples necessary to synthesize the desired function. This shows that our approach uses the information available to it effectively.
+In Table \ref{tab:benchmarks} we show detailed information about \ourTool/ over a set of benchmarks. These benchmarks were chosen to show the versatility of \ourTool/ over many different applications and libraries. The benchmarks over Booleans, trees, and lists are common to many other programming-by-example tools. The examples that utilize the \codeinline{Data.List} and \codeinline{Euterpea} libraries to show \ourTool/'s ability to work with large, highly specialized, 3rd-party libraries. Due to the algorithm's focus on generating natural code, the synthesized functions are concise enough to be listed within the table itself. The representative examples show that few, simple hints to the synthesizer are able to produce good results. In many cases, the representative examples are actually the \textit{only} examples necessary to synthesize the desired function. This shows that our approach uses the information available to it effectively.
 
 In addition, the runtime average about ten seconds thanks to the inherently parallel nature of the search. With just a few lines of code, we were able to achieve order-of-magnitude speedups over the serial version. Haskell's functional parallelism model is ideal for embarrassingly parallel problems like this one, and promises good scaling to larger instances of the problem over increasing computational resources.
 

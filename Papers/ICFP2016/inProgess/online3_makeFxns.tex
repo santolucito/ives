@@ -55,6 +55,7 @@ As an example, importing the Data.Monoid library, will bring into scope the unit
 There is no Monoid instance for Int in Data.Monoid however. 
 There are two valid monoids for numbers, using either (+) or (*) as the operators and resulting in unit elements 0 and 1 respectively. 
 Because these are particularly common value,  we hard code both of these values (along with the other useful values of -1, and 2), bringing them into $\Gamma$ and thereby making them available by default in synthesis.
+Note that using initial values in fact is a slight transgression of the formalism, as this may result in some use of the $\Gamma^3$ space.
 
 Presented with the problem of finding integer values to satisfy the examples may initially seem like a good application for an SMT solver.
 However, keep in mind that we do not in general know what we are trying to solve - the actual use of these variables is hidden within the function definition.
