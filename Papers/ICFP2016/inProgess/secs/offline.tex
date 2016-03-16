@@ -20,8 +20,9 @@ In line 9 of Listing \ref{listing:Algo} we call the \codeinline{assignRTypes} fu
 These refinement will be used to prune the search space in synthesis, as explained in detail in Section \ref{synth}.
 In brief, the size relation that applies to the higher order functions must also apply to the examples in order to consider that function as a candidate.
 When writing the refinement types, we can be sure, by our specification in Section \ref{problem}, that the last two types are always the input and output.
-With this unified signature for all considered higher order functions, we can use a template to assign a refinement types.
+With the unified signature for all considered higher order functions, we can create a template to assign a refinement types.
 This template uses GHC's partial type signatures and type wildcards, in order to account for the diversity of component functions and initial values that might be required for any given higher order function.
+This template is very similar to the $lift'$ refinement type inference for examples.
 
 \begin{lstlisting}[numbers=none]
 template :: _ -> i:[a] -> {o:[b] |
@@ -41,7 +42,7 @@ Notice that map will actually satisfy all three of these predicates, which in ge
 
 While one could imagine deriving more specific formulas for the refinement types, this would then require a more advanced unification procedure between the examples' refinement types and the higher order functions' refinement types.
 Currently the unification procedure is a simple equality check.
-A small step in this direction might be to have a subtyping relation between $\leq$ and $<$, but our evaluation has not shown this to currently be the highest priority optimization.
+A step in this direction might be to have a subtyping relation between $\leq$ and $<$ - our evaluation in fact shows that this could significantly benefit some test cases.
 
 
 \begin{lstlisting}[caption=Adding refinement types to higher order functions,label=listing:addRType]
@@ -66,7 +67,7 @@ These \codeinline{noRType} tagged functions can be further pruned in the synthes
 
 \subsection{User defined data types}
 %We focus only higher order functions that manipulate data structures
-In order to support user defined data structures, we only require that a user implements some kind of measure\cite{DBLP:conf/haskell/VazouSJ14} over their data structure.
+In order to support user defined data structures, we only require that a user implements some kind of measure ~\cite{DBLP:conf/haskell/VazouSJ14} over their data structure.
 This size function will allow \lhask/ to determine size constraints on the examples, so that \ourTool/ can pick higher order functions that also satisfy those size predicates.
 In fact, the size function could just be a constant function, resulting in every function and example satisfying the equality refinement type predicate.
 This means the system will test every higher-order function that fits the types.
@@ -76,7 +77,8 @@ The user would have needed to provide a measure function for Music a.
 This measure will allow \lhask/ to draw conclusions about the size of examples of type \codeinline{[Music a :-> Music a]}, as well as conclusions about higher order functions over the Music data structure.
 In this context, one sensible measure function counts the number of notes (Prim) in the tree-like Music structure, as shown by the \codeinline{len} function in Listing \ref{lenFxn}.
 
-Any data structure that is an instance of Foldable, automatically has the measure \codeinline{\{-@ measure length @-\}}.
+While it is rare for an average user to write a measure for a datatype, it is a simple process.
+Additionally, any data structure that is an instance of Foldable, automatically has the measure \codeinline{\{-@ measure length @-\}}.
 
 \begin{lstlisting}[caption=a user defined measure over a datatype,label=lenFxn]
 import Euterpea

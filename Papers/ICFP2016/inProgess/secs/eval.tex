@@ -2,14 +2,6 @@
 
 \subsection{Soundness and Completeness}\label{sound}
 
-
-Since we perform enumerative search over $\mathcal{G}_I$, which is a subset of the finite set $\Gamma^2$, our approach is complete in the trivial sense. 
-Clearly, it is not at all complete in general.
-If the search space was the full $\mathcal{G}$, we would have completeness (every permutation of every identifier in scope is equivalent to the full language).
-This is not at all a useful completeness, since the generated programs would be unreadable.
-For example, if the constant 10 is not in $\mathcal{G}$, we can only reproduce it with some combination of operations on the hardcoded initial values, e.g. (1+...(1+ (1))).
-
-\markk{TODO THIS SUBSECTION IS ALL JUNK NOW WITH NEW FORMALISM}
 It is clear that no function will be returned by the algorithm that does not fit the examples given, since functions are validated before being reported.
 Therefore, it is trivial to conclude that \ourTool/ is sound over the given examples.
 Still, it is possible for the synthesis procedure to return a function that does not capture the user's intent - that is, as with any programming by examples system, \ourTool/ is not sound over the user intent.
@@ -17,10 +9,17 @@ Generally, this ambiguity can be resolved by the user supplying more examples to
 However, depending on what the user is trying to synthesize, and which examples have been provided, it is possible for new examples to increase the internal search space.
 If, for example, a user gives only positive examples for a \texttt{filter}, the refinement type predicate discovery will assume that the lists do not change size, and will likely return \texttt{map id} as a result.
 
-The completeness claim we might like to make is that over the solution space defined in Section \ref{problem}, we will always find a solution if it exists.
-Since our space is finite (TODO considering only initial values induced by the types monoid instance), completeness can be made trivially true by replacing all instances of pruning with a zero ranking, so that our algorithm now is only a best-first enumerative search.
-Because we make some decisions in pruning that removes potentially sound functions, such as using the \codeinline{noRType} tag in Section \ref{HORtypeInf} we trade this completeness for performance.
-In Section \ref{sec:related}, we will discuss why, even if we had completeness, it should be sacrificed in future work.
+Since we perform enumerative search over $\mathcal{G}_I$, which is a subset of the finite set $\Gamma^2$, our approach is complete in the trivial sense. 
+If the search space was the full $\mathcal{G}$, we would have completeness (every permutation of every identifier in scope is equivalent to the full language).
+This is not at all a useful completeness, since the generated programs would be unreadable.
+For example, if the constant 10 is not in $\mathcal{G}$, we can only reproduce it with some combination of operations on the hardcoded initial values, e.g. (1+...(1+ (1))).
+
+
+
+%The completeness claim we might like to make is that over the solution space defined in Section \ref{problem}, we will always find a solution if it exists.
+%Since our space is finite (TODO considering only initial values induced by the types monoid instance), completeness can be made trivially true by replacing all instances of pruning with a zero ranking, so that our algorithm now is only a best-first enumerative search.
+%Because we make some decisions in pruning that removes potentially sound functions, such as using the \codeinline{noRType} tag in Section \ref{HORtypeInf} we trade this completeness for performance.
+%In Section \ref{sec:related}, we will discuss why, even if we had completeness, it should be sacrificed in future work.
 %On the other hand, the set of functions that the algorithm can produce is fairly broad. It is able to search through the entire space of higher order functions that have been specialized with a first-order function, when considering the functions that are in scope. We will see in Section \ref{evaluation} how broad this space actually is. \markk{See Section \ref{solnSpace}}
 
 
@@ -102,4 +101,4 @@ Imagining that we could not find a refinement type directly on \codeinline{filte
 
 However, we are not guaranteed to generate a correct refinement type because we might not generate fully representative examples.
 If the tool may not generate examples where the predicate on the filter is used, creating a situation equivalent to \codeinline{map id}.
-In this case we would incorrectly infer the refinement type \codeinline{filter :: _ -> i::[a] -> {o::[b] | (len i) = (len o)}}
+In this case we would incorrectly infer the refinement type \codeinline{filter :: _ -> i:[a] -> \{o:[b] | (len i) = (len o)\}}
