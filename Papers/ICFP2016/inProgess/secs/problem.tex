@@ -203,7 +203,7 @@ Haskell provides us with a rich set of libraries that allows us to explore this 
 While this approach can work for first-order synthesis, we instead focus on data structure manipulation problems that can be solved with higher order functions.
 
 We require all higher order functions to be of a unified type signature $(\star \to \tau_i \to \tau_o)$, so that the signature of the solution program is a function mapping the input type to the output type. 
-The type $\star$ is a type wildcard (from the partial type signatures of GHC~\cite{ghc}) that could be filled by a first-order function or a first-order function along with an initial value.
+The type $\star$ is a type wild-card (from the partial type signatures of GHC~\cite{ghc}) that could be filled by a first-order function or a first-order function along with an initial value.
 In the case of \codeinline{map :: (a -> b) -> [a] -> [b]}, the $\star$ matches \codeinline{(a -> b)}.
 In the case of \codeinline{foldr :: (a -> b -> b) -> b -> [a] -> b)}, the $\star$ matches \codeinline{(a -> b -> b) -> b}.
 
