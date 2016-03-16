@@ -29,9 +29,10 @@ This problem is in general undecidable. Finding a function of a type
 $\tau_{in} \rightarrow \tau_{out}$ (or even some of its generalization) is studied in the literature as a type inhabitation problem which is known to be undecidable 
 for Haskell. The problem is decidable for 
  the simply typed lambda calculus but is PSPACE-complete~\cite{DBLP:conf/tlca/Urzyczyn97}. 
- As soon as we add polymorphism to the language the type inhabitation problem becomes undecidable~\cite{DBLP:conf/lics/Wells94}. We have additional restriction that even if we find an inhabitatant, it also has to satisfy the given examples.
- 
-Therefore, the focus of our 
+ As soon as we add polymorphism to the language the type inhabitation problem becomes undecidable~\cite{DBLP:conf/lics/Wells94}. The synthesis problem imposes an additional restriction that even if there is an inhabitant, it also has to satisfy the given examples.
+
+Since the main problem that we are trying to solve is undecidable, we  
+, the focus of our 
  
 
 \subsection{Naturalness}
@@ -105,7 +106,7 @@ To do this, we can exploit an unstated assumption, but widely accepted approach,
 Usually, the example pair type is lifted into a function type in the trivial way.
 
 \begin{flalign*}
-lift\ (\tau_i, \tau_o) =\ \tau_i \to \tau_o
+\lift \ (\tau_i, \tau_o) =\ \tau_i \to \tau_o
 \end{flalign*}
 
 However, a subtyping relation can create more specific types that will better prune the space.
@@ -116,7 +117,7 @@ Given $\mathcal{A} = \{ x | x:A\}$ and $\mathcal{B} = \{ x | x:B\}$, we have $\m
 Lifting the examples to a subtype of the trivial lifting can then yield a smaller search space.
 
 \begin{flalign*}
-lift'\ (\tau_i, \tau_o) <:\ \tau_i \to \tau_o\\
+\lift'\ (\tau_i, \tau_o) <:\ \tau_i \to \tau_o\\
 \end{flalign*}
 
 Notice that we did not write out a full function for the subtype.
@@ -125,7 +126,7 @@ However, we do not wish to restrict the domain or range of the function, but onl
 So we must have the following
 
 \begin{flalign*}
-lift'\ (\tau_i, \tau_o) =&\ \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
+\lift'\ (\tau_i, \tau_o) =&\ \tau^{s}_{i} \to \tau^{s}_{i} \nRightarrow\\
 (\tau^{s}_{i} <: \tau_i)\ \lor&\ (\tau_o <: \tau^{s}_{o})\\
 \end{flalign*}
 
@@ -139,13 +140,13 @@ exs = [
 \end{lstlisting}
 
 Using the traditional approach, we would have the trivial lifting to the function type.
-However, if we use $lift'$ instead, we would derive a more specific type.
+However, if we use $\lift'$ instead, we would derive a more specific type.
 This more specific type could be a refinement type, expressed here using the syntax of LiquidHaskell\cite{DBLP:conf/icfp/VazouSJVJ14}.
  
 \begin{lstlisting}
 exs        :: ([Int],[Int])
-lift(exs)  :: [Int] -> [Int] 
-lift'(exs) :: x:[Int] -> {y:[Int] |
+\lift(exs)  :: [Int] -> [Int] 
+\lift'(exs) :: x:[Int] -> {y:[Int] |
               length x = length y}
 \end{lstlisting}
 
@@ -153,7 +154,7 @@ Alternatively, we could also have derived the equally specific type using depend
 In this case, using the Agda language, we would need a definition of (\codeinline{Vec L a}) to describe the type of lists of length \codeinline{L} and elemental type \codeinline{a}.
 
 \begin{lstlisting}
-lift'(exs) ::
+\lift'(exs) ::
   {Vec L Int -> Vec L Int}
 \end{lstlisting}
 
