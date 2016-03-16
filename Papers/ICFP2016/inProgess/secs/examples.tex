@@ -94,12 +94,11 @@ This observation is consistent with the examples, and is thus used to synthesize
 
 
 \subsection{Synthesis with user defined values}
+\label{sec:exampleBTree}
 
+Our next example illustrates how does  \ourTool/ deal with user defined code. Doing such synthesis requires automatic reasoning about not only the user defined polymorphic data type, but also the higher order function they have defined over it.
 
-Working on a set of user defined code is also a critical task \ourTool/ supports. 
-In the next example the user has provided a binary tree data structure and a higher order function to map over it. We show the synthesis of the exceedingly (for the sake of brevity) simple program \codeinline{mapBTree not}.
-Doing such synthesis requires automatic reasoning about not only the user defined polymorphic data type, but also the higher order function they have defined over it.
-
+Consider the following a user defined binary tree data structure and a higher order function to map over it.
 \begin{lstlisting}
 data BTree a = Nil |
                Branch (BTree a) a (BTree a)
@@ -108,28 +107,28 @@ mapBTree :: (a -> a) -> BTree a -> BTree
 mapBTree f Nil = Nil
 mapBTree f (Branch b1 v b2) = 
   Branch (mapBTree f b1) (f v) (mapBTree f b2)
+\end{lstlisting}
 
+For the sake of brevity let us assume that the user wants to synthesize
+the exceedingly simple program \codeinline{mapBTree not}.
+She might provide the following example to show her intentions:
+\begin{lstlisting}
 exs :: [(BTree Bool, Tree Bool)]
 exs = [(Branch Nil True Nil,
        Branch Nil False Nil)]
 \end{lstlisting}
-
-It may seem that if a user can write a higher order functions over custom data structures, they would not have a need to synthesize such functions.
-However, imagine the case of a user importing libraries.
-Haskell's module system and large repository of libraries like Hackage and Stackage are an indispensable part of the language\cite{hackage,stackage}.
+Based on this single example \ourTool/ correctly generates \codeinline{mapBTree not}. It may seem that if a user can write a higher order functions over custom data structures, they would not have a need to synthesize such functions.
+However, it become a practical question in the scenario of a user importing libraries.
+Haskell's module system and large repository of libraries like Hackage~\cite{hackage} and Stackage~\cite{stackage} are an indispensable part of the language.
 Often, a user is importing a library that is large, unfamiliar, and/or poorly documented.
-Using \ourTool/, the user no longer needs an intimate knowledge of the library to makes use of the functions and datatypes, and can instead synthesize functions from examples.
+Using \ourTool/, the user no longer needs an extensive knowledge of the library to makes use of the functions and data types. She can instead synthesize functions from these libraries using examples.
 
 
 \subsection{Synthesis with a DSL}
 
-As an example, we show code to transpose a music value from the Euterpea DSL (domain specific library) for music\cite{euterpea}.
-Among other things, Euterpea defines a tree-like datatype called \codeinline{Music} and various functions for manipulating these types.
-The user only needs to express the basic datatype as examples, and \ourTool/ can synthesize the \codeinline{solution} program.
-The solution utilizes the functions from Euterpea; \codeinline{mMap} for mapping over music values, and \codeinline{(trans::Int -> Music Pitch->Music Pitch)} to transpose a Music Pitch by a value.
-This again requires automated reasoning about the properties of the library's data types and higher order functions.
-Because we have synthesized a natural looking program, the user does not need to understand details of the library's function and data structures to be able to immediately gain an intuition about how the solution program works.
-
+Our last example shows how does \ourTool/ handle domain specific libraries (DSL) using the Euterpea Haskell library for music~\cite{euterpea}. 
+Among other things, Euterpea defines a tree-like data type called \codeinline{Music} and various functions for manipulating these types.
+The user only needs to express the basic data type as examples, and \ourTool/ can synthesize the \codeinline{solution} program.
 \begin{lstlisting}
 import Euterpea
 
@@ -140,4 +139,6 @@ exs = [
         
 solution = mMap (trans 2)
 \end{lstlisting}
-
+The \codeinline{solution} program utilizes the functions from Euterpea; \codeinline{mMap} for mapping over music values, and \codeinline{(trans::Int -> Music Pitch->Music Pitch)} to transpose a Music Pitch by a value.
+This again requires automated reasoning about the properties of the library's data types and higher order functions.
+Because we have synthesized a natural looking program, the user does not need to understand details of the library's function and data structures to be able to immediately gain an intuition about how the solution program works.
