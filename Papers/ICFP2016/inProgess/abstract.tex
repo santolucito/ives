@@ -1,9 +1,16 @@
 \begin{abstract}
  
-Programming by example is a popular paradigm used in software synthesis. The user provides a set of input-output examples that should illustrate her intentions, and a synthesis engine should automatically generate a program that satisfies these examples. However, often it is the case that the return code is very complex and unreadable, although it is correct. We propose a
-synthesis approach that generates  full, easy to read Haskell programs. Our tool finds best fitting, potentially higher order functions. The returned program utilizes Haskell libraries as well as user defined functions. Our algorithm incrementally aims to construct values that are considered "most natural" first.  We use refinement types to help us prune the search space of all programs.   Something else here???
+Programming by example is a popular paradigm used in software synthesis. The user provides a set of input-output examples that illustrate her intentions, and a synthesis engine automatically generates a program that satisfies these examples. 
+However, it is often the case that the returned code is very complex and unreadable, although it is correct. 
+We propose a synthesis approach that generates full, easy to read Haskell programs. 
+Our tool finds best fitting, potentially higher order functions. 
+The returned program utilizes Haskell libraries as well as user defined functions.
+Our algorithm incrementally aims to construct values that are considered the "most natural" first.  
+We infer refinement types on the examples by exploiting embedded type information in the examples, which allows us to prune the search space to a manageable size.
+To navigate the pruned search space, we use a weighted type matching algorithm.
 
-
-We implement this approach in \ourTool/ and we evaluate it on  set of synthesis examples including lists, trees, maps, and specialized musical score data structures. The synthesized programs operate over data structures and draw functions from various real world Haskell packages. The evaluation demonstrates the scalability and versatility of this approach. 
+We implement this approach in \ourTool/ and we evaluate it on a set of synthesis examples including lists, trees, maps, and specialized musical score data structures.
+The synthesized programs operate over data structures and draw functions from various real world Haskell packages. 
+The evaluation demonstrates the scalability and versatility of this approach. 
  
 \end{abstract}
