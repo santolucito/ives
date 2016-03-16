@@ -1,13 +1,32 @@
-\section{Problem Formulation}
+\section{Problem Description}
 \label{problem}
+
+\subsection{Problem Formulation}
+
+
+Program synthesis automatically builds a program from a specification.
+Our ultimate goal is to integrate the programming-by-example paradigm 
+into mainstream programming environments, thus the generated code must be readable and editable. The generated code should also support a real language and use native data types to the language.
+
+For \ourTool/, the specification is given as a list, $Ex$, of pairs of input and output. The specification is always given in the following 
+form:
+\begin{lstlisting}[mathescape=true]
+exs :: [([$\tau_i$], [$\tau_o$])]
+exs = [$(i_1, o_1), \ldots, (i_n, o_n)$]
+\end{lstlisting}
+
+
+Note that the specification is written in a standard Haskell syntax, enabling this way to make easier the synthesis procedure a part of the language.
+
+We place a constraint on the given example set that $\forall j. 0 \le j \le n. i_j \in \tau_i \land o_j \in \tau_o$. In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), or using the compiler to infer types~\cite{ghc}, or by inferring the types based on regular expressions~\cite{gulwani_popl15} .
+
+Let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library. Additionally, we require that $\tau_i \in T \land
+\tau_o \in T$.
+
+
 
 \subsection{Naturalness}
 \label{sec:naturalness}
-
-Program synthesis automatically builds a program from a specification.
-For \ourTool/, the specification is a set, $Ex$, of pairs of input and output $(i,o)$.
-We place a constraint on the example set that $Ex:\{(\tau_i,\tau_o)\}$, or more specifically $\forall (i,o) \in Ex,\ i:(\tau_i \in T) \land o:(\tau_o \in T)$.
-In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), using the compiler to infer types\cite{ghc}, or by inferring the types \cite{gulwani_popl15} based on regular expressions.
 
 The goal in \textit{natural} program synthesis is synthesize programs that meet a specification with the simplest and most readable code.
 As a formalization of simplicity and readability, we present a definition of naturalness.
@@ -43,14 +62,16 @@ The problem of natural synthesis is then to find an expression e, such that $\fo
 In order to enumerate programs in order of naturalness, we will use a type directed enumeration.
 This type directed enumeration will also need to order the terms by their likelihood to satisfy the examples.
 Here we describe the space of expressions over which we enumerate, and how this pertains to naturalness.
-We describe how the enumeration technique tries to order terms by likelihood to succed in Sections \ref{synth} and \ref{offline}.
+We describe how the enumeration technique tries to order terms by likelihood to succeed in Sections \ref{synth} and \ref{offline}.
 We can immediately restrict our search space to exclude generated lambda terms (anonymous functions), as such terms will generally induce a very low naturalness score and explode the search space.
 Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only draws from a finite set of predefined expressions.
 
 Let $E$ be the finite set of expressions exposed to the top-level module from user code, imported libraries, and the core library.
 Our search space will be the set of permutations of well-typed applications of elements of $E$.
 
-To determine if an expression is well-typed, let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library.
+To determine if an expression is well-typed, 
+
+
 A type environment $\Gamma$, is the set $\{e_1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_{i} \in E$ and is of type $\tau_i \in T$.
 $\tau_i$ may be a type variable, a concrete type
 The set of well-typed expressions we consider, $\mathcal{G}$, is the set $\{e_1 : \tau_1,\ ...,\ e_n : \tau_n\}$, where $e_i : \tau_i$ follows the usual rules of application for constructing well-typed expressions from $\Gamma$.
