@@ -4,7 +4,7 @@ Once \ourTool/ has both the base and refinement types for the examples and highe
 The first step is to simply filter the higher order function candidates over equality of refinement types.
 Additionally, \ourTool/ will check the example types are concrete versions of the input/output types of the higher order function with the infix (for clarity) \codeinline{isConcreteTypeOf} function.
 For type A to be a concrete version of type B, there must exist some type C (possibly equal to type B), such that both A and B can be instantiated to that type.
-The above requirement is then that there is some way to unify these two types - a familiar problem\cite{typeUnif}.
+The above requirement is then that there is some way to unify these two types - a familiar problem~\cite{typeUnif}.
 
 \begin{lstlisting}[caption=Pruning based on types]
 filter (exRType ==) higherOrderRTypes
