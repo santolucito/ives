@@ -31,30 +31,28 @@ for Haskell. The problem is decidable for
  the simply typed lambda calculus but is PSPACE-complete~\cite{DBLP:conf/tlca/Urzyczyn97}. 
  As soon as we add polymorphism to the language the type inhabitation problem becomes undecidable~\cite{DBLP:conf/lics/Wells94}. The synthesis problem imposes an additional restriction that even if there is an inhabitant, it also has to satisfy the given examples.
 
-Since the main problem that we are trying to solve is undecidable, we  
-, the focus of our 
+Since the main problem that we are trying to solve is undecidable, we try to find a solution using an incremental algorithm (Sec.~\ref{sec:enumeration}).
  
 
 \subsection{Naturalness}
 \label{sec:naturalness}
 
-The goal in \textit{natural} program synthesis is synthesize programs that meet a specification with the simplest and most readable code.
-As a formalization of simplicity and readability, we present a definition of naturalness.
+Our goal is to synthesize \textit{natural} programs, ie. programs that meet a specification with the simplest and most readable code.
+As a formalization of simplicity and readability, we propose a definition of naturalness.
 
-The standard of measuring complexity (the inverse of naturalness) is cyclomatic complexity~\cite{McCabe:1976:CM:800253.807712}.
+Our first idea was to use one of the standard measures for measuring code complexity -- so called {\emph{cyclomatic complexity}}~\cite{McCabe:1976:CM:800253.807712}.
 Cyclomatic complexity is function, $\mathcal{CC}$ on the control flow graph of a section of code, $C$.
-The function is $\mathcal{CC}(C) = E − N + 2(P)$, where $E$, $N$, and $P$ are the edges, nodes and connected components respectively.
-This function measures "the number of linearly independent paths" through a program, a crucial part of manipulating stateful variables.
-However a this is not well-suited for pure functional languages that use branching in a more functional way.
+The function is defined as $\mathcal{CC}(C) = E − N + 2P$, where $E$, $N$, and $P$ are the numbers of edges, nodes and connected components respectively in the control flow graph of $C$.
+In summary, this function measures the number of linearly independent paths through a program $C$.
+However this measure is not well-suited for pure functional languages that use branching in a more functional way.
 For example, given two programs to compute absolute value \codeinline{f} and \codeinline{g}, one would expect \codeinline{f} with the "if" solution to be more natural.
-However, using cycolmatic complexity verbatim means \codeinline{f} is more complex than \codeinline{g}.
-
 \begin{lstlisting}
 f x =
   if x>=0 then x else x * (-1)
 g x = 
   x * (fromEnum (x>0) + fromEnum (x<0) * (-1))
 \end{lstlisting}
+Using cyclomatic complexity verbatim means \codeinline{f} is more complex than \codeinline{g}.
 
 Instead, we define naturalness as a function $\mathcal{N}$, that returns the number of nodes in the abstract syntax tree.
 This approach integrates cyclomatic complexity, because branching is still encoded as a measure of complexity.
@@ -69,6 +67,7 @@ The problem of natural synthesis is then to find an expression e, such that $\fo
 
 
 \subsection{Enumeration}
+\label{sec:enumeration}
 In order to enumerate programs in order of naturalness, we will use a type directed enumeration.
 This type directed enumeration will also need to order the terms by their likelihood to satisfy the examples.
 Here we describe the space of expressions over which we enumerate, and how this pertains to naturalness.
