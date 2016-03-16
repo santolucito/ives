@@ -11,17 +11,17 @@ into mainstream programming environments, thus the generated code must be readab
 For \ourTool/, the specification is given as a list, $Ex$, of pairs of input and output. The specification is always given in the following 
 form:
 \begin{lstlisting}[mathescape=true]
-exs :: [([$\tau_i$], [$\tau_o$])]
+exs :: [([$\tau_{in}$], [$\tau_{out}$])]
 exs = [$(i_1, o_1), \ldots, (i_n, o_n)$]
 \end{lstlisting}
 
 
 Note that the specification is written in a standard Haskell syntax, enabling this way to make easier the synthesis procedure a part of the language.
 
-We place a constraint on the given example set that $\forall j. 0 \le j \le n. i_j \in \tau_i \land o_j \in \tau_o$. In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), or using the compiler to infer types~\cite{ghc}, or by inferring the types based on regular expressions~\cite{gulwani_popl15} .
+We place a constraint on the given example set that $\forall j. 0 \le j \le n. i_j \in \tau_{in} \land o_j \in \tau_{out}$. In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), or using the compiler to infer types~\cite{ghc}, or by inferring the types based on regular expressions~\cite{gulwani_popl15} .
 
-Let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library. Additionally, we require that $\tau_i \in T \land
-\tau_o \in T$.
+Let $T$ be the set of types (both inferred and explicitly declared) exposed to the top-level module from user code, imported libraries, and the core library. Additionally, we require that the given specification also satisfies $\tau_{in} \in T \land
+\tau_{out} \in T$.
 
 
 
@@ -31,7 +31,7 @@ Let $T$ be the set of types (both inferred and explicitly declared) exposed to t
 The goal in \textit{natural} program synthesis is synthesize programs that meet a specification with the simplest and most readable code.
 As a formalization of simplicity and readability, we present a definition of naturalness.
 
-The standard of measuring complexity (the inverse of naturalness) is cyclomatic complexity\cite{cyclo}.
+The standard of measuring complexity (the inverse of naturalness) is cyclomatic complexity~\cite{McCabe:1976:CM:800253.807712}.
 Cyclomatic complexity is function, $\mathcal{CC}$ on the control flow graph of a section of code, $C$.
 The function is $\mathcal{CC}(C) = E − N + 2(P)$, where $E$, $N$, and $P$ are the edges, nodes and connected components respectively.
 This function measures "the number of linearly independent paths" through a program, a crucial part of manipulating stateful variables.
