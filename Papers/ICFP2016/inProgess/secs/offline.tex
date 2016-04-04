@@ -42,7 +42,7 @@ Notice that map will actually satisfy all three of these predicates, which in ge
 
 While one could imagine deriving more specific formulas for the refinement types, this would then require a more advanced unification procedure between the examples' refinement types and the higher order functions' refinement types.
 Currently the unification procedure is a simple equality check.
-A step in this direction might be to have a subtyping relation between $\leq$ and $<$ - our evaluation in fact shows that this could significantly benefit some test cases.
+A step in this direction might be to have a subtyping relation between $\leq$ and $<$ ; our evaluation in fact shows that this could significantly benefit some test cases.
 
 
 \begin{lstlisting}[caption=Adding refinement types to higher order functions,label=listing:addRType]
@@ -74,7 +74,7 @@ This means the system will test every higher-order function that fits the types.
 
 As an example, take the code from Section \ref{examples} for synthesizing a music function.
 The user would have needed to provide a measure function for Music a.
-This measure will allow \lhask/ to draw conclusions about the size of examples of type \codeinline{[Music a :-> Music a]}, as well as conclusions about higher order functions over the Music data structure.
+This measure will allow \lhask/ to draw conclusions about the size of examples of type \codeinline{[(Music a, Music a)]}, as well as conclusions about higher order functions over the Music data structure.
 In this context, one sensible measure function counts the number of notes (Prim) in the tree-like Music structure, as shown by the \codeinline{len} function in Listing \ref{lenFxn}.
 
 While it is rare for an average user to write a measure for a datatype, it is a simple process.

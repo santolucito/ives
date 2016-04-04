@@ -16,7 +16,7 @@ exs = [$(i_1, o_1), \ldots, (i_n, o_n)$]
 \end{lstlisting}
 
 
-Note that the specification is written in a standard Haskell syntax, enabling this way to make easier the synthesis procedure a part of the language.
+Note that the specification is written using standard Haskell syntax, which will eventually enable easy integration of synthesis as a core part of development in the language.
 
 We place a constraint on the given example set that $\forall j. 0 \le j \le n. i_j \in \tau_{in} \land o_j \in \tau_{out}$. In practice this a trivial constraint, achieved by requiring the user to provide the types explicitly via type annotation (as we do), or using the compiler to infer types~\cite{ghc}, or by inferring the types based on regular expressions~\cite{gulwani_popl15} .
 
@@ -28,10 +28,10 @@ The goal is to find a Haskell expression $e$ such that it holds $\forall j. 0 \l
 This problem is in general undecidable. Finding a function of a type 
 $\tau_{in} \rightarrow \tau_{out}$ (or even some of its generalization) is studied in the literature as a type inhabitation problem which is known to be undecidable 
 for Haskell. The problem is decidable for 
- the simply typed lambda calculus but is PSPACE-complete~\cite{DBLP:conf/tlca/Urzyczyn97}. 
+ the simply typed lambda calculus, but is PSPACE-complete~\cite{DBLP:conf/tlca/Urzyczyn97}. 
  As soon as we add polymorphism to the language the type inhabitation problem becomes undecidable~\cite{DBLP:conf/lics/Wells94}. The synthesis problem imposes an additional restriction that even if there is an inhabitant, it also has to satisfy the given examples.
 
-Since the main problem that we are trying to solve is undecidable, we try to find a solution using an incremental algorithm (Sec.~\ref{sec:enumeration}).
+Since the main problem that we are trying to solve is then undecidable, we try to find a solution using an incremental algorithm (Sec.~\ref{sec:enumeration}).
  
 
 \subsection{Naturalness}
@@ -40,7 +40,7 @@ Since the main problem that we are trying to solve is undecidable, we try to fin
 Our goal is to synthesize \textit{natural} programs, ie. programs that meet a specification with the simplest and most readable code.
 As a formalization of simplicity and readability, we propose a definition of naturalness.
 
-Our first idea was to use one of the standard measures for measuring code complexity -- so called {\emph{cyclomatic complexity}}~\cite{McCabe:1976:CM:800253.807712}.
+A reasonable, but inadequate, first attempt would be to use the standard measure for quantifying code complexity --  {\emph{cyclomatic complexity}}~\cite{McCabe:1976:CM:800253.807712}.
 Cyclomatic complexity is function, $\mathcal{CC}$ on the control flow graph of a section of code, $C$.
 The function is defined as $\mathcal{CC}(C) = E − N + 2P$, where $E$, $N$, and $P$ are the numbers of edges, nodes and connected components respectively in the control flow graph of $C$.
 In summary, this function measures the number of linearly independent paths through a program $C$.
@@ -67,12 +67,13 @@ Taking the code from Listing \ref{natSyn}, $\mathcal{N}$(\codeinline{solution1})
 In addition, this definition also integrates basic ideas from cyclomatic complexity, because branching is still encoded as a measure of complexity.
 
 %
-We can now formally define the natural synthesis problem: given a set of input-output examples describing user intentions as before, the goal is 
-to find an expression $e$, such that it holds
-\begin{multline*}
-\forall j. 0 \le j \le n.\  e (i_j) = o_j \land \\
- \forall e'. (\forall j. 0 \le j \le n.\  e' (i_j) = o_j) \Rightarrow \mathcal{N}(e) \le \mathcal{N}(e')
-\end{multline*}
+We can now formally define the natural synthesis problem: given a set of $n$ input-output examples $\{(i_j,o_j),\ 0<j<n\}$ describing user intentions as before, the goal is to find an expression $e$, such that the following holds
+
+\begin{flalign*}
+\forall& j. 0 \le j \le n.\  e (i_j) = o_j\ \land \\
+\forall& e'. (\forall j. 0 \le j \le n.\  e' (i_j) = o_j) \\
+&\phantom{....} \Rightarrow\ \mathcal{N}(e) \le \mathcal{N}(e')
+\end{flalign*}
 
 
 
@@ -81,12 +82,12 @@ to find an expression $e$, such that it holds
 
 We use an iterative algorithm that enumerates all the programs 
 programs in order of naturalness. To do that we use a type directed enumeration. As we find a program that satisfies provided examples, \ourTool/ outputs the program to the user. In the first round of the algorithm we try to find a program $C$, such that $\mathcal{N}(C) = 1$.
-If exist, such program is a first-order function. In the next round we search for the 
+If it exists, such program is a first-order function. In the next round we search for
 programs such that $\mathcal{N}(C) = 2$. In this class of functions we mainly generate programs that are higher order functions which take another function as an argument. The enumeration process is guided with type constraints.
 
 The type directed enumeration also needs to order the terms by their likelihood to satisfy the examples.
 Here we describe the space of expressions over which we enumerate, and how this pertains to naturalness.
-Further in the paper in Sections \ref{synth} and \ref{offline} we describe how the enumeration technique tries to order terms by likelihood to succeed.
+Further in the paper in Sections \ref{offline} and \ref{synth} we describe how the enumeration technique tries to order terms by likelihood to succeed.
 We can immediately restrict our search space to exclude generated lambda terms (anonymous functions), as such terms will generally induce a very low naturalness score and explode the search space.
 Our synthesis approach will then only be able to solve synthesis problems when a solution exists that only draws from a finite set of predefined expressions.
 
@@ -109,7 +110,7 @@ As an example, consider the following
 With our definition of $\mathcal{G}$, we now have a decidable space that will allow us to approach the natural synthesis problem.
 In fact, we will rely on the definition of this space to ensure we are searching in the neighborhood of high naturalness measure programs.
 As our implementation will only be a subset of the space, we do not need to directly encode a measure of naturalness into the algorithm.
-This way our synthesis problem is reduced to finding an efficient solution to the now decidable problem.
+This way our synthesis problem is reduced to efficiently finding solution to the now decidable problem.
 
 \subsection{Lifting Example Types}
 While conceptually simple, enumerating all well-typed functions is not a very efficient algorithm.
@@ -125,7 +126,7 @@ However, a subtyping relation can create more specific types that will better pr
 The subtyping relation $A<:B$ means that any time type $B$ results in a well-typed program, so would type $A$ in place of $B$.
 A subtyping relation induces a subset relation of terms of type $A$ in relation to the terms of type $B$.
 For the purposes of this paper, we use $<:$ to mean only nontrivial subtyping rules - that is we do \textit{not} have $A<:A$.
-Given $\mathcal{A} = \{ x | x:A\}$ and $\mathcal{B} = \{ x | x:B\}$, we have $\mathcal{A}\subseteq\mathcal{B}$.
+Given $\mathcal{A} = \{ x | x:A\}$ and $\mathcal{B} = \{ x | x:B\}$ and $A<:B$, we have $\mathcal{A}\subseteq\mathcal{B}$.
 Lifting the examples to a subtype of the trivial lifting can then yield a smaller search space.
 
 \begin{flalign*}
@@ -190,20 +191,21 @@ Since we will not be generating $\Gamma^n, n>2$, we only need to consider functi
 \mathcal{G}_I = \Gamma^2 \cap \{f | f : \tau_{in} \to \tau_{out}\}
 \end{gather*}
 
-We need this restriction because we are building terms using haskell-src and re-engineering Haskell syntax and application rules, which a very labor intensive approach.
+We need this restriction because we are building terms using haskell-src and re-engineering Haskell syntax and application rules, which is a very labor intensive approach.
 Building longer application chains proved to be out of reach from an engineering perspective.
 Luckily, $\Gamma^2$ is able to cover synthesis of a large enough set of programs to be interesting.
 However, in order to generate novel and complex programs, we eventually will need to support the proper $\mathcal{G}$ set.
 One approach to this would be to use a dependently typed language like Agda~\cite{agda}.
-Rather than reconstructing datatype to manipulate types as value, Agda would allow us to program directly with types.
+Rather than reconstructing a datatype to represent and manipulate types as values, Agda would allow us to program easily directly with types.
+This would be especially helpful for the type match ranking algorithm.
 
 However, one key component of our approach is the ability to easily support third-party libraries and other user-defined values.
-Haskell provides us with a rich set of libraries that allows us to explore this feature of \ourTool/.
+Sticking with Haskell, and LiquidHaskell, provides us with a rich set of libraries that allows us to explore this feature of \ourTool/.
 
-While this approach can work for first-order synthesis, we instead focus on data structure manipulation problems that can be solved with higher order functions.
+While this approach works for first-order synthesis, we instead focus on the more interesting problem of data structure manipulation that can be solved with higher order functions.
 
 We require all higher order functions to be of a unified type signature $(\star \to \tau_{in} \to \tau_{out})$, so that the signature of the solution program is a function mapping the input type to the output type. 
-The type $\star$ is a type wild-card (from the partial type signatures of GHC~\cite{ghc}) that could be filled by a first-order function or a first-order function along with an initial value.
+We use $\star$ to represent the type wild-card (from the partial type signatures of GHC~\cite{ghc}) that could be filled by a first-order function or a first-order function along with an initial value.
 In the case of \codeinline{map :: (a -> b) -> [a] -> [b]}, the $\star$ matches \codeinline{(a -> b)}.
 In the case of \codeinline{foldr :: (a -> b -> b) -> b -> [a] -> b)}, the $\star$ matches \codeinline{(a -> b -> b) -> b}.
 

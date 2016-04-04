@@ -18,7 +18,7 @@ However, the code that is produced by these tools is rarely as simple as the spe
 
 Program synthesis does not inherently address the problem of code readability, often resulting in tools that produce something closer to an executable than the simple and stylistic code a human might write.
 Just as with code users write themselves, the ability to reuse and edit synthesized code is an integral part of the programming process.
-Thus, we define a notion of \textit{natural} code and define the problem of natural program synthesis.
+Thus, we define the problem of natural program synthesis.
 
 Take the simple task of synthesizing a list flattening function from examples.
 Synthesis approaches that use only the primitive recursive operators~\cite{Osera:2015,FeserCD15}, would find a function similar to \codeinline{solution1} in Listing \ref{natSyn} (modulo language syntax).
@@ -67,7 +67,7 @@ Since the stated goal is to find simple programs that a human might write, this 
 
 Our evaluation section shows that this is not the case.
 For example, natural synthesis of a program equivalent to the \codeinline{or::[Bool]->Bool} function finds two functions, \codeinline{any (id)} and \codeinline{foldr1 (max)}.
-The \codeinline{any (id)} solution would expected by Haskell programmer, where \codeinline{any:: (a-> Bool) -> [a] -> Bool)} is a built-in function to Haskell that returns \codeinline{True} if any element of a list satisfies the predicate function.
+The \codeinline{any (id)} solution would expected by a Haskell programmer, where \codeinline{any:: (a-> Bool) -> [a] -> Bool)} is a built-in function to Haskell that returns \codeinline{True} if any element of a list satisfies the predicate function.
 The more novel solution returned by our natural synthesis is \codeinline{foldr1 (max)}, where \codeinline{max :: Ord a => a -> a -> a} will return the maximum element of the two inputs.
 By folding over the list, this solution program exploits the \codeinline{Enum} property of the Boolean type in Haskell in a way that provides insight into some core Haskell functions and types.
 

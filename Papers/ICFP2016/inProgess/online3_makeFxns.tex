@@ -36,7 +36,7 @@ Users may also write their own specializations of the higher order functions if 
 This approach also handles the case when higher order functions to need initial values in addition to a component function.
 For example, the \codeinline{map} function only takes a first order function, while \codeinline{foldl :: (a-> b-> a)-> a-> [b]-> a} requires an initial value for \codeinline{a}.
 Using a similar process as for first order function application, we can apply values until the higher order function only needs the example input to complete execution.
-To identify initial values in a higher order type signature, we can use our previous assumption that all higher order function have been partially curried to the type \codeinline{_ -> *-> *}. 
+To identify initial values in a higher order type signature, we can use our previous assumption that all higher order function have been partially curried to the type $(\star \to \tau_{in} \to \tau_{out})$. 
 Adding the further assumption that only one first order function maybe be passed to the higher order function, we simply tag any non-function type in the hole as an initial value.
 
 \begin{lstlisting}[caption=adding default initial values]
