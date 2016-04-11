@@ -13,8 +13,8 @@ exs = [([1,2,3] , [1,2,3]),
       ([4,6,8] , [])]
        
 exsRType ::
-  (i : [Int], { o : [Int] 
-  len inExs >= len outExs })
+  (i : [Int], { o : [Int] |
+  len i >= len o })
 \end{lstlisting}
 
 \noindent and have the final refinement type of \codeinline{exRType}, since all of the examples suggest that the output list does not grow. 

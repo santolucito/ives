@@ -146,10 +146,10 @@ So we must have the following
 
 As an demonstration of this approach, following the syntax from previous code samples, we demonstrate below the synthesis of \codeinline{map (+1)}. We provide examples of type \codeinline{([Int],[Int])}.
 \begin{lstlisting}
-exs :: [ [Int] :-> [Int] ]
+exs :: [ ([Int],[Int]) ]
 exs = [
-  [1]   :-> [2],
-  [3,4] :-> [4,5] ]
+  ([1], [2]),
+  ([3,4], [4,5]) ]
 \end{lstlisting}
 
 Using the traditional approach, we would have the trivial lifting to the function type.
