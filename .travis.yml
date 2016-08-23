@@ -1,4 +1,4 @@
 language: haskell
-ghc: 7.8.4 
+ghc: 7.10.2
 script:
-  - cabal install
+  - apt-get install cvc4 ; cabal install
