@@ -1,0 +1,97 @@
+\section{Offline: Synthesis Engine Construction} \label{offline}
+
+
+
+\subsection{Refinement types for higher order functions}\label{HORtypeInf}
+
+% collectTypesAndWeights
+The first step of our algorithm (line 7 of Listing \ref{listing:Algo}) is to collect all of the type signatures from our sources (user code, imports, and standard library).
+In order to rank the higher-order functions, we assign weights based on their source location. User-defined functions are given the highest priority, while direct imports are given less, and the standard libraries are given the least. 
+These rankings will contribute to the final ranking of candidate functions in the synthesis stage when we match the component function signatures on the examples.
+
+% filter isHigherOrder
+We filter through these to select only the higher order functions. 
+Because in Haskell the function type constructor ($\to$) is right binding, any higher order function must have parenthesis in the type signature, which provides a convenient filtering predicate. 
+This is an over approximating filter, since the type signature might contain extraneous parentheses, for example surrounding the entire signature. 
+In practice, it is rarely the case that a programmer will add extraneous parentheses to type signatures, though this since this stage is offline and only happens once per a library, this over approximation does not significantly impact performance.
+
+% assignRTypes
+In line 9 of Listing \ref{listing:Algo} we call the \codeinline{assignRTypes} function (shown in Listing \ref{listing:addRType}) to automatically generate refinement types that relate input and output sizes for our higher order functions.
+These refinement will be used to prune the search space in synthesis, as explained in detail in Section \ref{synth}.
+In brief, the size relation that applies to the higher order functions must also apply to the examples in order to consider that function as a candidate.
+When writing the refinement types, we can be sure, by our specification in Section \ref{problem}, that the last two types are always the input and output.
+With the unified signature for all considered higher order functions, we can create a template to assign a refinement types.
+This template uses GHC's partial type signatures and type wildcards, in order to account for the diversity of component functions and initial values that might be required for any given higher order function.
+This template is very similar to the $lift'$ refinement type inference for examples.
+
+\begin{lstlisting}[numbers=none]
+template :: _ -> i:[a] -> {o:[b] |
+           (len i) `op' (len o)}
+        
+map :: _ -> i:[a] -> {o:[b] |
+        (len i) = (len o)}
+\end{lstlisting}
+
+%> map rTypeTemplate ["=","<=",">="]
+
+For every predicate \codeinline{`op'} we test against, we are able to more accurately prune the search space of higher-order functions.
+However, since we must test many higher-order functions on each these predicates, the cost to add a predicate is high.
+Therefore, it is best to only select as many refinement types as are needed.
+We only use predicates of $\leq,=,\geq$ to specify size constraints on input and output.
+Notice that map will actually satisfy all three of these predicates, which in general, results in an over approximation of appropriate refinement types for higher order functions.
+
+While one could imagine deriving more specific formulas for the refinement types, this would then require a more advanced unification procedure between the examples' refinement types and the higher order functions' refinement types.
+Currently the unification procedure is a simple equality check.
+A step in this direction might be to have a subtyping relation between $\leq$ and $<$ ; our evaluation in fact shows that this could significantly benefit some test cases.
+
+
+\begin{lstlisting}[caption=Adding refinement types to higher order functions,label=listing:addRType]
+assignRTypes ::Sig -> IO(Sig, [RType])
+assignRTypes sig = do
+   x <- if eqTypes (lastTypes sig) 
+       then rTypeAssign sig
+       else return [noRType]
+   return (t, x)
+
+testRs :: Sig -> IO([RType])
+testRs s =
+  filterM (runLiquidHaskell s) allPossibleRTypes
+\end{lstlisting}
+
+We separate possible types into two cases using the \codeinline{eqTypes} function on line 3 of Listing \ref{listing:addRType}.
+In the case that input and output types (extracted with \codeinline{lastTypes sig}) of the higher order functions are the same (up to equality on the top level type constructor), we should generate refinement types.
+In the other case, when the input and output type are different, the size measures between two different type constructors are not guaranteed to have any significance.
+A relation on these values may be useful on occasion, but in practice is more often only a confounding factor, leading to wasted computation.
+When we do not assign refinement types to a higher order function, we tag the higher order function with the placeholder \codeinline{noRType} value.
+These \codeinline{noRType} tagged functions can be further pruned in the synthesis stage by utilizing a subtype ranking system to be explained in more detail in Section \ref{synth}.
+
+\subsection{User defined data types}
+%We focus only higher order functions that manipulate data structures
+In order to support user defined data structures, we only require that a user implements some kind of measure ~\cite{DBLP:conf/haskell/VazouSJ14} over their data structure.
+This size function will allow \lhask/ to determine size constraints on the examples, so that \ourTool/ can pick higher order functions that also satisfy those size predicates.
+In fact, the size function could just be a constant function, resulting in every function and example satisfying the equality refinement type predicate.
+This means the system will test every higher-order function that fits the types.
+
+As an example, take the code from Section \ref{examples} for synthesizing a music function.
+The user would have needed to provide a measure function for Music a.
+This measure will allow \lhask/ to draw conclusions about the size of examples of type \codeinline{[(Music a, Music a)]}, as well as conclusions about higher order functions over the Music data structure.
+In this context, one sensible measure function counts the number of notes (Prim) in the tree-like Music structure, as shown by the \codeinline{len} function in Listing \ref{lenFxn}.
+
+While it is rare for an average user to write a measure for a datatype, it is a simple process.
+Additionally, any data structure that is an instance of Foldable, automatically has the measure \codeinline{\{-@ measure length @-\}}.
+
+\begin{lstlisting}[caption=a user defined measure over a datatype,label=lenFxn]
+import Euterpea
+
+{-@ measure len @-}
+len :: Music a -> Int
+len m =
+  case m of
+    Prim _     -> 1
+    m1 :+: m2  -> len m1 + len m2
+    m1 :=: m2  -> len m1 + len m2
+    Modify c m -> len m
+\end{lstlisting}
+
+
+

@@ -1,4 +1,5 @@
 --needs prelude
+import Ives.SynthEngine.Types
 
 f :: Int -> Bool
 f = (==1)

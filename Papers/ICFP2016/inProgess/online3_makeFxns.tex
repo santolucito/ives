@@ -1,0 +1,63 @@
+\subsection{Component function generation}\label{makeFxns}
+% makeFxns
+
+\ourTool/ must now find first order function for each of the higher order functions that are still candidates (line 18 of Listing \ref{listing:Algo}), in order to create complete functions in $\mathcal{G}_I$.
+For a given higher order function, \ourTool/ can choose component functions by reusing the weighted type matching algorithm from Listing \ref{valueAlgo}.
+Since examples must be given as a concrete type, we can always partially specialize our candidate higher order function. 
+We then search for first order functions that will type check against the partially specialized component signature.
+This partial specialization is a way of extracting more information out of our examples, and significantly reduces the space of candidate first order functions.
+Similar to Listing \ref{horank}, we show an example of how type matching is applied over first order functions in Listing \ref{comprank}.
+
+\begin{lstlisting}[caption=Ranking component function,label=comprank]
+exs   ::                ([Int] ,  [Int])
+map   :: (a   -> b)   -> [a]   -> [b]
+mapEx :: (Int -> Int) -> [Int] -> [Int]
+
+component ::
+      Int    -> Int
+f1 :: a      -> b      -- value is 21
+f2 :: Int    -> a      -- value is 31
+f3 :: Int    -> Int    -- value is 41
+f4 :: [Bool] -> [Bool] -- value is Nothing
+\end{lstlisting}
+
+\subsection{Initial Values}\label{initVals}
+
+In addition to considering first order functions where the arity of the type signature is equal to the component function, we may also want ``larger'' functions that have been applied to initial values.
+For examples, if the component signature is \codeinline{::Int->Int}, we may have the first order functions \codeinline{(+)::Int->Int->Int} in scope.
+By applying an initial value to \codeinline{(+)}, we can get a new function (e.g. \codeinline{(+1)::Int->Int}) that fits the component signature.
+
+In order to use an initial value, it must be in scope, i.e. in the set $\Gamma$.
+Initial values can be placed into this set in a few ways.
+First, users may have some domain knowledge that a particular value, or set of values, may be useful in their application.
+In this case, the value only needs to be defined in the same file as the examples.
+Users may also write their own specializations of the higher order functions if the value should only be used in the context of a single function.
+
+This approach also handles the case when higher order functions to need initial values in addition to a component function.
+For example, the \codeinline{map} function only takes a first order function, while \codeinline{foldl :: (a-> b-> a)-> a-> [b]-> a} requires an initial value for \codeinline{a}.
+Using a similar process as for first order function application, we can apply values until the higher order function only needs the example input to complete execution.
+To identify initial values in a higher order type signature, we can use our previous assumption that all higher order function have been partially curried to the type $(\star \to \tau_{in} \to \tau_{out})$. 
+Adding the further assumption that only one first order function maybe be passed to the higher order function, we simply tag any non-function type in the hole as an initial value.
+
+\begin{lstlisting}[caption=adding default initial values]
+-- to use 5 as an initial value for foldl
+fold5 :: (a -> b -> a) -> [b] -> a
+fold5 f i o = foldl f 5 i o
+
+-- to use 5 as an initial value for all functions
+initVal :: Int
+initVal = 5
+\end{lstlisting}
+
+Another interesting way to obtain initial values is through the Monoid class.
+If the initial value's type is an instance of Monoid, then the identifier mempty, from Haskell's monoid typeclass\cite{monoid}, will be included in $\Gamma$.
+As an example, importing the Data.Monoid library, will bring into scope the unit element is for lists, \codeinline{mempty= []}.
+There is no Monoid instance for Int in Data.Monoid however. 
+There are two valid monoids for numbers, using either (+) or (*) as the operators and resulting in unit elements 0 and 1 respectively. 
+Because these are particularly common value,  we hard code both of these values (along with the other useful values of -1, and 2), bringing them into $\Gamma$ and thereby making them available by default in synthesis.
+Note that using initial values in fact is a slight transgression of the formalism, as this may result in some use of the $\Gamma^3$ space.
+
+Presented with the problem of finding integer values to satisfy the examples may initially seem like a good application for an SMT solver.
+However, keep in mind that we do not in general know what we are trying to solve - the actual use of these variables is hidden within the function definition.
+Since in this work we maintain a primarily type directed approach, rather than code analysis, we will not be able to unravel these functions.
+

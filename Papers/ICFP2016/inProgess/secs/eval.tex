@@ -1,0 +1,110 @@
+\section{Evaluation}\label{evaluation}
+
+\subsection{Soundness and Completeness}\label{sound}
+
+It is clear that no function will be returned by the algorithm that does not fit the examples given, since functions are validated before being reported.
+Therefore, it is trivial to conclude that \ourTool/ is sound over the given examples.
+Still, it is possible for the synthesis procedure to return a function that does not capture the user's intent - that is, as with any programming by examples system, \ourTool/ is not sound over the user intent.
+Generally, this ambiguity can be resolved by the user supplying more examples to narrow the set of possible fitting functions.
+However, depending on what the user is trying to synthesize, and which examples have been provided, it is possible for new examples to increase the internal search space.
+If, for example, a user gives only positive examples for a \texttt{filter}, the refinement type predicate discovery will assume that the lists do not change size, and will likely return \texttt{map id} as a result.
+
+Since we perform enumerative search over $\mathcal{G}_I$, which is a subset of the finite set $\Gamma^2$, our approach is complete in the trivial sense. 
+If the search space was the full $\mathcal{G}$, we would have completeness (every permutation of every identifier in scope is equivalent to the full language).
+This is not at all a useful completeness, since the generated programs would be unreadable.
+For example, if the constant 10 is not in $\mathcal{G}$, we can only reproduce it with some combination of operations on the hardcoded initial values, e.g. (1+...(1+ (1))).
+
+
+
+%The completeness claim we might like to make is that over the solution space defined in Section \ref{problem}, we will always find a solution if it exists.
+%Since our space is finite (TODO considering only initial values induced by the types monoid instance), completeness can be made trivially true by replacing all instances of pruning with a zero ranking, so that our algorithm now is only a best-first enumerative search.
+%Because we make some decisions in pruning that removes potentially sound functions, such as using the \codeinline{noRType} tag in Section \ref{HORtypeInf} we trade this completeness for performance.
+%In Section \ref{sec:related}, we will discuss why, even if we had completeness, it should be sacrificed in future work.
+%On the other hand, the set of functions that the algorithm can produce is fairly broad. It is able to search through the entire space of higher order functions that have been specialized with a first-order function, when considering the functions that are in scope. We will see in Section \ref{evaluation} how broad this space actually is. \markk{See Section \ref{solnSpace}}
+
+
+\subsection{Performance}
+
+\begin{table*}[t]
+  \centering
+  \bgroup
+  \def\arraystretch{1.1}
+  \begin{tabular}{|c|l|c|l|l|l|l|}
+    \hline
+    & Name & Time (s) & Imports & \# Ex & Representative Example & Generated Function \\
+    \hline
+    \parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{Bool}}}
+    & and & 0.87 & None & 3 & [True, False] $:\to$ False & all id \\
+    & and (2nd) & 4.05 & None & 3 & [True, False] $:\to$ False & foldl min True \\
+    & or  & 1.84 & None & 4 & [True, False] $:\to$ True & any id \\
+    & xor & 3.13 & None & 4 & [True, False, True] $:\to$ False & foldl xor False \\
+    \hline
+
+    \parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{Tree (u.d.)}}}
+    & double vals & 4.02 & None & 1 & ((1) 3 (2)) $:\to$ ((2) 6 (4)) & mapBTree (*2) \\
+    & tree id & 3.00 & None & 1 & ((1) 3 ((4) 5 (6))) $:\to$ ((1) 3 ((4) 5 (6))) & mapBTree id \\
+    & tree max & 3.84 & None & 3 & ((1 10) 5) $:\to$ 10 & accumTree max 1 \\
+    & tree sum & 0.72 & None & 1 & ((3 1) 2) $:\to$ 6 & accumTree (+) 0 \\
+    \hline
+
+    \parbox[t]{2mm}{\multirow{9}{*}{\rotatebox[origin=c]{90}{List}}}
+    & all even & 1.27 & Data.List & 4 & [2,4,6,8] $:\to$ True & all even \\
+    & some odd & 2.91 & Data.List & 3 & [1,4,5,6] $:\to$ True & any odd \\
+    & custom filter & 15.63 & Data.List & 3 & [1,2,3,4,5] $:\to$ [3,4,5] & filter user\_pred \\
+    & length & 1.05 & Data.List & 3 & [5,6,7,8] $:\to$ 4 & foldl count 0 \\
+    & max elem & 3.54 & Data.List & 3 & [4,10,7] $:\to$ 10 & foldl max 0 \\
+    & negate all & 12.58 & Data.List & 1 & [True, False, True] $:\to$ [False, True, False] & map not \\
+    & odd prefix & 30.62 & Data.List & 1 & [1,3,4,6,7] $:\to$ [1,3] & takeWhile odd \\
+    & stutter & 5.72 & Data.List & 1 & [1,2,3] $:\to$ [1,1,2,2,3,3] & concatMap (replicate 2) \\
+    & sum ints & 0.84 & Data.List & 1 & [1,2,3,4] $:\to$ 10 & foldl (+) 0 \\
+    \hline
+
+    \parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{Etc.}}}
+    & set sum & 0.90 & Data.Map & 1 & \{ 1, 2, 3, 4 \} $:\to$ 10 & Data.Map.foldl (+) 0 \\
+    & music id & 3.48 & Euterpea & 1 & C\# $:\to$ C\# & mMap (fromIntegral) \\
+    & transpose score & 4.69 & Euterpea & 1 & A $:\to$ B & mMap (trans 2) \\
+    \hline
+  \end{tabular}
+  \egroup
+  \caption{Benchmarks and Performance Measures. This table lists all 20 benchmarks, grouped by data structure. Each benchmark lists its name, the amount of time it took to synthesize, the extra imports it uses, the number of examples needed to synthesize, one representative example, and the synthesized function itself. The group marked ``Tree (u.d.)'' is a user-defined structure with user-defined higher-order operations. All reported data is generated on a Linux machine with four cores of Intel Xeon E5-2650Lv3 @ 1.80GHz and 8 Gb of ram.}
+  \label{tab:benchmarks}
+\end{table*}
+
+In Table \ref{tab:benchmarks} we show detailed information about \ourTool/ over a set of benchmarks. These benchmarks were chosen to show the versatility of \ourTool/ over many different applications and libraries. The benchmarks over Booleans, trees, and lists are common to many other programming-by-example tools. The examples that utilize the \codeinline{Data.List} and \codeinline{Euterpea} libraries to show \ourTool/'s ability to work with large, highly specialized, 3rd-party libraries. Due to the algorithm's focus on generating natural code, the synthesized functions are concise enough to be listed within the table itself. The representative examples show that few, simple hints to the synthesizer are able to produce good results. In many cases, the representative examples are actually the \textit{only} examples necessary to synthesize the desired function. This shows that our approach uses the information available to it effectively.
+
+In 17 of the 20 benchmarks, the the running time was less than five second. This is in large part thanks to the inherently parallel nature of the search. With just a few lines of code, we were able to achieve order-of-magnitude speedups over the serial version. Haskell's functional parallelism model is ideal for perfectly parallel problems like this one, and promises good scaling to larger instances of the problem over increasing computational resources.
+
+In three cases, solutions took longer to be found. 
+While outliers are expected occasionally, due to the difficulty of the problem, the ``odd prefix'' is reveals an interesting shortcoming in the implementation.
+Currently, when a number of solutions have an equal rank they will be sorted by alphabetical order.
+This is, of course, completely arbitrary and should be remedied.
+One solution might be to add another layer of weights based on analysis of a code corpus. This would be a simple and effective extension based on well-explored techniques~\cite{thummalapenta2007parseweb}.
+
+In Section \ref{HORtypeInf} we discuss how type matching and the \codeinline{noRType} tag reduce the number of refinement type inferences we make. Recall that even if both types have a measure (lists and trees), in general there is no guarantee that this is a meaningful comparison. Since \lhask/ is the largest cost to our system in the offline stage, removing refinement type inference in these ambiguous cases provides a large performance gain. As an example, in processing the Haskell standard library \codeinline{base:Prelude}, 7 out of 30 higher order functions do not need to be checked against refinement types using this approach.
+
+
+\subsection{Example Generation}\label{languageSupport}
+
+
+Our goal is to create a synthesis procedure that is easily portable across full implementations of functional languages (Haskell, OCaml, etc), so we prefer using a type directed approach to synthesis over explicit code analysis whenever possible.
+This increases the portability and longevity of our system.
+To this end, we have tried to avoid code analysis at every stage of this paper.
+However there are two points where this has fallen short.
+
+First, we must parse a file to extract the name and type information of every top level identifier.
+Second, using \lhask/ as a blackbox means that we rely on \lhask/'s mechanisms to check refinement types over functions.
+Our eventual goal is to create a system that can be easily ported across functional languages.
+Luckily, the dependency on extracting type information is small enough to handle with ease in most typed languages (the grammar of a type signature is relatively small).
+However \lhask/ is a powerful tool that would be difficult to recreate in another language.
+
+One approach to solve this is to extend the refinement type system by allowing refinement type inference on representative examples of a higher order function.
+We do not need to identify a particular component function since we are only interested in size based refinement types.
+We then apply a similar refinement type inference strategy as in Listing \ref{exRTypeGen} to these examples.
+
+Our current example generation tool uses QuickCheck to generate and apply many examples for higher order functions in Haskell~\cite{quickcheck}.
+Since \lhask/ supports so much of Haskell, this was not a necessary extension for \ourTool/, but provides a prototype as a proof of concept.
+Imagining that we could not find a refinement type directly on \codeinline{filter}, we might instead generate examples on and use them to infer a refinement type - just as we infer a refinement type on the user-provided examples.
+
+However, we are not guaranteed to generate a correct refinement type because we might not generate fully representative examples.
+If the tool may not generate examples where the predicate on the filter is used, creating a situation equivalent to \codeinline{map id}.
+In this case we would incorrectly infer the refinement type \codeinline{filter :: _ -> i:[a] -> \{o:[b] | (len i) = (len o)\}}

@@ -1,0 +1,76 @@
+\section{System Overview}
+
+\begin{figure}[t]
+  \centering
+% Define block styles
+    \tikzstyle{block} = [rectangle, draw, fill=none,
+    text centered, sharp corners, minimum height=3em]
+\tikzstyle{line} = [draw, -latex']
+
+\begin{tikzpicture}[node distance = 8em, auto]
+    % Place nodes
+    \draw [fill=gray!20, opacity=1] (-4,-5) rectangle (4,-3);
+    \node [block](hofu) {select HO functions};
+    \node [block, above left of=hofu] (libraries) {standard libraries};
+    \node [block, above right of=hofu] (API) {user definded functions};
+    \node [block, below of=hofu, node distance=6em] (refty) {assigning refinement types};
+    \node [block, below of=refty, node distance=6em] (engine) {synthesis engine};
+    \node [block, left of=engine, node distance=8em] (examples) {examples};
+    \node [block, right of=engine, node distance=8em] (program) {program};
+
+%Online Flow
+
+    % Draw edges
+    \path [line] (libraries) -- (hofu);
+    \path [line] (API) -- (hofu);
+    \path [line] (hofu) -- (refty);
+    \path [line] (refty) -- (engine);
+    \path [line] (examples) -- (engine);
+    \path [line] (engine) -- (program);
+
+\end{tikzpicture}
+  \caption{High-level structure of the algorithm.}
+  \label{fig:high_level_overview}
+\end{figure}
+
+
+Figure~\ref{fig:high_level_overview} gives a high-level description of ways in which the components of our algorithm interact. Broadly speaking, there are two main stages in the algorithm. The offline (preprocessing) phase gathers the higher order declarations visible in the APIs and user-provided code, and assigns refinement types to them to build a custom synthesis \textit{engine}. This engine is simply the collection of inferred refinement types. It is then used during the online phase of the algorithm to search for functions that fit a set of supplied examples.
+
+%\ourTool/ uses an enumeration based approach, using refinement types to prune the space of higher order functions.
+%We then use a enumeration based, weighted subtyping algorithm for the first order synthesis stage.
+
+During the offline phase, the algorithm first scans the user-provided code, the libraries it imports, and the standard library to gather all of the functions and global values visible to the program. Then, it selects the higher-order functions from the set of all functions and values, and uses Liquid Haskell~\cite{DBLP:conf/haskell/VazouSJ14, DBLP:conf/esop/VazouRJ13, DBLP:conf/icfp/VazouSJVJ14} to assign refinement types to each one. Finally, each higher-order function is assigned a weight based on locality~\cite{DBLP:conf/pldi/GveroKKP13} in order to approximate $\mathcal{N}$. User-defined functions are given the highest weight, while direct imports are given less, and the standard libraries are given the least. Together with the first-order functions and values, these triples of higher-order functions with their refinement types and weights are collected to produce a synthesis engine.
+
+Once this stage is complete, the user can  give examples to the synthesis engine, which will search the space of constructable functions for those that fit the examples.
+First, the engine computes a refinement type that fits the examples, using an implementation of $lift'$.
+This type is matched against the refinement types of the known higher-order functions, and the weights of each known function are adjusted based on how close the types match, if at all.
+
+Once the candidate higher order functions have been chosen, the synthesis engine performs a best-first search through the ordered $\mathcal{G}_I$ for a program that fits all of the input and output examples.
+For example, the higher-order function \texttt{map} might be supplied the \texttt{length} function if the example inputs are lists of lists of integers and the output examples are all lists of integers. 
+The programs that are examined during the search are evaluated against the example set and are reported to the user as they match. 
+Because the weights favor local declarations and other stylistic conventions, the highest-ranked programs are likely to be the most idiomatic.
+
+We present a pseudocode algorithm here which we will use as a roadmap for the rest of the paper, explaining each line in the proceeding sections. For the remainder of the paper, code samples are taken from the implementation, and some are modified slightly to elide the details of managing Haskell's type system.
+
+\begin{lstlisting}[caption=A pseudocode representation of the build and synthesis stages of the synthesis algorithm, label=listing:Algo]
+main = do
+  eng <- build
+  ex  <- getExamples
+  synth eng ex
+
+build = do
+  allTypes   <- collectTypesAndWeights
+  allHOTypes <- filter isHigherOrder allTypes
+  allRTypes  <- assignRTypes allHOTypes
+  return (allTypes,allRTypes)
+
+synth eng ex = do
+  -- assign refinement types to examples
+  exType   <- getExampleType ex
+  exRType  <- assignRTypes exType
+  -- make candidate functions and programs
+  hoFxns <- rankByTypeMatch exRType eng
+  progs  <- makeFxns exType hoFxns
+  -- test the ranked list of possible programs
+  validProgs <- filter (testOn ex) progs
+\end{lstlisting}

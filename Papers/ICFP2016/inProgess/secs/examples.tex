@@ -1,0 +1,142 @@
+\section{Motivating Examples} 
+\label{examples}
+
+With next few illustrative examples we show functionality of \ourTool/.
+It takes as input a list of examples and automatically generates code
+corresponding to these examples. The tool is embedded in Haskell, so examples use regular Haskell syntax along with a type annotation.
+
+
+
+\subsection{Synthesis with the standard library}
+\label{sec:exampleBasic}
+
+%introduction to us using stutter- from the ground up
+We start with a \codeinline{stutter} program. It is one of the canonical examples used by similar tools~\cite{Osera:2015}.
+The \codeinline{stutter} program takes as input a list of elements and duplicates each element of the list.
+ 
+Following the programming-by-example principles, the user 
+provide a list of examples as a list of input/output pairs to the special variable \codeinline{exs}. These examples should be
+illustrative enough to convey her intentions:
+
+\begin{lstlisting}
+exs :: [([Int], [Int])]
+exs = [([1, 2, 3], [1, 1, 2, 2, 3, 3])]
+\end{lstlisting}
+
+Invoking \ourTool/ on this example starts to construct programs such that when they are applied to the list $[1, 2, 3]$ the result 
+is $[1, 1, 2, 2, 3, 3]$.
+Using a type-directed enumeration, we look for programs fitting the given example type, in this case \codeinline{[Int]->[Int]}.
+We first search for first order functions of type \codeinline{[Int]->[Int]}.
+In addition we look for generalizations of the given type, such as \codeinline{[a]->[a]}, or \codeinline{Num a => [a]->[a]}.
+There are various functions of this type, such as \codeinline{cycle} or \codeinline{tail}, but they do not satisfy the given example.
+Once we have exhausted this class of functions, we begin searching for chains of application.
+In particular, we focus on higher order functions because they are widely use in Haskell programs. Additionally, their use in program synthesis 
+in general has not been studied as extensively as for first-order functions.
+
+For the given example, a higher order function of interest is present in the Haskell the standard library; \codeinline{concatMap :: (a -> [b]) -> [a] -> [b]} which applies a function over a list and concatenates the result.
+With \codeinline{concatMap} as a candidate higher order function, we focus
+ our search for its first argument, which is a first order function of type \codeinline{a -> [b]}.
+Since our algorithm does not find a useful function of such a type, we continue searching for generalizations of that type.
+This way we find the function \codeinline{replicate n :: Int -> a -> [a]} in the standard library, which will replicate an item n times into a list.
+This function only needs to be specialized to our examples by applying an initial value.
+
+In the end, \ourTool/ returns the program \codeinline{concatMap (replicate 2)}. It only required a single example to synthesize this code.
+
+However, in the above example we considered only functions from the standard Haskell library. Let us now extend the program with a user defined function \codeinline{dupl} which duplicates an element:
+\begin{lstlisting}
+dupl :: a -> [a]
+dupl x = [x,x]
+\end{lstlisting}
+
+Clearly, there is now a second possible solution to the synthesis problem.
+Rather than waiting to find all solutions, \ourTool/ returns solutions to the user as they are found, and then further proceeds with rest of the search.
+In this example, (using the hardware from Sec \ref{evaluation}) \ourTool/ returns the solution \codeinline{concatMap dupl} as the first solution after 5.26 seconds, it then continues searching and returns \codeinline{concatMap (replicate 2)} after 5.93 seconds.
+
+The \codeinline{stutter} program was also synthesized in MYTH~\cite{Osera:2015}. However, their focus was on lists as inductively defined data types. 
+Instead we focus on using the built in representation of a list in Haskell.
+
+\ourTool/ returns several solutions satisfying the given examples. In
+ order to return better solutions in the beginning of the search, we use a ranking system. By ``better'' solution we mean solutions that are more intuitive, simpler, and more relevant to the user. Formally, we introduce a new complexity measure called \textit{naturalness} (in 
+Sec.~\ref{sec:naturalness}) and define our goal as finding the most natural solution. We use a ranking system based on the complexity of the 
+generated programs. The ranking system helps to guide our search.
+Naturalness will also help us avoid the difficult to read solutions as those often seen in other programming-by-example systems.
+
+
+
+\subsection{Optimizing with types}
+\label{sec:exampleFilter}
+
+A na\"ive approach to the synthesis would be to search 
+for every function of the type given by examples. However, this would be
+a highly non-efficient algorithm.
+Instead we use information embedded in the examples, to infer refinement types which help us to prune the search space.
+Consider the following example:
+\begin{lstlisting}
+exs :: [([Int], [Int])]
+exs = [([1, 2, 3], [1,3])]
+\end{lstlisting}
+The goal here is to synthesize a function that drops the odd numbers from a list. Based on only this single example, \ourTool/ finds a simple solution program \codeinline{filter (odd)}.
+
+Rather then starting a search over all functions of type \codeinline{[Int] -> [Int]}, we can first infer a refinement 
+type~\cite{DBLP:conf/icfp/VazouSJVJ14}.
+This refinement type will specify that the size of the input list cannot be shorter than the size of the output list.
+\ourTool/ then searches for a higher order function consistent with this refinement type.
+As a simple example, consider a library with only the following two higher order functions; \codeinline{map} and \codeinline{filter}.
+\codeinline{map} is assigned a refinement type that specifies the input and output lengths are equal.
+Since this behaviour is not consistent with the example's refinement type it is thus pruned from the search space.
+\codeinline{filter} is assigned a refinement type that specifies the input length is greater than or equal to the output length.
+Since this behaviour is consistent with the example's refinement type, it is thus used to synthesize the solution \codeinline{filter (odd)}.
+
+
+\subsection{Synthesis with user defined values}
+\label{sec:exampleBTree}
+
+Our next example illustrates how \ourTool/ deals with user defined code. 
+Doing such synthesis requires automatic reasoning not only about the user defined polymorphic data type, but also about the higher order functions defined over it.
+
+Consider the following a user defined binary tree data structure and a higher order function to map over it.
+\begin{lstlisting}
+data BTree a = Nil |
+               Branch (BTree a) a (BTree a)
+
+mapBTree :: (a -> a) -> BTree a -> BTree 
+mapBTree f Nil = Nil
+mapBTree f (Branch b1 v b2) = 
+  Branch (mapBTree f b1) (f v) (mapBTree f b2)
+\end{lstlisting}
+
+For the sake of brevity let us assume that the user wants to synthesize
+the exceedingly simple program \codeinline{mapBTree not}.
+She might provide the following example to show her intentions:
+\begin{lstlisting}
+exs :: [(BTree Bool, Tree Bool)]
+exs = [(Branch Nil True Nil,
+       Branch Nil False Nil)]
+\end{lstlisting}
+
+Based on this single example \ourTool/ correctly generates \codeinline{mapBTree not}. It may seem that if a user can write a higher order functions over custom data structures, they would not have a need to synthesize such functions.
+However, it becomes a practical question in the scenario of a user importing libraries.
+Haskell's module system and large repository of libraries like Hackage~\cite{hackage} and Stackage~\cite{stackage} are an indispensable part of the language.
+Often, a user is importing a library that is large, unfamiliar, and/or poorly documented.
+Using \ourTool/, the user no longer needs an extensive knowledge of the library to makes use of the functions and data types. She can instead synthesize functions from these libraries using examples.
+
+
+\subsection{Synthesis with a DSL}
+
+Our last example shows how \ourTool/ handles domain specific libraries (DSL) using the Euterpea Haskell library for music~\cite{euterpea}. 
+Among other things, Euterpea defines a tree-like data type called \codeinline{Music} and various functions for manipulating these types.
+The user only needs to provide examples using the basic datatype, and \ourTool/ can synthesize the \codeinline{solution} program.
+
+\begin{lstlisting}
+import Euterpea
+
+exs :: [(Music Pitch, Music Pitch)]
+exs = [
+  (Prim (Note qn (C,4)):+:Prim (Note qn (D,4)),
+   Prim (Note qn (D,4)):+:Prim (Note qn (E,4))) ]
+        
+solution = mMap (trans 2)
+\end{lstlisting}
+The \codeinline{solution} program utilizes the functions from Euterpea; \codeinline{mMap} for mapping over music values, and \codeinline{(trans::Int -> Music Pitch -> Music Pitch)} to transpose a Music Pitch by a value.
+This again requires automated reasoning about the properties of the library's data types and higher order functions.
+Because we have synthesized a natural looking program, the user does not need to understand details of the library's function and data structures to be able to immediately gain an intuition about how the solution program works.

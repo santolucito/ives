@@ -1,0 +1,122 @@
+%
+% LaTeX template for prepartion of submissions to PLDI'16
+%
+% Requires temporary version of sigplanconf style file provided on
+% PLDI'16 web site.
+% 
+\documentclass[pldi]{sigplanconf-pldi16}
+% \documentclass[pldi-cameraready]{sigplanconf-pldi16}
+
+%
+% the following standard packages may be helpful, but are not required
+%
+\usepackage{SIunits}            % typset units correctly
+\usepackage{courier}            % standard fixed width font
+\usepackage[scaled]{helvet} % see www.ctan.org/get/macros/latex/required/psnfss/psnfss2e.pdf
+\usepackage{url}                  % format URLs
+\usepackage{listings}          % format code
+\usepackage{enumitem}      % adjust spacing in enums
+\usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
+% known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
+\newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
+
+\usepackage{array,multirow,graphicx}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\input{defs}
+
+
+\usepackage{comment}
+
+\usepackage{graphicx}
+
+\definecolor{identifierColor}{rgb}{0.65,0.16,0.16}
+\definecolor{comment_color}{rgb}{0.40,0.46,0.3}
+\definecolor{num_color}{gray}{0.55}
+
+\lstset{
+  basicstyle=\footnotesize,
+  breaklines=true,
+  frame=bottomline,
+  language=haskell,
+  %identifierstyle=\color{identifierColor},
+  morecomment=[l][\color{comment_color}\ttfamily]{--},
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  %captionpos=b,                    % sets the caption-position to bottom
+  %commentstyle=\color{mygreen},    % comment style
+  %frame=single,	                   % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  otherkeywords={*,let, Server, Replication, FaultGraph, rankRCG, print, fialProb, goal, ...},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{num_color}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  %title=\lstname                  % show the filename of files included with \lstinputlisting; also try caption instead of title
+  mathescape=true,
+  tabsize=3,
+  literate=*{->}{{\textcolor{blue}{$\to$}}}{1}
+           {<-}{{\textcolor{blue}{$\leftarrow$}}}{1}
+}
+  
+  
+%\usepackage{minted}
+%\usepackage{tcolorbox}
+%\usepackage{etoolbox}
+%\BeforeBeginEnvironment{minted}{\begin{tcolorbox}}%
+%\AfterEndEnvironment{minted}{\end{tcolorbox}}%
+
+\begin{document}
+
+\title{Natural Program Synthesis from Examples in Haskell}
+
+%
+% any author declaration will be ignored  when using 'pldi' option (for double blind review)
+%
+
+\authorinfo{Person 1 \and Person 2}
+{\makebox{Department of Computer Science} \\
+\makebox{Yale University}  \\
+\makebox{A Place, AS 12345}}
+{\{person1,person2\}@cs.auniv.edu}
+
+
+\maketitle
+
+\begin{abstract}
+We present a new programming-by-example technique that efficiently synthesizes natural, readable fitting functions that combine user-defined higher-order functions with standard and third-party library code.
+
+The search works by \textit{dismantling} higher-order functions in order to deduce suitable refinement types. These refinement types are then used to prune the search space of possible higher-order functions for a given example set. Since refinement type under-approximate, we can apply Liquid Haskell to arbitrary syntax extensions while still preserving soundness.
+
+We evaluate an implementation of our tool against a large set of synthesis examples including lists, trees, maps, and specialized musical score data structures. This evaluation demonstrates the scalability and versatility of this approach.
+\end{abstract}
+
+\input{intro}
+
+\input{examples}
+
+\input{problem}
+
+\input{overview}
+
+\input{offline}
+
+\input{online0}
+
+\section{Evaluation}\label{evaluation}
+\input{eval}
+
+\input{related}
+
+\input{conclusion}
+
+\bibliographystyle{abbrvnat}
+\bibliography{myBib}
+
+\end{document}

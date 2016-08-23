@@ -1,0 +1,217 @@
+===========================================================================
+                           PLDI '16 Review #305A
+                     Updated 13 Jan 2016 8:00:17pm EST
+---------------------------------------------------------------------------
+      Paper #305: Natural Program Synthesis from Examples in Haskell
+---------------------------------------------------------------------------
+
+                 Reviewer expertise: X. Expert
+                      Overall merit: C. Weak paper, though I will not fight
+                                        strongly against it
+
+                         ===== Paper summary =====
+
+This paper tackles a problem that many others are trying to solve these days: how do we synthesize functional programs from examples? The proposed approach differs from the existing ones in the following two aspect: 1) programs should be synthesized from few examples, 2) synthesized programs should reuse library and user-defined functions. Since blindly searching for programs meeting a given set of examples cannot scale in practice the search needs to be somehow guided. Many other tools have proposed ideas that address this problem using type signatures and example propagation. This particular paper focuses on using liquid types. Examples are assigned a liquid type that is then matched against the liquid types of the functions in the search space. If a function is met that has consistent type and is consistent with the examples, such a function is return (there is also a ranking strategy if multiple functions meet the examples). The tool is evaluated on a few simple programs and showed that it can synthesize most (simple) functions from fewer than 4 examples each in less than 12 seconds each.
+
+                      ===== Comments for author =====
+
+This paper tackles an interesting problem, but I personally don't find the proposed techniques and the experimental results too impressive. In particular I don't like the idea of giving up completeness for reducing the search space, and I find it hard to argue that a tool is more usable without a proper user study. While tools like FlashFill have been evaluated on real problems that Excel users were facing, this tool is claimed to be natural after an evaluation on synthetic problems.
+
+PROS:
+- The problem of synthesizing programs that reuse library functions is well-motivated and clearly important. If this tool was scalable and fast enough it would be a great addition to an IDE.
+- The proposed examples are fun and interesting to read, and are helpful in understanding the paper.
+
+CONS
+- The argument of giving up completeness is not well-supported. While FlashFill gives up completeness at the cost of (experimentally evaluated) practicality, this is not the case here. As the experiments are arbitrarily picked, I can't see why this would actually work in practice.
+- Many choices are hacky and not experimentally evaluated. I can see that the proposed ranking function makes somewhat sense, but one should measure how often it is accurate or how many times it causes the interaction to require further examples
+- The evaluation did not meet the expectations set by the introduction. From the intro: "A human inspecting the generated code should be able to understand it as easily as if it were written by a human". Although this can be measured the paper only provides anecdotal evidence for it.
+
+COMMENTS
+- How do you checked that the picked examples are natural? In general I like the premise of the paper. However, since the target users seem to be novel programmers this really requires a proper user study. Running this in a classroom is an option. For example, you could group students into two groups A and B. A uses the tool to solve some simple programming task, and B writes without the tool. Compare the speed of writing code, and then use a third set of people to run a Turing test (i.e., guess which group the code belongs to). If you show that A can write faster and the code is indistinguishable from group B this would be amazing.
+- Giving up completeness would be fine with me if the paper could show that this causes practicality. Unfortunately this is not evaluated (see point 1). As it is, there might be a very simple function that the tool doesn't even enumerate as no example of it was provided, and the user wouldn't have a clue about it.
+- I think one extra motivation for the tool could be to reverse engineer the implementation of functions for which the code is not available. Even though, given the scalability issues this might not work too well.
+- I think that, given the large amount of Haskell code, there should be a way to produce better ranking functions using machine learning. See this for example
+http://people.csail.mit.edu/rishabh/papers/cav15-ranking.pdf
+
+QUESTIONS
+- The experiments are cute but what strikes me is how small the generated functions are. Moreover the tool still takes 10 seconds. Did you try how it works for larger functions, let's say with 5 operands. Will it take 10 mins, 100 seconds, 1 day?
+- How often do users write measures in Haskell, is this really a reasonable thing to ask?
+- Currently examples are reevaluated many times. Is there a way to reuse parts of computations or evaluated only subparts of the examples as done in Myth and Escher?
+
+MINOR COMMENTS
+- the paper has many typos, backward and forward references.
+- Some numbers are off in the description between listing 7 and 8
+
+ADDED AFTER AUTHOR RESPONSE
+I have read the author response in full and updated my review as appropriate
+
+
+===========================================================================
+                           PLDI '16 Review #305B
+---------------------------------------------------------------------------
+      Paper #305: Natural Program Synthesis from Examples in Haskell
+---------------------------------------------------------------------------
+
+                 Reviewer expertise: Y. Knowledgeable
+                      Overall merit: D. Reject
+
+                         ===== Paper summary =====
+
+The paper presents an approach for synthesizing higher order functions from examples. The basic idea is to assign liquid types to the examples and the higher order functions and to then prune the functions which do not match. The system also searches for first order functions to be passed to the higher order functions and checks that the resulting program satisfies the examples.
+
+                      ===== Comments for author =====
+
+The paper explores an interesting direction: synthesizing comprehensible function definitions from a library of components.  The main technical contribution of the paper is the use of refinement types to prune the enumeration of function definitions.  The authors also present a preliminary experimental evaluation of this technique.
+
+While interesting, the technical contribution of the paper is insufficient:
+
+- The paper fails to convey the significance of using refinement types: the technique should be compared -- both theoretically and experimentally -- to pruning based on the Hindley-Milner type system (that prior work is based upon).
+
+- Importantly, the paper completely brushes off the problem of obtaining the refinement types from examples. This is a synthesis problem in itself: learning a formula from examples, and is probably the more interesting part of the work. It seems that currently the entire process is completely hardcoded to specific predicates (=, <=. and >=) of formulas of finite size.
+
+- It is unclear if the approach is complete. The process of learning  formulas by itself introduces approximation which can easily result in incompleteness, an unfortunate fact given the search space is finite. Section 6.2 is unclear on this matter.
+
+- The actual synthesis procedure is a very simple search: for instance, it seems as if first order functions cannot be composed here. Are you passing as arguments flat first-order expressions to a higher-order function?  For example, do you allow function composition f `compose` f in the first-order expressions (a non-flat expression).
+
+- What is the search space here after type pruning? The benchmarks leave the impression that the system can synthesize very small expressions only. Of course, this depends on the number of library components under consideration.  Therefore, the authors should evaluate the trade-off between having a larger library vs. the ability to synthesize more complex expressions.
+
+- The requirement that all higher-order functions are of a unified signature `(* -> types) -> types -> inputs -> output` seems too restrictive, where `inputs -> output` is the type of the function to be synthesized.  What if the library contains no function of the desired signature, but one of the kind `(* -> types) -> inputs -> types -> output`?
+
+- Further, the commitment to an unified signature might be a large factor in pruning the search space -- even larger than using refinement types.  This factor needs to be quantified in the experimental evaluation.
+
+- It is unclear to what extent the benchmark examples match the bias of the synthesis algorithm.  In other words, the benchmarks might be tailored to the algorithm, to the unified signature, etc.  The authors should evaluate the limitations of the technique as well.
+
+- The paper is full of typos and broken sentences.
+
+The authors should address the above concerns and make another deep pass on the paper, before submitting.
+
+===========================================================================
+                           PLDI '16 Review #305C
+                    Updated 14 Jan 2016 11:23:37am EST
+---------------------------------------------------------------------------
+      Paper #305: Natural Program Synthesis from Examples in Haskell
+---------------------------------------------------------------------------
+
+                 Reviewer expertise: X. Expert
+                      Overall merit: D. Reject
+
+                         ===== Paper summary =====
+
+The author's propose a program synthesis system that utilizes refinement type
+inference in conjunction with input-output examples to synthesize programs
+involving library calls.  They do this by leveraging Liquid Haskell for
+refinement type inference coupled with a system to rank library functions
+coupled with their refinements.  The authors exercise their system on 20 Haskell
+benchmarks that synthesize simple programs over booleans, trees, lists, and
+notably the Euterpea music library.  They are able to synthesize natural-looking
+programs that utilize higher-order functions.
+
+                      ===== Comments for author =====
+
+The authors tackle a hard, important problem—program synthesis in the presence
+of library functions—and propose an intriguing system that builds on top of
+refinement types.  Their emphasis on natural synthesis is also refreshing as
+prior approaches focus entirely on correctness rather than usability.  I
+appreciated the conciseness of the synthesized functions and the benchmarks
+involving Euterpea, lifting the work beyond "synthesizing programs you teach in
+an intro functional programming courses".
+
+However, I believe there are a number of fundamental problems with the proposed
+approach that should be addressed:
+
+- As much as I like the idea of "natural synthesis", crystallizing such an idea
+  into a usable definition is difficult.  On top of this, claiming that the
+  programs are "natural" requires such concrete measure.  Such a measure alone
+  would be a useful contribution, however, the authors do not do so.  Presenting
+  synthesized programs in Table 1 is helpful, however, this alone is not a
+  systematic, reproducible way of asserting "naturalness".
+- Restricting the system to only synthesizing applications of higher-order
+  functions is a very weird restriction.  A first-order function is one with
+  just "initial values" (as describe in section 6.4), so it makes me wary of the
+  approach and its ability to generalize appropriately if it cannot naturally
+  deal with first-order functions.  Related to this, it appears that the
+  synthesized programs are limited to a single fully-applied higher-order
+  function which is not very expressive.  For example, function
+  composition/application-of-applied functions, does not appear to be
+  synthesizable able with the system.
+- Several other restrictions also seem to be ill-motivated and overly
+  restrictive, for example (1) refinements are restricted to predicates of ≥, =,
+  and ≤ over size constraints on the input and output and (2) the requirement
+  that input and output types of higher-order functions be equal.  With these
+  restrictions in place, it feels like that refinements are not being exploited
+  to their full potential.  Some comments about why these restrictions are in place
+  and what it would take to remove them would help validate the proposed
+  approach.
+- Checking for equality over refinement types also seems restrictive (sections
+  6.1 and 6.2); what about sub-typing relationships between refinements?  Does
+  it matter since you are using Liquid Haskell?
+- Section 6.4 is a big hole in the proposed approach:
+  + Users must specify non-monoidal initial values, e.g., starting a fold with
+    5.  This is a weird restriction; why does the system not attempt to search
+    this space?
+  + It also seems that function values, e.g., the function argument to map, is
+    restricted to other components in the context.  In other words, the system
+    cannot invent a new function or even applications of functions, to fulfill a
+    map.  This seems to be partially refuted by the stutter and transpose
+    score examples in the benchmarks, but it isn't clear at all how the system
+    explores the space of such function arguments.
+  + Other approaches have developed ways of systematically exploring the space
+    of these programs---why were they not integrated into this approach?
+- The completeness claims in section 7 are suspect.  In particular, "the search
+  space is not finite" is questionable because a fold that produces an integer
+  has an infinite number of values it take on.  If the claim is completeness
+  over components and initial values induced by the monoid structure of the
+  types, then perhaps the claim holds, but it is a far weaker claim to make than
+  what is suggested in section 7.1.  A formal statement of soundness and
+  completeness would go a long way towards clarifying what you mean here.
+- Comparisons between the proposed approach and related work should be explored
+  in more detail to help patch up some of the questions above:
+  + The system performs worse than Myth and Λ^2 in terms of runtime.  This is
+    not an apples-to-apples comparison since this approach deals with full
+    standard libraries, but some extended discussion of the differences is
+    warranted.
+  + The major difference between Myth and Λ^2 and the proposed work lies in
+    example refinement which is not discussed in section 8.  Can notions of
+    example refinement be integrated into the system to help speed it up?
+  + Also, the authors should explore other prior work that explores the space of
+    component-driven synthesis, e.g., Complete Completion using Types and
+    Weights (Gvero, et al) and Type-directed Completion of Partial Expressions
+    (Perelman, et al).
+
+Here are other minor comments and questions that I have:
+
+- Code typesetting should be done in a monospace font---a non-monospace font
+  typeset to be monospace looks bad.
+- Section 2.3: an explanation of what was synthesized would be helpful to the
+  non-musician/someone not familiar with Euterpea.
+- Section 3.1, second paragraph: what precisely is the underscore here, just a
+  type placeholder---of a single argument?
+- Section 3.1: should give a before-and-after of the type signature of zipWith
+  to show explicitly this transformation.
+- Section 3.2, fourth paragraph: does Haskell's laziness matter since the
+  synthesis technique depends on evaluation?
+- Section 5.1, paragraph 2: worrying about parentheses in the type signature
+  suggests this is a parsing-level transformation, is this true?
+- Section 5.1, paragraph 3: you should pronounce this type refinement.  In
+  particular, why do you introduce a type hole here?
+- Section 7.2: because the approach is multi-phase, it would be nice to see the
+  time spent in each phase, i.e., the time spent preprocessor versus actually
+  combing the preprocessed data.
+
+Here are typos that I caught from my read of the paper:
+
+- Spacing between words and citations ("word~\cite{...}").
+- Section 3, first paragraph: "clear and concise _manner._"
+- Section 3.2, first paragraph: "...we can _use_ this..."
+- Section 6.2, third paragraph: "In Listing 7, we present __ part of this
+  ranking algorithm."
+- Section 8, first paragraph: "...allows our tool to synthesize natural and
+organic code."
+- Section 8, third paragraph: "MagicHaskeller __ is in the same..."
+- Section 8, eighth paragraph: "...than our tool, which _instead_ uses
+  examples..." and "...that our use of refinement types may be related on _a_
+  fundamental, proof theoretic level."
+
+*ADDED AFTER AUTHOR RESPONSE*
+
+I have read the authors' response, and have made no changes to my review.  I thank the authors for their submission!

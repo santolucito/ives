@@ -30,7 +30,7 @@ The approach here is just fine since we put everything into the haskell-src-exts
 
 In order for browse to work on a module, that module must be part of Ives.cabal
 
-> -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string. 
+> -- | grab all the defintions (fxns, types, etc) from a module and spit them back as a string.
 > getTypesFromModule :: String -> IO([Sig])
 > getTypesFromModule m = do
 >   r <- runGmOutT defaultOptions $ runGhcModT (defaultOptions {optDetailed = True}) $ browse m
@@ -61,7 +61,7 @@ In order for browse to work on a module, that module must be part of Ives.cabal
 
 > -- | take code and get every Decl, a complete abstract rep of the source
 > fromCode :: Code -> (Module -> a) -> Maybe a
-> fromCode c getterFun = 
+> fromCode c getterFun =
 >   case parseModuleWithMode (defaultParseMode {extensions=knownExtensionsE}) c of
 >     ParseOk a -> Just $ getterFun a
 >     ParseFailed l e -> error ("Parsing failed due to: "++e)
@@ -85,11 +85,11 @@ In order for browse to work on a module, that module must be part of Ives.cabal
 
 
 > showImport :: ImportDecl -> String
-> showImport (ImportDecl _ mn _ _ _ _ _ _) = 
+> showImport (ImportDecl _ mn _ _ _ _ _ _) =
 >   let getModuleName (ModuleName n) = n
 >   in getModuleName mn
 
-from haskell-src-exts we have 
+from haskell-src-exts we have
 data Module = Module
   SrcLoc ModuleName [ModulePragma] (Maybe WarningText) (Maybe [ExportSpec]) [ImportDecl] [Decl]
 
@@ -104,11 +104,11 @@ data Module = Module
 > isHigherOrder :: Type -> Bool
 > isHigherOrder = isRight. getComp
 
-> -- | assume that the component fxn signature will be a fxn typ surrounded by parens 
+> -- | assume that the component fxn signature will be a fxn typ surrounded by parens
 > getComp :: Type -> Either String Type
 > getComp = \case
->   TyParen t1       -> case t1 of 
->                         TyFun _ _ -> Right t1 
+>   TyParen t1       -> case t1 of
+>                         TyFun _ _ -> Right t1
 >                         otherwise -> getComp t1
 >   TyForall m c t   -> getComp t
 >   TyList  t        -> getComp t
@@ -121,13 +121,6 @@ data Module = Module
 >   TyCon   qn       -> Left "could not find component fxn"
 >   otherwise        -> Left "unsupported feature in Typsig"
 
-> tryAll :: [Either String b] -> String -> Either String b
-> tryAll [] e = Left e
-> tryAll (c:cs) e =
->   case c of 
->     Right r -> Right r --should only have one succesful result, so just stop here 
->     Left e1 -> tryAll cs (e++e1) --carry all the errors in case we fail in the end
-
 the type signature datas that are curretnly unsupported
    TyInfix t1 qn t2 -> u  -- ^ infix type constructor
    TyPromoted p     -> u -- ^ promoted data type (-XDataKinds)
@@ -136,14 +129,14 @@ the type signature datas that are curretnly unsupported
    TyBang b t       -> u-- ^ Strict type marked with \"@!@\" or type marked with UNPACK pragma.
 
 > tyFunToList :: Type -> [Type]
-> tyFunToList ty = case ty of 
+> tyFunToList ty = case ty of
 >   TyFun t1 t2      -> tyFunToList t1 ++ tyFunToList t2
 >   TyForall m c t   -> tyFunToList t
 >   TyParArray t     -> tyFunToList t
 >   TyApp   t1 t2    -> tyFunToList t2
->   TyKind  t k      -> tyFunToList t  
+>   TyKind  t k      -> tyFunToList t
 >   TyParen t1       -> [ty] --this will unravel the component fxns
->   TyTuple b ts     -> [TyTuple b ts] 
+>   TyTuple b ts     -> [TyTuple b ts]
 >   TyList  t        -> [ty]
 >   TyVar   n        -> [ty]
 >   TyCon   qn       -> [ty]
@@ -152,16 +145,16 @@ the type signature datas that are curretnly unsupported
  -- |if we are working witha  HOFxn like fold
  --  where we need an initial value to use it
  isInitHOFxn :: Type - Bool
- isInitHOFxn ty = 
-   let 
+ isInitHOFxn ty =
+   let
      f t = drop 2 $ tail $ tyFunToList t
      hasInit ty = not $ null $ tyFunToList ty
    in
      isHigherOrder ty && hasInit ty
 
  getInitHOFxn :: Type - Type
- getInitHOFxn ty = 
-   let 
+ getInitHOFxn ty =
+   let
      f t = drop 2 $ tail $ tyFunToList t
    in
      foldr1 TyFun $ tyFunToList ty
@@ -177,16 +170,16 @@ the type signature datas that are curretnly unsupported
 
 > getExType :: Type -> (Type,Type)
 > getExType = \case
->   TyList t -> case t of 
+>   TyList t -> case t of
 >                 TyTuple b ts -> (ts !! 0, ts !! 1)
 >                 otherwise -> error "examples are fucked"
 >   otherwise -> error "examples are fucked"
 
 > getFxnType :: Type -> (String,String)
 > getFxnType s =
->   let 
+>   let
 >     tf = map T.strip $ T.splitOn "->" $ T.pack $ prettyPrint s
->   in 
+>   in
 >     (T.unpack . last $ init tf ,T.unpack $last tf)
 
 > lastAsFunType :: Type -> Type
@@ -199,7 +192,7 @@ the type signature datas that are curretnly unsupported
 
 > -- | get last two types
 > lastTyps :: Type -> (Type,Type)
-> lastTyps (TyFun t1 t2) = 
+> lastTyps (TyFun t1 t2) =
 >   case t2 of
 >     (TyFun t21 t22) -> lastTyps t2
 >     otherwise -> (t1,t2)
@@ -227,7 +220,7 @@ Num a => (a-> a) -> a won't work
 
 > isInstanceOf :: Context -> Type -> Bool
 > isInstanceOf c t =
->   let 
+>   let
 >     buildContext s = ClassA (UnQual (Ident s)) [TyVar (Ident "a")]
 >     numberContexts = map buildContext ["Num","Integral","Real","RealFrac","RealFloat","Fractional","Floating"]
 >     isNumCon = any (\c' -> elem c' c) numberContexts
@@ -237,25 +230,25 @@ Num a => (a-> a) -> a won't work
 
 > compareTypes :: Type -> Type -> Maybe Int
 > isConcreteTypeOf = compareTypes
-> compareTypes (TyParen t1) (TyParen t2) = 
+> compareTypes (TyParen t1) (TyParen t2) =
 >   fmap (1+) $ compareTypes t1 t2
-> compareTypes (t1) (TyParen t2) = 
+> compareTypes (t1) (TyParen t2) =
 >   fmap (1+) $ compareTypes t1 t2
-> compareTypes (TyParen t1) (t2) = 
+> compareTypes (TyParen t1) (t2) =
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyForall _ _ t1) (TyForall _ _ t2) = --TODO this allows Num a => a->a to match Ord a => a -> a
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyForall _ c t1) t2 =
->   if isInstanceOf c t2 
+>   if isInstanceOf c t2
 >     then fmap (1+) $ compareTypes t1 t2
 >     else Nothing
 
 > compareTypes t1 (TyForall _ c t2) =
->   if isInstanceOf c t1 
+>   if isInstanceOf c t1
 >     then fmap (1+) $ compareTypes t1 t2
 >     else Nothing
 
-> compareTypes (TyList t1) (TyList t2) = 
+> compareTypes (TyList t1) (TyList t2) =
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyParArray t1) (TyParArray t2) =
 >   fmap (1+) $ compareTypes t1 t2
@@ -263,11 +256,11 @@ Num a => (a-> a) -> a won't work
 >   fmap (1+) $ compareTypes t1 t2
 > compareTypes (TyList t1) (TyApp t2 t2') = --[a] -> t a
 >   fmap (1+) $ compareTypes t1 t2'
-> compareTypes (TyTuple _ ts1) (TyTuple _ ts2) = 
+> compareTypes (TyTuple _ ts1) (TyTuple _ ts2) =
 >   foldl (liftA2 (+)) (Just 1) (zipWith compareTypes ts1 ts2)
 > compareTypes (TyApp t1 t1') (TyApp t2 t2') =
 >   fmap (1+) (liftA2 (+) (compareTypes t1 t2) (compareTypes t1' t2'))
-> compareTypes (TyFun t1 t1') (TyFun t2 t2') = 
+> compareTypes (TyFun t1 t1') (TyFun t2 t2') =
 >   fmap (1+) (liftA2 (+) (compareTypes t1 t2) (compareTypes t1' t2'))
 > compareTypes (TyCon q1) (TyCon q2) = if (q1==q2) then Just 20 else Nothing
 > compareTypes _         (TyVar _) = Just 10
@@ -275,34 +268,33 @@ Num a => (a-> a) -> a won't work
 > compareTypes _ _ = Nothing --inlucdes unsupported types
 
 > compareTopLevel :: Type -> Type -> Bool
-> compareTopLevel (TyParen t1) (TyParen t2) = 
+> compareTopLevel (TyParen t1) (TyParen t2) =
 >   compareTopLevel t1 t2
-> compareTopLevel (t1) (TyParen t2) = 
+> compareTopLevel (t1) (TyParen t2) =
 >   compareTopLevel t1 t2
-> compareTopLevel (TyParen t1) (t2) = 
+> compareTopLevel (TyParen t1) (t2) =
 >   compareTopLevel t1 t2
-> compareTopLevel (TyForall _ _ t1) (TyForall _ _ t2) = 
+> compareTopLevel (TyForall _ _ t1) (TyForall _ _ t2) =
 >   compareTopLevel t1 t2
-> compareTopLevel (TyForall _ _ t1) t2 = 
+> compareTopLevel (TyForall _ _ t1) t2 =
 >   compareTopLevel t1 t2
-> compareTopLevel t1 (TyForall _ _ t2) = 
+> compareTopLevel t1 (TyForall _ _ t2) =
 >   compareTopLevel t1 t2
-> compareTopLevel (TyList t1) (TyList t2) = 
+> compareTopLevel (TyList t1) (TyList t2) =
 >   True
-> compareTopLevel (TyList t1) (TyVar _) = 
+> compareTopLevel (TyList t1) (TyVar _) =
 >   True
-> compareTopLevel (TyVar _) (TyList t1) = 
+> compareTopLevel (TyVar _) (TyList t1) =
 >   True
 > compareTopLevel (TyParArray t1) (TyParArray t2) =
 >   True
 > compareTopLevel (TyKind t1 _) (TyKind t2 _) =
 >   compareTopLevel t1 t2
-> compareTopLevel (TyTuple _ ts1) (TyTuple _ ts2) = 
+> compareTopLevel (TyTuple _ ts1) (TyTuple _ ts2) =
 >   and (zipWith compareTopLevel ts1 ts2)
 > compareTopLevel (TyApp t1 t1') (TyApp t2 t2') =
 >   t1==t2
-> compareTopLevel (TyApp t1 t1') (TyList t2 ) = True
-> compareTopLevel (TyFun t1 t1') (TyFun t2 t2') = 
+> compareTopLevel (TyFun t1 t1') (TyFun t2 t2') =
 >   (compareTopLevel t1 t2) && (compareTopLevel t1' t2')
 > compareTopLevel (TyCon q1) (TyCon q2) = q1==q2
 > compareTopLevel _         (TyVar _) = True
@@ -317,12 +309,18 @@ Num a => (a-> a) -> a won't work
 >                         otherwise -> t --should be error
 > sndTyp x = x --this should be an error
 
+> tryAll :: [Either String b] -> String -> Either String b
+> tryAll [] e = Left e
+> tryAll (c:cs) e =
+>   case c of
+>     Right r -> Right r --should only have one succesful result, so just stop here
+>     Left e1 -> tryAll cs (e++e1) --carry all the errors in case we fail in the end
 
 
 > -- | instantiate the tyVars in abstTy with the TyCons in concTy
 > --   we assume that the concTy is the ex fxn for the abstTy (a higher order fxn)
 > specializeOn :: Type -> Type -> Type
-> specializeOn concTy hoTy = 
+> specializeOn concTy hoTy =
 >   let
 >     typeMap = makeTypeMap concTy (lastAsFunType hoTy) Map.empty
 >   in
@@ -330,7 +328,7 @@ Num a => (a-> a) -> a won't work
 
 > replaceTysIn :: Type -> Map.Map Type Type -> Type
 > replaceTysIn (TyVar n) m = fromMaybe (TyVar n)  (Map.lookup (TyVar n) m)
-> replaceTysIn (TyCon n) m = TyCon n 
+> replaceTysIn (TyCon n) m = TyCon n
 > replaceTysIn (TyApp t1 t2) m = TyApp (replaceTysIn t1 m) (replaceTysIn t2 m)
 > replaceTysIn (TyFun t1 t2) m = TyFun (replaceTysIn t1 m) (replaceTysIn t2 m)
 > replaceTysIn (TyList t) m = TyList (replaceTysIn t m)
@@ -350,5 +348,3 @@ Num a => (a-> a) -> a won't work
 > makeTypeMap (TyKind t1 _) (TyKind t2 _) m = makeTypeMap t1 t2 m
 > makeTypeMap (TyForall _ _ t1) (TyForall _ _ t2) m = makeTypeMap t1 t2 m
 > makeTypeMap _ _ m = m
-
-
