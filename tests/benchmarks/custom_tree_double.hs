@@ -11,6 +11,8 @@ data BTree a = Nil | Branch (BTree a) a (BTree a) deriving Eq
 
 double :: Int -> Int
 double x = 2 * x
+mult :: Int -> Int -> Int
+mult = (*)
 
 mapBTree :: (a -> a) -> BTree a -> BTree a
 mapBTree f Nil = Nil

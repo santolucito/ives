@@ -119,6 +119,13 @@ data Module = Module
 >   TyCon   qn       -> Left "could not find component fxn"
 >   otherwise        -> Left "unsupported feature in Typsig"
 
+> tryAll :: [Either String b] -> String -> Either String b
+> tryAll [] e = Left e
+> tryAll (c:cs) e =
+>   case c of 
+>     Right r -> Right r --should only have one succesful result, so just stop here 
+>     Left e1 -> tryAll cs (e++e1) --carry all the errors in case we fail in the end
+
 the type signature datas that are curretnly unsupported
    TyInfix t1 qn t2 -> u  -- ^ infix type constructor
    TyPromoted p     -> u -- ^ promoted data type (-XDataKinds)
@@ -268,6 +275,7 @@ the type signature datas that are curretnly unsupported
 >   and (zipWith compareTopLevel ts1 ts2)
 > compareTopLevel (TyApp t1 t1') (TyApp t2 t2') =
 >   t1==t2
+> compareTopLevel (TyApp t1 t1') (TyList t2 ) = True
 > compareTopLevel (TyFun t1 t1') (TyFun t2 t2') = 
 >   (compareTopLevel t1 t2) && (compareTopLevel t1' t2')
 > compareTopLevel (TyCon q1) (TyCon q2) = q1==q2
@@ -283,12 +291,6 @@ the type signature datas that are curretnly unsupported
 >                         otherwise -> t --should be error
 > sndTyp x = x --this should be an error
 
-> tryAll :: [Either String b] -> String -> Either String b
-> tryAll [] e = Left e
-> tryAll (c:cs) e =
->   case c of 
->     Right r -> Right r --should only have one succesful result, so just stop here 
->     Left e1 -> tryAll cs (e++e1) --carry all the errors in case we fail in the end
 
 
 > -- | instantiate the tyVars in abstTy with the TyCons in concTy

@@ -21,6 +21,7 @@
 > import Ives.SynthEngine.Types
 > import Ives.SynthEngine.Extractor
 
+> import Debug.Trace
 
 If you statisfy >=, I dont car if you satisfy =
 
@@ -74,8 +75,8 @@ we also only need to run step 1 on the higher order fxn identifiers (which we ca
 > addRType c t = do
 >   --print $ getFxnType $ snd t --only test fxn where types match	
 >   --print t
->   let testR = uncurry compareTopLevel $ lastTyps $ snd t --only test fxn where types match	
->   x <- if testR then rTypeAssign HigherOrderFxn c t else return [noRType]
+>   let testR = uncurry compareTopLevel $ lastTyps $ snd t :: Bool --only test fxn where example type is concrete of fxn
+>   x <- if trace ((toString$ fst t)++" "++(show testR)) testR then rTypeAssign HigherOrderFxn c t else return [noRType]
 >   return (t, x)
    
 > -- | a hof only fits if one of the rtypes overlaps with the one of the examples rtypes

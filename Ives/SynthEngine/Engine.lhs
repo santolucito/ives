@@ -73,8 +73,9 @@ NB: a fair amount of time will be added for getting files from disk
 > --  let allHOTyps = uHOTyps ++ iHOTyps :: [(Sig,Maybe Int)]
 > --  let allHOTyps = pHOTyps :: [(Sig,Maybe Int)]
 >
-> --  mapM print allHOTyps
-> --  mapM print typSigs
+> --  mapM (\x -> print ((toString $ fst x) ++" - "++(fromLeft "" .getComp $snd x))) preludeTypSigs
+>   
+> --  mapM (print .toString.fst.fst) allHOTyps
 >   hoRTyps <- mapM (addRType fc) (map fst allHOTyps)
 >   print $ length $ filter (\(s,r) -> r/=[]) hoRTyps
 >   let hoRTypsW = zipWith (\(t,r) w -> (t,r,w)) hoRTyps (map snd allHOTyps)
@@ -104,7 +105,7 @@ synth will need the code file with examples, and all the HOFxns with RTypes
 > synthTime startTime c hoTyps allTyps = do
 >   let exsTyp = fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps
 >   let exsTyMatch = isJust $ uncurry compareTypes $ getExType $ snd exsTyp
-> --  print exsTyMatch
+>   print exsTyMatch
 >   exsRTyp  <- if exsTyMatch 
 >               then rTypeAssign Example c (fromJust $ find (\t -> "exs" == (toString $ fst t)) allTyps)
 >               else return [noRType]
@@ -117,12 +118,11 @@ then with the ranks, begin searching for a program
 
 >   let hoFxns1 = filter (matchRType exsRTyp) (map fstsnd hoTyps')
 >   let exFunType = exAsFunType $ snd exsTyp
-> --  mapM print hoFxns1
->   let hoFxns = filter (\(t,r) -> isJust $ isConcreteTypeOf exFunType (lastAsFunType $ snd t)) hoFxns1
->   --mapM print hoFxns
+>   mapM (print .fst) hoFxns1
+>   let hoFxns = filter (\(t,r) -> isJust $ isConcreteTypeOf (t1 exFunType) (lastAsFunType $ snd t)) hoFxns1
+> --  mapM print hoFxns
 >   let candidateFxns = makeFxns (snd exsTyp) (map fst hoFxns) allTyps
-> --  mapM print (map fstsnd hoTyps')
-> --  print candidateFxns
+>   --mapM print (candidateFxns)
 >   validProgs <- applyAll startTime c candidateFxns
 >   putStrLn "the following programs satisfy the examples: "
 >   mapM_ (putStrLn.("* "++)) validProgs
@@ -181,13 +181,14 @@ we need to compose these functions and run them on the examples until we find on
 > makeFxns exTy hoFxnSig allTyps = 
 > -- | take all the code, and the component sig, and get the names of all the fxns that fit component fxn
 >   let 
->     sOn hTy n = tr2 specializeOn (exAsFunType exTy) hTy
->     hoFxnSig' = map (\s -> (fst s, sOn (snd s) (fst s))) hoFxnSig
+>     sOn hTy n = specializeOn (exAsFunType exTy) hTy
+>     hoFxnSig' = let x = map (\s -> (fst s, sOn (snd s) (fst s))) hoFxnSig in x 
+>     --codePieces = map (\x -> (trace (show(fst x)++" "++(prettyPrint$snd x)) x, genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
 >     codePieces = map (\x -> (x, genComponentFxn exTy x allTyps)) hoFxnSig' --a list of compnent fxns for each hofxn
->     hoWithComp = buildFxns codePieces :: [Sig]--with comp fxn applied
+>     hoWithComp =  buildFxns codePieces :: [Sig]--with comp fxn applied
 >     needsInit t = (length $ tyFunToList t)>2
 >     finalTy t = TyFun (fst $lastTyps t) (snd$ lastTyps t)
->     hoWithInit = concatMap (\t -> if needsInit $ snd t  
+>     hoWithInit = concatMap (\t -> if needsInit $ snd t   
 >                                   then coerceSig (finalTy$ snd t) t
 >                                   else [t]) hoWithComp
 >   in
@@ -203,7 +204,8 @@ take a higher order function that still needs some initial values to be ready fo
 >     target = foldr1 TyFun [inTy,outTy]
 >     funList = tail $ tyFunToList $ snd ty 
 >     cur = (fst ty, if length funList ==0 then TyVar (Ident ":(") else foldr1 TyFun funList)
->     newFxns' = trace (show target ++ "\n"++show cur) $ coerceSig target cur
+>     --newFxns' = trace (show target ++ "\n"++show cur) $ coerceSig target cur
+>     newFxns' = coerceSig target cur
 >     newFxns  = mapSnd (TyFun $ head $ rights $ [getComp (snd ty)]) newFxns'
 >   in 
 >     newFxns
